@@ -19,14 +19,14 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> createMember(@RequestBody MemberRequestDto requestDto) {
-        return memberService.createMember(requestDto);
+    public ResponseEntity<?> signup(@RequestBody MemberRequestDto.Signup signup) {
+        return memberService.signup(signup);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginMember(@RequestBody MemberRequestDto requestDto,
-                                         HttpServletResponse response) {
-        return memberService.loginMember(requestDto, response);
+    public ResponseEntity<?> login(@RequestBody MemberRequestDto.Login login,
+                                   HttpServletResponse response) {
+        return memberService.login(login, response);
     }
 
 }
