@@ -17,28 +17,32 @@ public class Map extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long MapId;
 
-    @Column
+    @JoinColumn(name = "member_id",nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Member member;
+
+    @Column(nullable = false)
     private String title;
 
-    @Column
+    @Column(nullable = false)
     private String category;
 
-    @Column
+    @Column(nullable = false)
     private String content;
 
-    @Column
+    @Column(nullable = false)
     private int star;
 
-    @Column
+    @Column(nullable = false)
     private int view;
 
-    @Column
+    @Column(nullable = false)
     private String address;
 
-    @Column
+    @Column(nullable = false)
     private int mapx;
 
-    @Column
+    @Column(nullable = false)
     private int mapy;
 
 }
