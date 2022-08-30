@@ -12,6 +12,6 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("*")
-                .exposedHeaders("Authorization");
+                .exposedHeaders("Authorization", "Refresh-Token");
     }
 }
