@@ -52,6 +52,7 @@ public class SecurityConfiguration {
                 .authorizeRequests()
                 .antMatchers("/member/*").permitAll()
                 .antMatchers("/check/**").permitAll()
+                .antMatchers("/search/hospital/**").permitAll()
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated()
 
