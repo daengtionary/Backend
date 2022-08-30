@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-public class HospitalApiController {
+public class HospitalController {
     private final HospitalService hospitalService;
 
     @GetMapping("/search/hospital/{keyword}")

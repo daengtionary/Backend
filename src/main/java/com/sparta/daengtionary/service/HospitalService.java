@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.service;
 
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.service.naverapi.HospitalApiClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

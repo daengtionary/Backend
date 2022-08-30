@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.service;
+package com.sparta.daengtionary.service.naverapi;
 
 import com.sparta.daengtionary.dto.response.HospitalResponseDto;
 import lombok.RequiredArgsConstructor;
