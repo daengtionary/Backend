@@ -1,13 +1,11 @@
 package com.sparta.daengtionary.cotroller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,14 +17,20 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/signup")
-    public ResponseEntity<?> createMember(@RequestBody MemberRequestDto requestDto) {
-        return memberService.createMember(requestDto);
+    public ResponseEntity<?> signup(@RequestBody MemberRequestDto.Signup signup) {
+        return memberService.signup(signup);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> loginMember(@RequestBody MemberRequestDto requestDto,
-                                         HttpServletResponse response) {
-        return memberService.loginMember(requestDto, response);
+    public ResponseEntity<?> login(@RequestBody MemberRequestDto.Login login,
+                                   HttpServletResponse response) {
+        return memberService.login(login, response);
+    }
+
+    @GetMapping("/kakao")
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code,
+                                        HttpServletResponse response)  throws JsonProcessingException {
+        return memberService.kakaoLogin(code, response);
     }
 
 }

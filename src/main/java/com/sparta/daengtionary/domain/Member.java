@@ -18,29 +18,26 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
-    private String name;
-    @Column(nullable = false)
-    private String nickname;
-    @Column(nullable = false)
-    private String phoneNumber;
+    private String nick;
     @Column(nullable = false)
     private Authority role;
+    @Column
+    private Long kakaoId;
 
 
     public Member() {
     }
 
     @Builder
-    public Member(Long memberNo, String email, String password, String name, String nickname,
-                  String phoneNumber, Authority role) {
+    public Member(Long memberNo, String email, String password,
+                  String nick, Authority role, Long kakaoId) {
 
         this.memberNo = memberNo;
         this.email = email;
         this.password = password;
-        this.name = name;
-        this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
+        this.nick = nick;
         this.role = role;
+        this.kakaoId = kakaoId;
 
     }
 
