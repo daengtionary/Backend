@@ -43,13 +43,13 @@ public class MemberService {
     private final TokenProvider tokenProvider;
     @Value("${KakaoRestApiKey}")
     private String kakaoRestApiKey;
+    @Value("${adminCode}")
+    private String adminCode;
 
     @Transactional
     public ResponseEntity<?> signup(MemberRequestDto.Signup signup) {
 
         if (signup.getRole().ordinal() == 1) {
-
-            String adminCode = "daeng0829";
 
             if (!signup.getAdminCode().equals(adminCode)) {
                 return responseBodyDto.fail("관리자 코드가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
