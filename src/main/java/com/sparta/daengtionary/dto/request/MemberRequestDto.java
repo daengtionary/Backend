@@ -11,9 +11,7 @@ public class MemberRequestDto {
     public static class Signup {
         private String email;
         private String password;
-        private String name;
-        private String nickname;
-        private String phoneNumber;
+        private String nick;
         private Authority role;
         private String adminCode;
     }

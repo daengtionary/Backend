@@ -13,9 +13,7 @@ public class MemberResponseDto {
     private Long memberNo;
     private Authority role;
     private String email;
-    private String name;
-    private String nickname;
-    private String phoneNumber;
+    private String nick;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -23,15 +21,13 @@ public class MemberResponseDto {
 
 
     @Builder
-    public MemberResponseDto(Long memberNo, Authority role, String email, String name, String nickname,
-                             String phoneNumber, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MemberResponseDto(Long memberNo, Authority role, String email, String nick,
+                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
 
         this.memberNo = memberNo;
         this.role = role;
         this.email = email;
-        this.name = name;
-        this.nickname = nickname;
-        this.phoneNumber = phoneNumber;
+        this.nick = nick;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
 

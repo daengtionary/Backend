@@ -7,7 +7,7 @@ import lombok.Getter;
 public class KakaoUserInfoDto {
     private Long kakaoId;
     private String email;
-    private String nickname;
+    private String nick;
 
 
     public KakaoUserInfoDto() {
@@ -15,10 +15,10 @@ public class KakaoUserInfoDto {
     }
 
     @Builder
-    public KakaoUserInfoDto(Long kakaoId, String email, String nickname) {
+    public KakaoUserInfoDto(Long kakaoId, String email, String nick) {
         this.kakaoId = kakaoId;
         this.email = email;
-        this.nickname = nickname;
+        this.nick = nick;
     }
 
 }

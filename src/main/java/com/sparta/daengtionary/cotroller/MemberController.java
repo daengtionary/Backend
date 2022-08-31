@@ -2,10 +2,8 @@ package com.sparta.daengtionary.cotroller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
-import com.sparta.daengtionary.dto.request.TokenDto;
 import com.sparta.daengtionary.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
