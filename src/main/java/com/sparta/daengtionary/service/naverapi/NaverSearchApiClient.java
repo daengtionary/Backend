@@ -1,6 +1,6 @@
 package com.sparta.daengtionary.service.naverapi;
 
-import com.sparta.daengtionary.dto.response.HospitalResponseDto;
+import com.sparta.daengtionary.dto.response.NaverSearchResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @Service
-public class HospitalApiClient {
+public class NaverSearchApiClient {
 
     @Value("${naver.key}")
     private String CLIENT_ID;
@@ -25,7 +25,7 @@ public class HospitalApiClient {
     private String OpenNaverHospitalUrl_getHospital;
 
 
-    public HospitalResponseDto responseDto(String keyword){
+    public NaverSearchResponseDto responseDto(String keyword){
         final HttpHeaders headers = new HttpHeaders(); // 헤더에 key들을 담아준다.
         headers.set("X-Naver-Client-Id", CLIENT_ID);
         headers.set("X-Naver-Client-Secret", CLIENT_SECRET);
@@ -35,6 +35,6 @@ public class HospitalApiClient {
         ByteBuffer buffer = StandardCharsets.UTF_8.encode(keyword);
         String encode = StandardCharsets.UTF_8.decode(buffer).toString();
 
-        return restTemplate.exchange(OpenNaverHospitalUrl_getHospital, HttpMethod.GET, entity, HospitalResponseDto.class, encode,5,1,"random").getBody();
+        return restTemplate.exchange(OpenNaverHospitalUrl_getHospital, HttpMethod.GET, entity, NaverSearchResponseDto.class, encode,5,1,"random").getBody();
     }
 }

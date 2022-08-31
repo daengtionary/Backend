@@ -1,21 +1,18 @@
 package com.sparta.daengtionary.domain;
 
 import com.sparta.daengtionary.util.Timestamped;
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
 public class Map extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long MapId;
+    private Long mapId;
 
     @JoinColumn(name = "member_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,5 +41,24 @@ public class Map extends Timestamped {
 
     @Column(nullable = false)
     private int mapy;
+
+    public Map(){
+
+    }
+
+    @Builder
+    public Map(Long mapId,Member member,String title,String category,String content,
+               int star,int view,String address,int mapx,int mapy){
+        this.mapId = mapId;
+        this.member = member;
+        this.title = title;
+        this.category = category;
+        this.content = content;
+        this.star = star;
+        this.view = view;
+        this.address = address;
+        this.mapx = mapx;
+        this.mapy = mapy;
+    }
 
 }
