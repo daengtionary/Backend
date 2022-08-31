@@ -3,7 +3,7 @@ package com.sparta.daengtionary.dto.response;
 import lombok.Data;
 
 @Data
-public class HospitalResponseDto {
+public class NaverSearchResponseDto {
     private int display;
     private Item[] items;
 
