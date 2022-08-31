@@ -86,13 +86,11 @@ public class MemberService {
                         .memberNo(member.getMemberNo())
                         .role(member.getRole())
                         .email(member.getEmail())
-                        .name(member.getName())
-                        .nickname(member.getNickname())
-                        .phoneNumber(member.getPhoneNumber())
+                        .nick(member.getNick())
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build(),
-                member.getNickname() + "님 환영합니다 :)",
+                member.getNick() + "님 환영합니다 :)",
                 HttpStatus.OK
         );
 
@@ -115,7 +113,8 @@ public class MemberService {
             kakaoUser = Member.builder()
                     .email(kakaoUserInfoDto.getEmail())
                     .password(passwordEncoder.encode(UUID.randomUUID().toString()))
-                    .nickname(kakaoUserInfoDto.getNickname())
+                    .nick(kakaoUserInfoDto.getNick())
+                    .kakaoId(kakaoUserInfoDto.getKakaoId())
                     .role(Authority.USER)
                     .build();
 
@@ -192,13 +191,13 @@ public class MemberService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
 
         Long id = jsonNode.get("id").asLong();
-        String nickname = jsonNode.get("properties").get("nickname").asText();
+        String nick = jsonNode.get("properties").get("nickname").asText();
         String email = jsonNode.get("kakao_account").get("email").asText();
 
         return KakaoUserInfoDto.builder()
                 .kakaoId(id)
                 .email(email)
-                .nickname(nickname)
+                .nick(nick)
                 .build();
     }
 
@@ -227,7 +226,7 @@ public class MemberService {
 
     public ResponseEntity<?> checkNick(String nick) {
 
-        if (memberRepository.existsByNickname(nick)) {
+        if (memberRepository.existsByNick(nick)) {
             return responseBodyDto.fail("중복된 닉네임 입니다.", HttpStatus.BAD_REQUEST);
         }
 
@@ -241,16 +240,14 @@ public class MemberService {
             return responseBodyDto.fail("중복된 email 입니다.", HttpStatus.BAD_REQUEST);
         }
 
-        if (memberRepository.existsByNickname(signup.getNickname())) {
+        if (memberRepository.existsByNick(signup.getNick())) {
             return responseBodyDto.fail("중복된 닉네임 입니다.", HttpStatus.BAD_REQUEST);
         }
 
         Member member = Member.builder()
                 .email(signup.getEmail())
                 .password(passwordEncoder.encode(signup.getPassword()))
-                .name(signup.getName())
-                .nickname(signup.getNickname())
-                .phoneNumber(signup.getPhoneNumber())
+                .nick(signup.getNick())
                 .role(signup.getRole())
                 .build();
 
@@ -261,13 +258,11 @@ public class MemberService {
                         .memberNo(member.getMemberNo())
                         .role(member.getRole())
                         .email(member.getEmail())
-                        .name(member.getName())
-                        .nickname(member.getNickname())
-                        .phoneNumber(member.getPhoneNumber())
+                        .nick(member.getNick())
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build(),
-                member.getNickname() + "님 가입을 축하힙니다 :)",
+                member.getNick() + "님 가입을 축하힙니다 :)",
                 HttpStatus.OK
         );
 
