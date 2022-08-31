@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.cotroller;
 
-import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.service.NaverSearchService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,4 +16,5 @@ public class NaverSearchController {
     public ResponseEntity<?> get(@PathVariable String keyword){
         return naverSearchService.findByKeyword(keyword);
     }
+
 }
