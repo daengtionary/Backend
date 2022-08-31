@@ -34,7 +34,7 @@ public class MapService {
 //        }
 //    }
 
-    public Member validateMember(){
-        return tokenProvider.getMemberFromAuthentication();
-    }
+//    public Member validateMember(){
+//        return tokenProvider.getMemberFromAuthentication();
+//    }
 }

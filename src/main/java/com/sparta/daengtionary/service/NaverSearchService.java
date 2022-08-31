@@ -20,7 +20,6 @@ public class NaverSearchService {
     public ResponseEntity<?> findByKeyword(String keyword) {
         ArrayList<Object> list = new ArrayList<>();
         list.add(naverSearchApiClient.responseDto(keyword));
-        return responseBodyDto.success(list, "", HttpStatus.OK);
+        return responseBodyDto.success(list,"조회성공", HttpStatus.OK);
     }
-
 }

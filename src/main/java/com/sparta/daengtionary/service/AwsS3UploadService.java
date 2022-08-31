@@ -22,7 +22,7 @@ import java.io.InputStream;
 public class AwsS3UploadService {
     private final AmazonS3 amazonS3;
 
-    @Value("${aws.access-key}")
+    @Value("${cloud.aws.credentials.access-key}")
     private String accessKey;
 
     @Value("${cloud.aws.credentials.secret-key}")
