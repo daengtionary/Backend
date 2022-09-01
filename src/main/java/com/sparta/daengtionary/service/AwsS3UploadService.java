@@ -10,12 +10,19 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -44,16 +51,50 @@ public class AwsS3UploadService {
                 .build();
     }
 
-    public void uploadFile(InputStream inputStream, ObjectMetadata objectMetadata,String fileName){
-        amazonS3.putObject(new PutObjectRequest(bucket,fileName,inputStream,objectMetadata).withCannedAcl(CannedAccessControlList.PublicRead));
+    public List<String> upload(List<MultipartFile> multipartFiles){
+        List<String> imgUrlList = new ArrayList<>();
+
+        for(MultipartFile file : multipartFiles){
+            String fileName = createFileName(file.getOriginalFilename());
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
+
+            try(InputStream inputStream = file.getInputStream()){
+                amazonS3.putObject(new PutObjectRequest(bucket+"/map/image",fileName,inputStream,objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                imgUrlList.add(amazonS3.getUrl(bucket+"/map/image",fileName).toString());
+            }catch (IOException e){
+                throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
+            }
+        }
+        return imgUrlList;
     }
 
-    public String getFileUrl(String fileName){
-        return amazonS3.getUrl(bucket,fileName).toString();
+
+    private String createFileName(String fileName){
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
-    public void deleteFile(String fileName){
-        DeleteObjectRequest deleteObjectRequest = new DeleteObjectRequest(bucket,fileName);
-        amazonS3.deleteObject(deleteObjectRequest);
+    private String getFileExtension(String fileName){
+        if (fileName.length() == 0) {
+            throw new CustomException(ErrorCode.WRONG_INPUT_IMAGE);
+        }
+
+        ArrayList<String> fileValidate = new ArrayList<>();
+        fileValidate.add(".jpg");
+        fileValidate.add(".jpeg");
+        fileValidate.add(".png");
+        fileValidate.add(".JPG");
+        fileValidate.add(".JPEG");
+        fileValidate.add(".PNG");
+        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
+        if(!fileValidate.contains(idxFileName)){
+            throw new CustomException(ErrorCode.WRONG_IMAGE_FORMAT);
+        }
+        return fileName.substring(fileName.lastIndexOf("."));
+
+
     }
+
 }

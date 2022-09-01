@@ -16,8 +16,8 @@ public class MapDetailResponseDto {
     private String category;
     private int star;
     private int view;
-    private int mapx;
-    private int mapy;
+    private Double mapx;
+    private Double mapy;
     private List<String> imgUrls;
     private List<String> mapInfo;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -31,7 +31,7 @@ public class MapDetailResponseDto {
 
     @Builder
     public MapDetailResponseDto(Long mapId,String title,String address,String category,
-                                int star,int view, int mapx,int mapy ,List<String> imgUrls,LocalDateTime createdAt,LocalDateTime moditiedAt){
+                                int star,int view, Double mapx,Double mapy ,List<String> imgUrls,List<String> mapInfo,LocalDateTime createdAt,LocalDateTime moditiedAt){
         this.mapId = mapId;
         this.title = title;
         this.address = address;
@@ -41,6 +41,7 @@ public class MapDetailResponseDto {
         this.mapx = mapx;
         this.mapy = mapy;
         this.imgUrls = imgUrls;
+        this.mapInfo = mapInfo;
         this.createdAt = createdAt;
         this.moditiedAt = moditiedAt;
     }

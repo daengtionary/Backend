@@ -1,7 +1,5 @@
 package com.sparta.daengtionary.jwt;
 
-import com.sparta.daengtionary.configration.error.CustomException;
-import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.UserDetailsImpl;
 import com.sparta.daengtionary.dto.request.TokenDto;
@@ -20,7 +18,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;

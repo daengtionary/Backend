@@ -10,20 +10,20 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = {CustomException.class})
     public ResponseEntity<Object> handleApiRequestException(CustomException ex) {
-        HttpStatus status = ex.getErrorCode().getStatus();
-        String errerCode = ex.getErrorCode().getErrorMessage();
-        String errerMSG = ex.getErrorCode().getErrorMessage();
+        Integer status = ex.getErrorCode().getStatus();
+        String code = ex.getErrorCode().getCode();
+        String message = ex.getErrorCode().getMessage();
         ExceptionResponse exceptionResponse = new ExceptionResponse();
         exceptionResponse.setStatus(status);
-        exceptionResponse.setErrorCode(errerCode);
-        exceptionResponse.setErrorMessage(errerMSG);
+        exceptionResponse.setCode(code);
+        exceptionResponse.setMessage(message);
 
 
-        System.out.println("ERR : " + status + "," + errerCode + "," + errerMSG);
+        System.out.println("ERR : " + status + "," + code + "," + message);
 
         return new ResponseEntity<>(
                 exceptionResponse,
-                ex.getErrorCode().getStatus()
+                HttpStatus.valueOf(ex.getErrorCode().getStatus())
         );
     }
 

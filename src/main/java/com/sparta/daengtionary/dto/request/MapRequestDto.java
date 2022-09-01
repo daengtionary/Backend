@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.dto.request;
 
-import com.sparta.daengtionary.domain.Member;
 import lombok.Getter;
 
 import java.util.List;
@@ -12,7 +11,7 @@ public class MapRequestDto {
     private String category;
     private String content;
     private String address;
-    private int mapx;
-    private int mapy;
+    private Double mapx;
+    private Double mapy;
     private List<String> mapInfos;
 }
