@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -27,10 +29,10 @@ public class Map extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private int star;
+    @Column
+    private float star;
 
-    @Column(nullable = false)
+    @Column
     private int view;
 
     @Column(nullable = false)
@@ -48,17 +50,29 @@ public class Map extends Timestamped {
 
     @Builder
     public Map(Long mapId,Member member,String title,String category,String content,
-               int star,int view,String address,int mapx,int mapy){
+               String address,int mapx,int mapy){
         this.mapId = mapId;
         this.member = member;
         this.title = title;
         this.category = category;
         this.content = content;
-        this.star = star;
-        this.view = view;
+        this.star = 0;
+        this.view = 0;
         this.address = address;
         this.mapx = mapx;
         this.mapy = mapy;
+    }
+
+    public void UpdateMap(){
+
+    }
+
+    public void viewUpdate(int view){
+        this.view = view;
+    }
+
+    public void starUpdate(float star){
+        this.star = star;
     }
 
 }
