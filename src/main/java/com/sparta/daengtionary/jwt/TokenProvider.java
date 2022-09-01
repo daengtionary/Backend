@@ -1,5 +1,7 @@
 package com.sparta.daengtionary.jwt;
 
+import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.UserDetailsImpl;
 import com.sparta.daengtionary.dto.request.TokenDto;
@@ -18,6 +20,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -100,6 +103,7 @@ public class TokenProvider {
             log.info("Invalid JWT Token", e);
         } catch (ExpiredJwtException e) {
             log.info("Expired JWT Token", e);
+//            throw new CustomException(ErrorCode.)
         } catch (UnsupportedJwtException e) {
             log.info("Unsupported JWT Token", e);
         } catch (IllegalArgumentException e) {

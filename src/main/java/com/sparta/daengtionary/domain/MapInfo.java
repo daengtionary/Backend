@@ -1,8 +1,8 @@
 package com.sparta.daengtionary.domain;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -10,8 +10,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
+@Setter
 public class MapInfo {
 
     @Id
@@ -25,5 +24,17 @@ public class MapInfo {
 
     @Column
     private String mapInfo;
+
+    public MapInfo(){
+
+    }
+
+    @Builder
+    public MapInfo(Map map,String mapInfo){
+        this.map = map;
+        this.mapInfo = mapInfo;
+    }
+
+
 
 }
