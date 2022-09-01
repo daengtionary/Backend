@@ -38,11 +38,19 @@ public class Map extends Timestamped {
     @Column(nullable = false)
     private String address;
 
+    //위도
     @Column(nullable = false)
-    private int mapx;
+    private Double mapx;
 
+    //경도
     @Column(nullable = false)
-    private int mapy;
+    private Double mapy;
+
+    @OneToMany(mappedBy = "map")
+    private List<MapImg> mapImgList;
+
+    @OneToMany(mappedBy = "map")
+    private List<MapInfo> mapInfoList;
 
     public Map(){
 
@@ -50,7 +58,7 @@ public class Map extends Timestamped {
 
     @Builder
     public Map(Long mapId,Member member,String title,String category,String content,
-               String address,int mapx,int mapy){
+               String address,Double mapx,Double mapy, List<MapImg>mapImgList ,List<MapInfo> mapInfoList){
         this.mapId = mapId;
         this.member = member;
         this.title = title;
@@ -61,6 +69,8 @@ public class Map extends Timestamped {
         this.address = address;
         this.mapx = mapx;
         this.mapy = mapy;
+        this.mapImgList = mapImgList;
+        this.mapInfoList = mapInfoList;
     }
 
     public void UpdateMap(){

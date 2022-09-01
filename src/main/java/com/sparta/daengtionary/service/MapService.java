@@ -4,7 +4,7 @@ import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
-import com.sparta.daengtionary.dto.response.MapImgResponseDto;
+import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MapImgRepository;
@@ -12,15 +12,13 @@ import com.sparta.daengtionary.repository.MapInfoRepository;
 import com.sparta.daengtionary.repository.MapRepository;
 import com.sparta.daengtionary.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,18 +29,18 @@ public class MapService {
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
 
-    private final FileUploadService fileUploadService;
-    private final AwsS3UploadService s3UploadService;
-
+    private final ResponseBodyDto responseBodyDto;
 
     @Transactional
-    public void createMap(MapRequestDto mapRequestDto, List<MultipartFile> mapImgs)
-        throws IOException
-    {
-        Optional<Member> member = Optional.ofNullable(validateMember());
-        //member null 검사
+    public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<String> mapImgs) {
+        Member member = memberRepository.findById(mapRequestDto.getMemberNo()).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+        );
+
+        isTitleCheck(mapRequestDto.getTitle());
+
         Map map = Map.builder()
-                .member(member.get())
+                .member(member)
                 .title(mapRequestDto.getTitle())
                 .content(mapRequestDto.getContent())
                 .category(mapRequestDto.getCategory())
@@ -53,46 +51,54 @@ public class MapService {
 
         mapRepository.save(map);
 
-        List<MapImg> imgList = new ArrayList<>();
-        List<MapImgResponseDto> imgResponseDtoList = new ArrayList<>();
         List<MapInfo> mapInfos = new ArrayList<>();
 
-        for(MultipartFile mapimg : mapImgs){
-            MapImgResponseDto imgResponseDto = fileUploadService.uploadImage(mapimg,"map");
-            imgResponseDtoList.add(imgResponseDto);
+        for (String mapinfo : mapRequestDto.getMapInfos()) {
+            mapInfos.add(
+                    MapInfo.builder()
+                            .map(map)
+                            .mapInfo(mapinfo)
+                            .build()
+            );
         }
-        dtoParser(imgList,imgResponseDtoList,mapInfos,mapRequestDto);
-
-        mapImgRepository.saveAll(imgList);
         mapInfoRepository.saveAll(mapInfos);
-    }
 
-    public Map loadMapByMapNo(Long mapNo){
-        return mapRepository.findById(mapNo).orElseThrow(
-                () -> new CustomException(ErrorCode.MAP_WRONG_INPUT)
+        List<MapImg> mapImgList = new ArrayList<>();
+        for (String img : mapImgs) {
+            mapImgList.add(
+                    MapImg.builder()
+                            .map(map)
+                            .mapImgUrl(img)
+                            .build()
+            );
+        }
+        mapImgRepository.saveAll(mapImgList);
+
+        return responseBodyDto.success(
+                MapDetailResponseDto.builder()
+                        .mapId(map.getMapId())
+                        .category(map.getCategory())
+                        .title(map.getTitle())
+                        .address(map.getAddress())
+                        .mapx(map.getMapx())
+                        .mapy(map.getMapy())
+                        .mapInfo(mapRequestDto.getMapInfos())
+                        .imgUrls(mapImgs)
+                        .createdAt(map.getCreatedAt())
+                        .moditiedAt(map.getModifiedAt())
+                        .build(), "생성 완료", HttpStatus.OK
         );
     }
 
-    private void dtoParser(List<MapImg> imgList, List<MapImgResponseDto> imgResponseDtoList
-        ,List<MapInfo> infoList , MapRequestDto requestDto){
-        for(MapImgResponseDto imgResponseDto: imgResponseDtoList){
-            MapImg mapImg = MapImg.builder()
-                    .mapImgName(imgResponseDto.getImgName())
-                    .mapImgUrl(imgResponseDto.getImgUrl())
-                    .build();
-            imgList.add(mapImg);
-        }
-
-        for(String info : requestDto.getMapInfos()){
-            MapInfo mapInfo = MapInfo.builder()
-                    .mapInfo(info)
-                    .build();
-            infoList.add(mapInfo);
+    @Transactional(readOnly = true)
+    public void isTitleCheck(String title) {
+        if (mapRepository.existsByTitle(title)) {
+            throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
         }
     }
 
     @Transactional
-    public Member validateMember(){
+    public Member validateMember() {
         return tokenProvider.getMemberFromAuthentication();
     }
 

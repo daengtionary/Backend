@@ -22,20 +22,10 @@ public class MapImg {
     private Map map;
 
     @Column(nullable = false)
-    private String mapImgName;
-
-    @Column(nullable = false)
     private String mapImgUrl;
 
     public MapImg(){
 
-    }
-
-    @Builder
-    public MapImg(Map map,String mapImgName,String mapImgUrl){
-        this.map = map;
-        this.mapImgName = mapImgName;
-        this.mapImgUrl = mapImgUrl;
     }
 
     @Builder
