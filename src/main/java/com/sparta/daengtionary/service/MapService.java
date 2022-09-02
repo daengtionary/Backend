@@ -5,13 +5,17 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
+import com.sparta.daengtionary.dto.response.MapResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MapImgRepository;
 import com.sparta.daengtionary.repository.MapInfoRepository;
 import com.sparta.daengtionary.repository.MapRepository;
 import com.sparta.daengtionary.repository.MemberRepository;
+import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,8 +32,9 @@ public class MapService {
     private final MapImgRepository mapImgRepository;
     private final MemberRepository memberRepository;
     private final TokenProvider tokenProvider;
-
     private final ResponseBodyDto responseBodyDto;
+
+    private final MapRepositorySupport mapRepositorySupport;
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<String> mapImgs) {
@@ -76,7 +81,7 @@ public class MapService {
 
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
-                        .mapId(map.getMapId())
+                        .mapNo(map.getMapNo())
                         .category(map.getCategory())
                         .title(map.getTitle())
                         .address(map.getAddress())
@@ -88,6 +93,12 @@ public class MapService {
                         .moditiedAt(map.getModifiedAt())
                         .build(), "생성 완료", HttpStatus.OK
         );
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getAllMap(String qCategory) {
+        List<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(qCategory);
+        return ResponseEntity.ok(mapResponseDtoPage);
     }
 
     @Transactional(readOnly = true)

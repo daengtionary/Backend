@@ -10,11 +10,11 @@ import java.util.List;
 
 @Getter
 public class MapDetailResponseDto {
-    private Long mapId;
+    private Long mapNo;
     private String title;
     private String address;
     private String category;
-    private int star;
+    private float star;
     private int view;
     private Double mapx;
     private Double mapy;
@@ -30,9 +30,9 @@ public class MapDetailResponseDto {
     }
 
     @Builder
-    public MapDetailResponseDto(Long mapId,String title,String address,String category,
-                                int star,int view, Double mapx,Double mapy ,List<String> imgUrls,List<String> mapInfo,LocalDateTime createdAt,LocalDateTime moditiedAt){
-        this.mapId = mapId;
+    public MapDetailResponseDto(Long mapNo,String title,String address,String category,
+                                float star,int view, Double mapx,Double mapy ,List<String> imgUrls,List<String> mapInfo,LocalDateTime createdAt,LocalDateTime moditiedAt){
+        this.mapNo = mapNo;
         this.title = title;
         this.address = address;
         this.category = category;
