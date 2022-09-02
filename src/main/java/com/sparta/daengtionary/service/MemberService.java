@@ -83,8 +83,7 @@ public class MemberService {
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build(),
-                member.getNick() + "님 환영합니다 :)",
-                HttpStatus.OK
+                member.getNick() + "님 환영합니다 :)"
         );
     }
 
@@ -108,7 +107,7 @@ public class MemberService {
         TokenDto tokenDto = tokenProvider.generateToken(authentication);
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success("", kakaoUser.getKakaoId() + "님 환영합니다 :)", HttpStatus.OK);
+        return responseBodyDto.success(kakaoUser.getKakaoId() + "님 환영합니다 :)");
     }
 
 
@@ -213,7 +212,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.DUPLICATE_EMAIL);
         }
 
-        return responseBodyDto.success("", "사용 가능한 email 입니다.", HttpStatus.OK);
+        return responseBodyDto.success("사용 가능한 email 입니다.");
     }
 
     @Transactional(readOnly = true)
@@ -222,7 +221,7 @@ public class MemberService {
             throw new CustomException(ErrorCode.DUPLICATE_NICK);
         }
 
-        return responseBodyDto.success("", "사용 가능한 닉네임 입니다.", HttpStatus.OK);
+        return responseBodyDto.success("사용 가능한 닉네임 입니다.");
     }
 
     @Transactional
@@ -245,8 +244,7 @@ public class MemberService {
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build(),
-                member.getNick() + "님 가입을 축하힙니다 :)",
-                HttpStatus.OK
+                member.getNick() + "님 가입을 축하힙니다 :)"
         );
     }
 

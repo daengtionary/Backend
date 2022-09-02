@@ -1,62 +1,40 @@
 package com.sparta.daengtionary.dto.response;
 
-import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
-
 @Component
 public class ResponseBodyDto {
-
     @Getter
     @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private static class Body {
-
-        private Boolean success;
-        private Object data;
         private Integer state;
+        private Object data;
         private String massage;
     }
 
-    public ResponseEntity<?> success(Object data, String msg, HttpStatus status) {
-
+    public ResponseEntity<?> success(Object data, String massage) {
         Body body = Body.builder()
-                .success(true)
+                .state(HttpStatus.OK.value())
                 .data(data)
-                .state(status.value())
-                .massage(msg)
+                .massage(massage)
                 .build();
 
         return ResponseEntity.ok(body);
-
     }
 
     // 메시지만 있는 성공 응답
-    public ResponseEntity<?> success(String msg) {
-        return success(Collections.emptyList(), msg, HttpStatus.OK);
-    }
-
-
-    public ResponseEntity<?> fail(Object data, String msg, HttpStatus status) {
-
+    public ResponseEntity<?> success(String massage) {
         Body body = Body.builder()
-                .success(false)
-                .data(data)
-                .state(status.value())
-                .massage(msg)
+                .state(HttpStatus.OK.value())
+                .massage(massage)
                 .build();
 
         return ResponseEntity.ok(body);
-
     }
-
-    // 메시지만 있는 실패 응답
-    public ResponseEntity<?> fail(String msg, HttpStatus status) {
-        return fail(Collections.emptyList(), msg, status);
-    }
-
 }

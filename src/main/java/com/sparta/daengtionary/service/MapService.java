@@ -93,7 +93,8 @@ public class MapService {
                         .imgUrls(mapImgs)
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
-                        .build(), "생성 완료", HttpStatus.OK
+                        .build(),
+                "생성 완료"
         );
     }
 
@@ -101,10 +102,10 @@ public class MapService {
     public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, Pageable pageable) {
         if (orderBy.equals("popular")) {
             PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
-            return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
+            return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
         }
         PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, pageable);
-        return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
+        return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
     }
 
     @Transactional(readOnly = true)
@@ -148,8 +149,8 @@ public class MapService {
                         .mapy(map.getMapy())
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
-                        .build()
-                , "조회 성공", HttpStatus.OK
+                        .build(),
+                "조회 성공"
         );
     }
 
@@ -174,16 +175,18 @@ public class MapService {
         map.updateMap(putRequestDto,mapInfos);
 
         return responseBodyDto.success(MapDetailResponseDto.builder()
-                .mapNo(map.getMapNo())
-                .category(map.getCategory())
-                .title(map.getTitle())
-                .address(map.getAddress())
-                .mapx(map.getMapx())
-                .mapy(map.getMapy())
-                .mapInfo(putRequestDto.getMapInfos())
-                .createdAt(map.getCreatedAt())
-                .moditiedAt(map.getModifiedAt())
-                .build(), "수정 성공", HttpStatus.OK);
+                        .mapNo(map.getMapNo())
+                        .category(map.getCategory())
+                        .title(map.getTitle())
+                        .address(map.getAddress())
+                        .mapx(map.getMapx())
+                        .mapy(map.getMapy())
+                        .mapInfo(putRequestDto.getMapInfos())
+                        .createdAt(map.getCreatedAt())
+                        .moditiedAt(map.getModifiedAt())
+                        .build(),
+                "수정 성공"
+        );
     }
 
 //    @Transactional
