@@ -20,7 +20,6 @@ public class MapImg {
 
     @JoinColumn(name = "map_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Map map;
 
     @Column(nullable = false)

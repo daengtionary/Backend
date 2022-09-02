@@ -12,9 +12,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
-@Builder
 @NoArgsConstructor
-@AllArgsConstructor
 public class MapResponseDto {
     private Long mapNo;
     private String category;
@@ -29,5 +27,17 @@ public class MapResponseDto {
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private  LocalDateTime modifiedAt;
 
-
+    @Builder
+    public MapResponseDto(Long mapNo,String category,String title,String address,float star,
+                          String mapImgUrl,String mapInfo,LocalDateTime createdAt, LocalDateTime modifiedAt){
+        this.mapNo = mapNo;
+        this.category = category;
+        this.title = title;
+        this.address = address;
+        this.star = star;
+        this.mapImgUrl = mapImgUrl;
+        this.mapInfo = mapInfo;
+        this.createdAt = createdAt;
+        this.modifiedAt = modifiedAt;
+    }
 }
