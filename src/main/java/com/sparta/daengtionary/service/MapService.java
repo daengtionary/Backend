@@ -6,6 +6,7 @@ import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
+import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MapImgRepository;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -97,7 +99,7 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMap(String category, String orderBy, Pageable pageable) {
+    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, Pageable pageable) {
         if (orderBy.equals("popular")) {
             PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
             return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
@@ -107,11 +109,66 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
+    public ResponseEntity<?> getAllMap(Long mapNo) {
+        Map map = isEmptyCheck(mapNo);
+
+        List<MapImg> mapImgs = mapImgRepository.findAllByMap(map);
+        List<String> iList = new ArrayList<>();
+
+        for (MapImg i : mapImgs) {
+            iList.add(i.getMapImgUrl());
+        }
+
+        List<MapInfo> mapInfos = mapInfoRepository.findAllByMap(map);
+        List<String> infoList = new ArrayList<>();
+
+        for (MapInfo i : mapInfos) {
+            infoList.add(i.getMapInfo());
+        }
+
+        return responseBodyDto.success(
+                MapDetailResponseDto.builder()
+                        .mapNo(map.getMapNo())
+                        .member(
+                                MemberResponseDto.builder()
+                                        .memberNo(map.getMember().getMemberNo())
+                                        .email(map.getMember().getEmail())
+                                        .role(map.getMember().getRole())
+                                        .nick(map.getMember().getNick())
+                                        .build()
+                        )
+                        .title(map.getTitle())
+                        .address(map.getAddress())
+                        .category(map.getCategory())
+                        .content(map.getContent())
+                        .star(map.getStar())
+                        .view(map.getView())
+                        .imgUrls(iList)
+                        .mapInfo(infoList)
+                        .mapx(map.getMapx())
+                        .mapy(map.getMapy())
+                        .createdAt(map.getCreatedAt())
+                        .moditiedAt(map.getModifiedAt())
+                        .build()
+                , "조회 성공", HttpStatus.OK
+        );
+
+    }
+
+    @Transactional(readOnly = true)
     public void isTitleCheck(String title) {
         if (mapRepository.existsByTitle(title)) {
             throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
         }
     }
+
+    @Transactional(readOnly = true)
+    public Map isEmptyCheck(Long mapNo) {
+        return mapRepository.findById(mapNo).orElseThrow(
+                () -> new CustomException(ErrorCode.MAP_NOT_FOUND)
+        );
+    }
+
 
     @Transactional
     public Member validateMember() {
