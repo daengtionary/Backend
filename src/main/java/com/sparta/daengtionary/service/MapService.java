@@ -3,6 +3,7 @@ package com.sparta.daengtionary.service;
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
+import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
@@ -23,6 +24,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,11 +44,7 @@ public class MapService {
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<String> mapImgs) {
-        Member member = memberRepository.findById(mapRequestDto.getMemberNo()).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
-        );
-
-//        isTitleCheck(mapRequestDto.getTitle());
+        Member member = validateMember(mapRequestDto.getMemberNo());
 
         Map map = Map.builder()
                 .member(member)
@@ -110,7 +109,7 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMap(Long mapNo) {
-        Map map = isEmptyCheck(mapNo);
+        Map map = isMapEmptyCheck(mapNo);
 
         List<MapImg> mapImgs = mapImgRepository.findAllByMap(map);
         List<String> iList = new ArrayList<>();
@@ -152,27 +151,73 @@ public class MapService {
                         .build()
                 , "조회 성공", HttpStatus.OK
         );
-
     }
 
+    @Transactional
+    public ResponseEntity<?> mapUpdate(MapPutRequestDto putRequestDto, Long mapNo) {
+        Member member = validateMember(putRequestDto.getMemberNo());
+        Map map = isMapEmptyCheck(mapNo);
+        map.validateMember(member);
+
+
+        List<MapInfo> mapInfos = new ArrayList<>();
+
+        for (String mapinfo : putRequestDto.getMapInfos()) {
+            mapInfos.add(
+                    MapInfo.builder()
+                            .map(map)
+                            .mapInfo(mapinfo)
+                            .build()
+            );
+        }
+
+        map.updateMap(putRequestDto,mapInfos);
+
+        return responseBodyDto.success(MapDetailResponseDto.builder()
+                .mapNo(map.getMapNo())
+                .category(map.getCategory())
+                .title(map.getTitle())
+                .address(map.getAddress())
+                .mapx(map.getMapx())
+                .mapy(map.getMapy())
+                .mapInfo(putRequestDto.getMapInfos())
+                .createdAt(map.getCreatedAt())
+                .moditiedAt(map.getModifiedAt())
+                .build(), "수정 성공", HttpStatus.OK);
+    }
+
+//    @Transactional
+//    public ResponseEntity<?> mapDelete(Long mapNo, Long memberNo) {
+//
+//    }
+
+
     @Transactional(readOnly = true)
-    public void isTitleCheck(String title) {
-        if (mapRepository.existsByTitle(title)) {
+    public void isDuplicateCheck(String title, String address) {
+        if (mapRepository.existsByTitle(title) && mapRepository.existsByAddress(address)) {
             throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
         }
     }
 
     @Transactional(readOnly = true)
-    public Map isEmptyCheck(Long mapNo) {
+    public Map isMapEmptyCheck(Long mapNo) {
         return mapRepository.findById(mapNo).orElseThrow(
                 () -> new CustomException(ErrorCode.MAP_NOT_FOUND)
         );
     }
 
+    private Member validateMember(Long memberNo){
+        return memberRepository.findById(memberNo).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+        );
+    }
 
-    @Transactional
-    public Member validateMember() {
-        return tokenProvider.getMemberFromAuthentication();
+
+    private Member validateMember(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Authorization").substring(7))) {
+            throw new CustomException(ErrorCode.NOT_FOUND_USER_INFO);
+        }
+        return this.tokenProvider.getMemberFromAuthentication();
     }
 
 }
