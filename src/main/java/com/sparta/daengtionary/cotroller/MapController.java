@@ -3,6 +3,7 @@ package com.sparta.daengtionary.cotroller;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.request.PageRequest;
 import com.sparta.daengtionary.service.AwsS3UploadService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -26,7 +28,7 @@ public class MapController {
     private final PageRequest pageRequest;
 
     @PostMapping("/create/category")
-    public ResponseEntity<?> createMap(@RequestPart(value = "content") MapRequestDto mapRequestDto,
+    public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         if (mapImgs == null) {
             throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
@@ -36,14 +38,22 @@ public class MapController {
         return mapService.createMap(mapRequestDto, imgPaths);
     }
 
-    //    @GetMapping("/hospital/query?category={hospital}&orderby={temp}&size={isize}&page={ipage}")
-    //    @GetMapping("/hospital/{hospital}/{size}/{page}")
-    @GetMapping("/hospital/{hospital}")
-    public ResponseEntity<?> getAllMapCategory(@PathVariable("hospital") String hospital){
-//        Pageable pageable = pageRequest.of(size, page);
 
-//        return mapService.getAllMap(hospital, pageable);
-        return mapService.getAllMap(hospital);
+    @GetMapping("/hospital/{category}&{orderBy}&{page}&{size}")
+    public ResponseEntity<?> getAllMapCategory(@PathVariable String category, @PathVariable String orderBy, @PathVariable int page, @PathVariable int size) {
+        Pageable pageable = pageRequest.of(page, size);
+
+        return mapService.getAllMapByCategory(category, orderBy, pageable);
+    }
+
+    @GetMapping("/hospital/{mapNo}")
+    public ResponseEntity<?> getMap(@PathVariable Long mapNo) {
+        return mapService.getAllMap(mapNo);
+    }
+
+    @PutMapping("/hospital/{mapNo}")
+    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto){
+        return mapService.mapUpdate(requestDto,mapNo);
     }
 
 }
