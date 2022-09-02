@@ -26,7 +26,7 @@ public class MapController {
     private final PageRequest pageRequest;
 
     @PostMapping("/create/category")
-    public ResponseEntity<?> createMap(@RequestPart(value = "content") MapRequestDto mapRequestDto,
+    public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         if (mapImgs == null) {
             throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
@@ -35,15 +35,12 @@ public class MapController {
         System.out.println("IMG 경로 : " + imgPaths);
         return mapService.createMap(mapRequestDto, imgPaths);
     }
+    
+    @GetMapping("/hospital/{category}/{page}/{size}")
+    public ResponseEntity<?> getAllMapCategory(@PathVariable String category,@PathVariable int page,@PathVariable int size){
+        Pageable pageable = pageRequest.of(page, size);
 
-    //    @GetMapping("/hospital/query?category={hospital}&orderby={temp}&size={isize}&page={ipage}")
-    //    @GetMapping("/hospital/{hospital}/{size}/{page}")
-    @GetMapping("/hospital/{hospital}")
-    public ResponseEntity<?> getAllMapCategory(@PathVariable("hospital") String hospital){
-//        Pageable pageable = pageRequest.of(size, page);
-
-//        return mapService.getAllMap(hospital, pageable);
-        return mapService.getAllMap(hospital);
+        return mapService.getAllMap(category, pageable);
     }
 
 }
