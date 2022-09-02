@@ -1,8 +1,14 @@
 package com.sparta.daengtionary.jwt;
 
+import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
+import com.sparta.daengtionary.domain.RefreshToken;
 import com.sparta.daengtionary.domain.UserDetailsImpl;
 import com.sparta.daengtionary.dto.request.TokenDto;
+import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.repository.MemberRepository;
+import com.sparta.daengtionary.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -17,11 +23,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,10 +41,16 @@ public class TokenProvider {
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000;              // 60분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000;    // 7일
     private final Key key;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
-    public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public TokenProvider(@Value("${jwt.secret}") String secretKey,
+                         RefreshTokenRepository refreshTokenRepository,
+                         MemberRepository memberRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.refreshTokenRepository = refreshTokenRepository;
+        this.memberRepository = memberRepository;
     }
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
@@ -63,6 +77,16 @@ public class TokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
+        Member member = ((UserDetailsImpl) authentication.getPrincipal()).getMember();
+
+        RefreshToken refreshTokenObject = RefreshToken.builder()
+                .refreshTokenNo(member.getMemberNo())
+                .member(member)
+                .value(refreshToken)
+                .build();
+
+        refreshTokenRepository.save(refreshTokenObject);
+
         return TokenDto.builder()
                 .grantType(BEARER_TYPE)
                 .accessToken(accessToken)
@@ -77,7 +101,7 @@ public class TokenProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new CustomException(ErrorCode.INVAILID_TOKEN);
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -88,6 +112,7 @@ public class TokenProvider {
 
         // UserDetails 객체를 만들어서 Authentication 리턴
         UserDetails principal = new User(claims.getSubject(), "", authorities);
+
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
@@ -127,11 +152,30 @@ public class TokenProvider {
 
     public Member getMemberFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || AnonymousAuthenticationToken.class.
-                isAssignableFrom(authentication.getClass())) {
+        if (authentication == null ||
+                AnonymousAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
             return null;
         }
-        return ((UserDetailsImpl) authentication.getPrincipal()).getMember();
+
+        Optional<Member> member = memberRepository.findByEmail(authentication.getName());
+
+        return member.orElseThrow(
+                () -> new CustomException(ErrorCode.WRONG_EMAIL)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public RefreshToken checkRefreshToken(Member member) {
+        Optional<RefreshToken> refreshTokenOptional = refreshTokenRepository.findByMember(member);
+        return refreshTokenOptional.orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_TOKEN)
+        );
+    }
+
+    @Transactional
+    public void deleteRefreshToken(Member member) {
+        RefreshToken refreshToken = checkRefreshToken(member);
+        refreshTokenRepository.delete(refreshToken);
     }
 
 }

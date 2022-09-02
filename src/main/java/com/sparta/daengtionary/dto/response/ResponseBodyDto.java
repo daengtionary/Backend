@@ -15,14 +15,14 @@ public class ResponseBodyDto {
     private static class Body {
         private Integer state;
         private Object data;
-        private String massage;
+        private String message;
     }
 
     public ResponseEntity<?> success(Object data, String massage) {
         Body body = Body.builder()
                 .state(HttpStatus.OK.value())
                 .data(data)
-                .massage(massage)
+                .message(massage)
                 .build();
 
         return ResponseEntity.ok(body);
@@ -32,7 +32,7 @@ public class ResponseBodyDto {
     public ResponseEntity<?> success(String massage) {
         Body body = Body.builder()
                 .state(HttpStatus.OK.value())
-                .massage(massage)
+                .message(massage)
                 .build();
 
         return ResponseEntity.ok(body);

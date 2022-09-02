@@ -17,10 +17,13 @@ public enum ErrorCode {
     //회원가입
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_EMAIL", "이미 사용중인 email 입니다."),
     DUPLICATE_NICK(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_NICK", "이미 사용중인 닉네임 입니다."),
-    WRONG_ADMINCODE(HttpStatus.BAD_REQUEST.value(), "WRONG_ADMINCODE", "관리자 코드가 일치하지 않습니다."),
+    WRONG_ADMIN_CODE(HttpStatus.BAD_REQUEST.value(), "WRONG_ADMINCODE", "관리자 코드가 일치하지 않습니다."),
 
 
     //TOKEN
+    INVAILID_TOKEN(HttpStatus.UNAUTHORIZED.value(), "UNAUTHORIZED", "권한 정보가 없는 token 입니다."),
+    NOT_FOUND_TOKEN(HttpStatus.BAD_REQUEST.value(), "NOT_FOUND_TOKEN", "존재하지 않는 Token 입니다."),
+
 
 
     //로그인
