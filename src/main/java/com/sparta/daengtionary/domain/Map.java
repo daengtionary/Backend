@@ -1,5 +1,8 @@
 package com.sparta.daengtionary.domain;
 
+import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,8 +75,19 @@ public class Map extends Timestamped {
         this.mapInfoList = mapInfoList;
     }
 
-    public void UpdateMap(){
+    public void updateMap(MapPutRequestDto requestDto,List<MapInfo> infos){
+        this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
+        this.content = requestDto.getContent();
+        this.address = requestDto.getAddress();
+        this.mapInfoList = infos;
+    }
 
+    public boolean validateMember(Member member){
+        if(this.member.equals(member)){
+            throw  new CustomException(ErrorCode.MAP_WRONG_ACCESS);
+        }
+        return !this.member.equals(member);
     }
 
     public void viewUpdate(int view){

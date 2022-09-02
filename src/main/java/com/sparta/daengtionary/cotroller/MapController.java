@@ -3,6 +3,7 @@ package com.sparta.daengtionary.cotroller;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.request.PageRequest;
 import com.sparta.daengtionary.service.AwsS3UploadService;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -47,6 +49,11 @@ public class MapController {
     @GetMapping("/hospital/{mapNo}")
     public ResponseEntity<?> getMap(@PathVariable Long mapNo) {
         return mapService.getAllMap(mapNo);
+    }
+
+    @PutMapping("/hospital/{mapNo}")
+    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto){
+        return mapService.mapUpdate(requestDto,mapNo);
     }
 
 }

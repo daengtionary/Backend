@@ -33,9 +33,8 @@ public enum ErrorCode {
 
     //게시글
     MAP_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"NOT_FOUND","해당 게시물을 찾을 수 없습니다."),
-    MAP_DUPLICATE_TITLE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","중복된 제목입니다."),
-    MAP_UPDATE_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인의 게시물만 수정할 수 있습니다."),
-    MAP_DELETE_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인의 게시물만 삭제할 수 있습니다."),
+    MAP_DUPLICATE_TITLE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","중복된 제목이거나 주소입니다."),
+    MAP_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인의 게시글이 아닙니다."),
     MAP_WRONG_INPUT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","비어있는 항목을 채워주세요"),
 
     //댓글
