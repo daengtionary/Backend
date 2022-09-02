@@ -71,6 +71,11 @@ public class AwsS3UploadService {
         return imgUrlList;
     }
 
+    public void deleteFile(String fileName){
+        DeleteObjectRequest request = new DeleteObjectRequest(bucket,fileName);
+        amazonS3.deleteObject(request);
+    }
+
 
     private String createFileName(String fileName){
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
