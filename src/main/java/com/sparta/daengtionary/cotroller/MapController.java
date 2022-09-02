@@ -36,11 +36,19 @@ public class MapController {
         return mapService.createMap(mapRequestDto, imgPaths);
     }
     
-    @GetMapping("/hospital/{category}/{page}/{size}")
-    public ResponseEntity<?> getAllMapCategory(@PathVariable String category,@PathVariable int page,@PathVariable int size){
+//    @GetMapping("/hospital/{category}&{page}&{size}")
+//    @GetMapping("/hospital?type={category}&pnum={page}&snum{size}")
+//    public ResponseEntity<?> getAllMapCategory(@PathVariable String category,@PathVariable int page,@PathVariable int size){
+//        Pageable pageable = pageRequest.of(page, size);
+//
+//        return mapService.getAllMap(category, pageable);
+//    }
+
+        @GetMapping("/hospital/{category}&{orderBy}&{page}&{size}")
+    public ResponseEntity<?> getAllMapCategory(@PathVariable String category,@PathVariable String orderBy,@PathVariable int page,@PathVariable int size){
         Pageable pageable = pageRequest.of(page, size);
 
-        return mapService.getAllMap(category, pageable);
+        return mapService.getAllMap(category,orderBy, pageable);
     }
 
 }
