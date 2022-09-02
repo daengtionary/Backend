@@ -30,6 +30,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,7 +53,7 @@ public class MemberService {
     public ResponseEntity<?> signup(MemberRequestDto.Signup signup) {
         if (signup.getRole().ordinal() == 1) {
             if (!signup.getAdminCode().equals(adminCode)) {
-                throw new CustomException(ErrorCode.WRONG_ADMINCODE);
+                throw new CustomException(ErrorCode.WRONG_ADMIN_CODE);
             }
 
             return saveMember(signup);
@@ -83,7 +84,7 @@ public class MemberService {
                         .createdAt(member.getCreatedAt())
                         .modifiedAt(member.getModifiedAt())
                         .build(),
-                member.getNick() + "님 환영합니다 :)"
+                member.getNick() + "님 반갑습니다 :)"
         );
     }
 
@@ -107,7 +108,7 @@ public class MemberService {
         TokenDto tokenDto = tokenProvider.generateToken(authentication);
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success(kakaoUser.getKakaoId() + "님 환영합니다 :)");
+        return responseBodyDto.success(kakaoUser.getKakaoId() + "님 반갑습니다 :)");
     }
 
 
@@ -177,6 +178,18 @@ public class MemberService {
                 .email(email)
                 .nick(nick)
                 .build();
+    }
+
+    public ResponseEntity<?> logout(HttpServletRequest request) {
+        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
+            throw new CustomException(ErrorCode.INVAILID_TOKEN);
+        }
+
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        tokenProvider.deleteRefreshToken(member);
+
+        return responseBodyDto.success("로그아웃 되었습니다 :)");
     }
 
 
