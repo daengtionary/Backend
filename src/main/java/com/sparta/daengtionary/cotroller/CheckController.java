@@ -16,13 +16,13 @@ public class CheckController {
     private final MemberService memberService;
 
     @GetMapping("/email")
-    public ResponseEntity<?> checkEmail(@RequestParam String email) {
-        return memberService.checkEmail(email);
+    public ResponseEntity<?> checkDuplicateByEmail(@RequestParam String email) {
+        return memberService.checkDuplicateByEmail(email);
     }
 
     @GetMapping("/nick")
-    public ResponseEntity<?> checkNickname(@RequestParam String nick) {
-        return memberService.checkNick(nick);
+    public ResponseEntity<?> checkDuplicateByNick(@RequestParam String nick) {
+        return memberService.checkDuplicateByNick(nick);
     }
 
 }
