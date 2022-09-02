@@ -1,8 +1,7 @@
 package com.sparta.daengtionary.repository.supportRepository;
 
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Predicate;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -38,25 +37,22 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.mapNo,
                         map.category,
                         map.title,
-                        map.content,
-                        map.star,
                         map.address,
-                        map.createdAt,
-                        map.modifiedAt,
                         mapImg.mapImgUrl,
-                        mapInfo1.mapInfo
+                        mapInfo1.mapInfo,
+                        map.createdAt,
+                        map.modifiedAt
                 ))
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1)
+                .leftJoin(mapInfo1).fetchJoin()
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(map.category.eq(category))
                 .groupBy(map.mapNo)
                 .fetch();
 
 //        return new PageImpl<>(content,pageable,content.size());
-
     }
 
     public PageImpl<MapResponseDto> findAllByMapByPopular(String category, Pageable pageable) {
@@ -114,7 +110,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content,pageable,content.size());
+        return new PageImpl<>(content, pageable, content.size());
     }
 
 

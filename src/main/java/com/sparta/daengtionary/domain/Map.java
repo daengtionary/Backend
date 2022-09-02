@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Getter
 @Entity
@@ -41,16 +42,22 @@ public class Map extends Timestamped {
     private String address;
 
     //위도
-    @Column(nullable = false)
+    @Column
     private Double mapx;
 
     //경도
-    @Column(nullable = false)
+    @Column
     private Double mapy;
+
+    @OneToMany(mappedBy = "map",fetch = FetchType.LAZY)
+    private List<MapImg> mapImgList;
+
+    @OneToMany(mappedBy = "map",fetch = FetchType.LAZY )
+    private List<MapInfo> mapInfoList;
 
     @Builder
     public Map(Long mapNo,Member member,String title,String category,String content,
-               String address,Double mapx,Double mapy){
+               String address,Double mapx,Double mapy,List<MapImg> mapImgList,List<MapInfo> mapInfoList){
         this.mapNo = mapNo;
         this.member = member;
         this.title = title;
@@ -61,6 +68,8 @@ public class Map extends Timestamped {
         this.address = address;
         this.mapx = mapx;
         this.mapy = mapy;
+        this.mapImgList = mapImgList;
+        this.mapInfoList = mapInfoList;
     }
 
     public void UpdateMap(){

@@ -1,6 +1,8 @@
 package com.sparta.daengtionary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.domain.MapImg;
+import com.sparta.daengtionary.domain.MapInfo;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,14 +17,12 @@ import java.util.List;
 @AllArgsConstructor
 public class MapResponseDto {
     private Long mapNo;
+    private String category;
     private String title;
     private String address;
-    private String category;
     private float star;
-    private String imgUrls;
-
-    private String mapInfos;
-
+    private String mapImgUrl;
+    private String mapInfo;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
 

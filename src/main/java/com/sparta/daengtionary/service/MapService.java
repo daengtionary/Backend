@@ -13,6 +13,7 @@ import com.sparta.daengtionary.repository.MapInfoRepository;
 import com.sparta.daengtionary.repository.MapRepository;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
+import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -98,7 +99,11 @@ public class MapService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMap(String qCategory) {
         List<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(qCategory);
-        return ResponseEntity.ok(mapResponseDtoPage);
+
+        List<MapResponseDto> test = new ArrayList<>();
+
+
+        return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
     }
 
     @Transactional(readOnly = true)
