@@ -30,8 +30,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public List<MapResponseDto> findAllByMap(String category) {
-        return queryFactory
+    public PageImpl<MapResponseDto> findAllByMap(String category, Pageable pageable) {
+        List<MapResponseDto> content = queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
                         map.mapNo,
@@ -50,9 +50,12 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(map.category.eq(category))
                 .groupBy(map.mapNo)
+                .orderBy(map.mapNo.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
-//        return new PageImpl<>(content,pageable,content.size());
+        return new PageImpl<>(content,pageable,content.size());
     }
 
     public PageImpl<MapResponseDto> findAllByMapByPopular(String category, Pageable pageable) {

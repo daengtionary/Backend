@@ -43,7 +43,7 @@ public class MapService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
         );
 
-        isTitleCheck(mapRequestDto.getTitle());
+//        isTitleCheck(mapRequestDto.getTitle());
 
         Map map = Map.builder()
                 .member(member)
@@ -97,12 +97,8 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMap(String qCategory) {
-        List<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(qCategory);
-
-        List<MapResponseDto> test = new ArrayList<>();
-
-
+    public ResponseEntity<?> getAllMap(String category,Pageable pageable) {
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category,pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
     }
 
