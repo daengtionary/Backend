@@ -8,14 +8,12 @@ import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.request.PageRequest;
 import com.sparta.daengtionary.service.AwsS3UploadService;
 import com.sparta.daengtionary.service.MapService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
@@ -39,10 +37,10 @@ public class MapController {
     }
 
 
-    @GetMapping("/hospital/{category}&{orderBy}&{page}&{size}")
-    public ResponseEntity<?> getAllMapCategory(@PathVariable String category, @PathVariable String orderBy, @PathVariable int page, @PathVariable int size) {
+    @GetMapping("/hospital")
+    public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
+                                               @RequestParam int page, @RequestParam int size) {
         Pageable pageable = pageRequest.of(page, size);
-
         return mapService.getAllMapByCategory(category, orderBy, pageable);
     }
 
@@ -52,8 +50,12 @@ public class MapController {
     }
 
     @PutMapping("/hospital/{mapNo}")
-    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto){
-        return mapService.mapUpdate(requestDto,mapNo);
+    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
+        return mapService.mapUpdate(requestDto, mapNo);
     }
 
+    @DeleteMapping("/hospital/{mapNo}")
+    public ResponseEntity<?> deleteMap(@PathVariable Long mapNo, @RequestParam Long memberNo) {
+        return mapService.mapDelete(mapNo, memberNo);
+    }
 }
