@@ -15,7 +15,6 @@ import com.sparta.daengtionary.repository.MapInfoRepository;
 import com.sparta.daengtionary.repository.MapRepository;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
-import jdk.jshell.Snippet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +22,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -42,9 +40,13 @@ public class MapService {
 
     private final MapRepositorySupport mapRepositorySupport;
 
+    private final AwsS3UploadService s3UploadService;
+
     @Transactional
-    public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<String> mapImgs) {
+    public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = validateMember(mapRequestDto.getMemberNo());
+        validateFile(multipartFiles);
+        List<String> mapImgs = s3UploadService.upload(multipartFiles);
 
         Map map = Map.builder()
                 .member(member)
@@ -104,13 +106,15 @@ public class MapService {
             PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
             return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
         }
+
         PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
+
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMap(Long mapNo) {
-        Map map = isMapEmptyCheck(mapNo);
+        Map map = validateMap(mapNo);
 
         List<MapImg> mapImgs = mapImgRepository.findAllByMap(map);
         List<String> iList = new ArrayList<>();
@@ -157,7 +161,7 @@ public class MapService {
     @Transactional
     public ResponseEntity<?> mapUpdate(MapPutRequestDto putRequestDto, Long mapNo) {
         Member member = validateMember(putRequestDto.getMemberNo());
-        Map map = isMapEmptyCheck(mapNo);
+        Map map = validateMap(mapNo);
         map.validateMember(member);
 
 
@@ -172,7 +176,7 @@ public class MapService {
             );
         }
 
-        map.updateMap(putRequestDto,mapInfos);
+        map.updateMap(putRequestDto, mapInfos);
 
         return responseBodyDto.success(MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
@@ -189,10 +193,58 @@ public class MapService {
         );
     }
 
-//    @Transactional
-//    public ResponseEntity<?> mapDelete(Long mapNo, Long memberNo) {
-//
-//    }
+
+    @Transactional
+    public ResponseEntity<?> mapUpdateTest(MapPutRequestDto putRequestDto, Long mapNo,List<MultipartFile> multipartFiles) {
+        Member member = validateMember(putRequestDto.getMemberNo());
+        Map map = validateMap(mapNo);
+        map.validateMember(member);
+        validateFile(multipartFiles);
+
+
+        List<MapInfo> mapInfos = new ArrayList<>();
+
+        for (String mapinfo : putRequestDto.getMapInfos()) {
+            mapInfos.add(
+                    MapInfo.builder()
+                            .map(map)
+                            .mapInfo(mapinfo)
+                            .build()
+            );
+        }
+
+        map.updateMap(putRequestDto, mapInfos);
+
+        return responseBodyDto.success(MapDetailResponseDto.builder()
+                        .mapNo(map.getMapNo())
+                        .category(map.getCategory())
+                        .title(map.getTitle())
+                        .address(map.getAddress())
+                        .mapx(map.getMapx())
+                        .mapy(map.getMapy())
+                        .mapInfo(putRequestDto.getMapInfos())
+                        .createdAt(map.getCreatedAt())
+                        .moditiedAt(map.getModifiedAt())
+                        .build(),
+                "수정 성공"
+        );
+    }
+
+    @Transactional
+    public ResponseEntity<?> mapDelete(Long mapNo, Long memberNo) {
+        Member member = validateMember(memberNo);
+        Map map = validateMap(mapNo);
+        map.validateMember(member);
+        mapRepository.delete(map);
+
+        return responseBodyDto.success("삭제 완료");
+    }
+
+    private void validateFile(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
+        }
+    }
 
 
     @Transactional(readOnly = true)
@@ -203,24 +255,15 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public Map isMapEmptyCheck(Long mapNo) {
+    public Map validateMap(Long mapNo) {
         return mapRepository.findById(mapNo).orElseThrow(
                 () -> new CustomException(ErrorCode.MAP_NOT_FOUND)
         );
     }
 
-    private Member validateMember(Long memberNo){
+    private Member validateMember(Long memberNo) {
         return memberRepository.findById(memberNo).orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
         );
     }
-
-
-    private Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Authorization").substring(7))) {
-            throw new CustomException(ErrorCode.NOT_FOUND_USER_INFO);
-        }
-        return this.tokenProvider.getMemberFromAuthentication();
-    }
-
 }

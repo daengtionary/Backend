@@ -52,10 +52,10 @@ public class Map extends Timestamped {
     @Column
     private Double mapy;
 
-    @OneToMany(mappedBy = "map",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MapImg> mapImgList;
 
-    @OneToMany(mappedBy = "map",fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
     private List<MapInfo> mapInfoList;
 
     @Builder
@@ -83,11 +83,10 @@ public class Map extends Timestamped {
         this.mapInfoList = infos;
     }
 
-    public boolean validateMember(Member member){
-        if(this.member.equals(member)){
+    public void validateMember(Member member){
+        if(!this.member.equals(member)){
             throw  new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
-        return !this.member.equals(member);
     }
 
     public void viewUpdate(int view){

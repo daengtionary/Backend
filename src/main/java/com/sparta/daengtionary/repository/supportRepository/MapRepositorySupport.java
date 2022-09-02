@@ -55,9 +55,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content,pageable,content.size());
+        return new PageImpl<>(content, pageable, content.size());
     }
-
 
 
     public PageImpl<MapResponseDto> findAllByMapByPopular(String category, Pageable pageable) {
