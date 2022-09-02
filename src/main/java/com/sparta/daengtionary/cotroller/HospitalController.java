@@ -17,15 +17,16 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
+@RequestMapping("/hospital")
 @RequiredArgsConstructor
-public class MapController {
+public class HospitalController {
 
     private final MapService mapService;
     private final AwsS3UploadService s3UploadService;
 
     private final PageRequest pageRequest;
 
-    @PostMapping("/create/category")
+    @PostMapping
     public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         if (mapImgs == null) {
@@ -37,24 +38,24 @@ public class MapController {
     }
 
 
-    @GetMapping("/hospital")
+    @GetMapping("/query")
     public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
                                                @RequestParam int page, @RequestParam int size) {
         Pageable pageable = pageRequest.of(page, size);
         return mapService.getAllMapByCategory(category, orderBy, pageable);
     }
 
-    @GetMapping("/hospital/{mapNo}")
+    @GetMapping("/{mapNo}")
     public ResponseEntity<?> getMap(@PathVariable Long mapNo) {
         return mapService.getAllMap(mapNo);
     }
 
-    @PutMapping("/hospital/{mapNo}")
+    @PatchMapping("/{mapNo}")
     public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
         return mapService.mapUpdate(requestDto, mapNo);
     }
 
-    @DeleteMapping("/hospital/{mapNo}")
+    @DeleteMapping("/{mapNo}")
     public ResponseEntity<?> deleteMap(@PathVariable Long mapNo, @RequestParam Long memberNo) {
         return mapService.mapDelete(mapNo, memberNo);
     }
