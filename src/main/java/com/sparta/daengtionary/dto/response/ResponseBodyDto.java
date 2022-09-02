@@ -1,5 +1,6 @@
 package com.sparta.daengtionary.dto.response;
 
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

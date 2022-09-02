@@ -10,6 +10,8 @@ import javax.persistence.*;
 @Getter
 @Entity
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MapImg {
 
     @Id
@@ -23,10 +25,6 @@ public class MapImg {
 
     @Column(nullable = false)
     private String mapImgUrl;
-
-    public MapImg(){
-
-    }
 
     @Builder
     public MapImg(Map map,String mapImgUrl){

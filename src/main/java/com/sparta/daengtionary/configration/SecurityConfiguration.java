@@ -53,7 +53,9 @@ public class SecurityConfiguration {
                 .antMatchers("/member/*").permitAll()
                 .antMatchers("/check/**").permitAll()
                 .antMatchers("/search/hospital/**").permitAll()
+                .antMatchers("/api/**").permitAll()
                 .antMatchers("/").permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
 
                 .and()

@@ -1,20 +1,22 @@
 package com.sparta.daengtionary.domain;
 
 import com.sparta.daengtionary.util.Timestamped;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class Map extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mapId;
+    private Long mapNo;
 
     @JoinColumn(name = "member_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,20 +48,10 @@ public class Map extends Timestamped {
     @Column(nullable = false)
     private Double mapy;
 
-    @OneToMany(mappedBy = "map")
-    private List<MapImg> mapImgList;
-
-    @OneToMany(mappedBy = "map")
-    private List<MapInfo> mapInfoList;
-
-    public Map(){
-
-    }
-
     @Builder
-    public Map(Long mapId,Member member,String title,String category,String content,
-               String address,Double mapx,Double mapy, List<MapImg>mapImgList ,List<MapInfo> mapInfoList){
-        this.mapId = mapId;
+    public Map(Long mapNo,Member member,String title,String category,String content,
+               String address,Double mapx,Double mapy){
+        this.mapNo = mapNo;
         this.member = member;
         this.title = title;
         this.category = category;
@@ -69,8 +61,6 @@ public class Map extends Timestamped {
         this.address = address;
         this.mapx = mapx;
         this.mapy = mapy;
-        this.mapImgList = mapImgList;
-        this.mapInfoList = mapInfoList;
     }
 
     public void UpdateMap(){
