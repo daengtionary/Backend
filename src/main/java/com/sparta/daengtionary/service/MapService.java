@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,9 +40,13 @@ public class MapService {
 
     private final MapRepositorySupport mapRepositorySupport;
 
+    private final AwsS3UploadService s3UploadService;
+
     @Transactional
-    public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<String> mapImgs) {
+    public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = validateMember(mapRequestDto.getMemberNo());
+        validateFile(multipartFiles);
+        List<String> mapImgs = s3UploadService.upload(multipartFiles);
 
         Map map = Map.builder()
                 .member(member)
@@ -96,7 +101,7 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy ,Pageable pageable){
+    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, Pageable pageable) {
         if (orderBy.equals("popular")) {
             PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
             return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
@@ -188,21 +193,57 @@ public class MapService {
         );
     }
 
+
     @Transactional
-    public ResponseEntity<?> mapDelete(Long mapNo,Long memberNo) {
-        Member member =  validateMember(memberNo);
+    public ResponseEntity<?> mapUpdateTest(MapPutRequestDto putRequestDto, Long mapNo,List<MultipartFile> multipartFiles) {
+        Member member = validateMember(putRequestDto.getMemberNo());
         Map map = validateMap(mapNo);
         map.validateMember(member);
+        validateFile(multipartFiles);
 
-//        List<MapInfo> mapInfos = mapInfoRepository.findAllByMap(map);
-//        mapInfoRepository.deleteAll(mapInfos);
-//
-//        List<MapImg> mapImgs = mapImgRepository.findAllByMap(map);
-//        mapImgRepository.deleteAll(mapImgs);
 
+        List<MapInfo> mapInfos = new ArrayList<>();
+
+        for (String mapinfo : putRequestDto.getMapInfos()) {
+            mapInfos.add(
+                    MapInfo.builder()
+                            .map(map)
+                            .mapInfo(mapinfo)
+                            .build()
+            );
+        }
+
+        map.updateMap(putRequestDto, mapInfos);
+
+        return responseBodyDto.success(MapDetailResponseDto.builder()
+                        .mapNo(map.getMapNo())
+                        .category(map.getCategory())
+                        .title(map.getTitle())
+                        .address(map.getAddress())
+                        .mapx(map.getMapx())
+                        .mapy(map.getMapy())
+                        .mapInfo(putRequestDto.getMapInfos())
+                        .createdAt(map.getCreatedAt())
+                        .moditiedAt(map.getModifiedAt())
+                        .build(),
+                "수정 성공"
+        );
+    }
+
+    @Transactional
+    public ResponseEntity<?> mapDelete(Long mapNo, Long memberNo) {
+        Member member = validateMember(memberNo);
+        Map map = validateMap(mapNo);
+        map.validateMember(member);
         mapRepository.delete(map);
 
         return responseBodyDto.success("삭제 완료");
+    }
+
+    private void validateFile(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
+        }
     }
 
 
