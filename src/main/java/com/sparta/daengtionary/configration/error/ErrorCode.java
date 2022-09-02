@@ -15,13 +15,17 @@ public enum ErrorCode {
     NOT_VALIDURL(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","유효하지 않는 URL 입니다."),
 
     //회원가입
+    DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_EMAIL", "이미 사용중인 email 입니다."),
+    DUPLICATE_NICK(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_NICK", "이미 사용중인 닉네임 입니다."),
+    WRONG_ADMINCODE(HttpStatus.BAD_REQUEST.value(), "WRONG_ADMINCODE", "관리자 코드가 일치하지 않습니다."),
 
 
     //TOKEN
 
 
     //로그인
-    LOGIN_NOT_FOUNT_MEMBERID(HttpStatus.NOT_FOUND.value(), "NOT_FOUND", "해당 아이디를 찾을 수 없습니다"),
+    WRONG_EMAIL(HttpStatus.BAD_REQUEST.value(), "WRONG_EMAIL", "존재하지 않는 email 입니다."),
+    WRONG_PASSWORD(HttpStatus.BAD_REQUEST.value(), "WRONG_PASSWORD", "비밀번호가 일치하지 않습니다."),
 
     //회원탈퇴
 
