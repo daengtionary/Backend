@@ -58,6 +58,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(content,pageable,content.size());
     }
 
+
+
     public PageImpl<MapResponseDto> findAllByMapByPopular(String category, Pageable pageable) {
         List<MapResponseDto> content = queryFactory
                 .select(Projections.fields(
@@ -65,20 +67,20 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.mapNo,
                         map.category,
                         map.title,
-                        map.content,
-                        map.star,
                         map.address,
                         mapImg.mapImgUrl,
-                        mapInfo1.mapInfo
+                        mapInfo1.mapInfo,
+                        map.createdAt,
+                        map.modifiedAt
                 ))
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1)
+                .leftJoin(mapInfo1).fetchJoin()
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(map.category.eq(category))
                 .groupBy(map.mapNo)
-                .orderBy(map.star.desc())
+                .orderBy(map.view.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

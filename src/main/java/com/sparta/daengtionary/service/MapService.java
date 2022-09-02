@@ -97,8 +97,12 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMap(String category,Pageable pageable) {
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category,pageable);
+    public ResponseEntity<?> getAllMap(String category, String orderBy, Pageable pageable) {
+        if (orderBy.equals("popular")) {
+            PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
+            return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
+        }
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료", HttpStatus.OK);
     }
 
