@@ -25,10 +25,11 @@ public class ShopController {
     }
 
 
-    @GetMapping("/query")
-    public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
+    @PostMapping
+    public ResponseEntity<?> getAllMapCategory(@RequestParam String orderby,
                                                Pageable pageable ) {
-        return mapService.getAllMapByCategory(category, orderBy, pageable);
+        String category = "shop";
+        return mapService.getAllMapByCategory(category, orderby, pageable);
     }
 
     @GetMapping("/{mapNo}")
@@ -36,7 +37,8 @@ public class ShopController {
         return mapService.getAllMap(mapNo);
     }
 
-    @PatchMapping("/{mapNo}")
+
+    @PutMapping("/{mapNo}")
     public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
         return mapService.mapUpdate(requestDto, mapNo);
     }

@@ -18,16 +18,17 @@ public class HospitalController {
 
     private final MapService mapService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         return mapService.createMap(mapRequestDto, mapImgs);
     }
 
-    @GetMapping("/query")
-    public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
+    @PostMapping()
+    public ResponseEntity<?> getAllMapCategory(@RequestParam String orderby,
                                                Pageable pageable ) {
-        return mapService.getAllMapByCategory(category, orderBy, pageable);
+        String category = "hospital";
+        return mapService.getAllMapByCategory(category, orderby, pageable);
     }
 
     @GetMapping("/{mapNo}")
@@ -39,11 +40,15 @@ public class HospitalController {
     public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
         return mapService.mapUpdate(requestDto, mapNo);
     }
+    @PutMapping("/{mapNo}")
+    public ResponseEntity<?> updatePutMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
+        return mapService.mapUpdate(requestDto, mapNo);
+    }
 
     @PatchMapping("/update-test/{mapNo}")
     public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
-                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
-        return mapService.mapUpdateTest(requestDto, mapNo,mapImgs);
+                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+        return mapService.mapUpdateTest(requestDto, mapNo,multipartFiles);
     }
 
     @DeleteMapping("/{mapNo}")

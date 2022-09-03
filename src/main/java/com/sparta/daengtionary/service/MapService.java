@@ -165,30 +165,31 @@ public class MapService {
 
         List<MapInfo> mapInfos = new ArrayList<>();
 
-        for (String mapinfo : putRequestDto.getMapInfos()) {
+        for (String mapInfo : putRequestDto.getMapInfos()) {
             mapInfos.add(
                     MapInfo.builder()
                             .map(map)
-                            .mapInfo(mapinfo)
+                            .mapInfo(mapInfo)
                             .build()
             );
         }
 
         map.updateMap(putRequestDto, mapInfos);
 
-        return responseBodyDto.success(MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .category(map.getCategory())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .mapx(map.getMapx())
-                        .mapy(map.getMapy())
-                        .mapInfo(putRequestDto.getMapInfos())
-                        .createdAt(map.getCreatedAt())
-                        .moditiedAt(map.getModifiedAt())
-                        .build(),
-                "수정 성공"
-        );
+//        return responseBodyDto.success(MapDetailResponseDto.builder()
+//                        .mapNo(map.getMapNo())
+//                        .category(map.getCategory())
+//                        .title(map.getTitle())
+//                        .address(map.getAddress())
+//                        .mapx(map.getMapx())
+//                        .mapy(map.getMapy())
+//                        .mapInfo(putRequestDto.getMapInfos())
+//                        .createdAt(map.getCreatedAt())
+//                        .moditiedAt(map.getModifiedAt())
+//                        .build(),
+//                "수정 성공"
+//        );
+        return responseBodyDto.success("수정 성공");
     }
 
 
@@ -210,6 +211,7 @@ public class MapService {
                             .build()
             );
         }
+
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
         for (MapImg i : temp) {
             s3UploadService.deleteFile(i.getMapImgUrl());
