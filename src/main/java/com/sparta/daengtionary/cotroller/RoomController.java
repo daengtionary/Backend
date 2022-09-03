@@ -2,7 +2,6 @@ package com.sparta.daengtionary.cotroller;
 
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
-import com.sparta.daengtionary.dto.request.PageRequest;
 import com.sparta.daengtionary.service.MapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +17,6 @@ import java.util.List;
 public class RoomController {
 
     private final MapService mapService;
-    private final PageRequest pageRequest;
 
     @PostMapping
     public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
@@ -30,7 +28,6 @@ public class RoomController {
     @GetMapping("/query")
     public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
                                                Pageable pageable ) {
-
         return mapService.getAllMapByCategory(category, orderBy, pageable);
     }
 

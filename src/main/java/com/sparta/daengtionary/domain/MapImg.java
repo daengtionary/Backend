@@ -31,4 +31,8 @@ public class MapImg {
         this.mapImgUrl = mapImgUrl;
     }
 
+    public void mapImgUpdate(String mapImgUrl){
+        this.mapImgUrl = mapImgUrl;
+    }
+
 }

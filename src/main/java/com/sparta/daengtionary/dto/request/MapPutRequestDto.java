@@ -1,7 +1,6 @@
 package com.sparta.daengtionary.dto.request;
 
 
-import com.sparta.daengtionary.domain.MapInfo;
 import lombok.Getter;
 import java.util.List;
 
