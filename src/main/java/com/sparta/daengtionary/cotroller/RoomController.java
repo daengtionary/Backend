@@ -25,10 +25,11 @@ public class RoomController {
     }
 
 
-    @GetMapping("/query")
-    public ResponseEntity<?> getAllMapCategory(@RequestParam String category, @RequestParam String orderBy,
+    @PostMapping
+    public ResponseEntity<?> getAllMapCategory(@RequestParam String orderby,
                                                Pageable pageable ) {
-        return mapService.getAllMapByCategory(category, orderBy, pageable);
+        String category = "room";
+        return mapService.getAllMapByCategory(category, orderby, pageable);
     }
 
     @GetMapping("/{mapNo}")

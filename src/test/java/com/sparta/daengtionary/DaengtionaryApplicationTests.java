@@ -8,6 +8,7 @@ class DaengtionaryApplicationTests {
 
 	@Test
 	void contextLoads() {
+
 	}
 
 }
