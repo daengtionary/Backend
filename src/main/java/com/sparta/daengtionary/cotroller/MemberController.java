@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/member")
 @RequiredArgsConstructor
 public class MemberController {
-
     private final MemberService memberService;
 
     @PostMapping("/signup")
@@ -33,10 +32,4 @@ public class MemberController {
                                         HttpServletResponse response)  throws JsonProcessingException {
         return memberService.kakaoLogin(code, response);
     }
-
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        return memberService.logout(request);
-    }
-
 }
