@@ -11,7 +11,5 @@ public class MapRequestDto {
     private String category;
     private String content;
     private String address;
-    private Double mapx;
-    private Double mapy;
     private List<String> mapInfos;
 }

@@ -28,6 +28,6 @@ public class MapInfo {
         this.mapInfo = mapInfo;
     }
 
-
+//    public mapInfoUpdate()
 
 }

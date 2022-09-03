@@ -9,7 +9,6 @@ import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
 import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
-import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MapImgRepository;
 import com.sparta.daengtionary.repository.MapInfoRepository;
 import com.sparta.daengtionary.repository.MapRepository;
@@ -33,7 +32,6 @@ public class MapService {
     private final MapInfoRepository mapInfoRepository;
     private final MapImgRepository mapImgRepository;
     private final MemberRepository memberRepository;
-    private final TokenProvider tokenProvider;
     private final ResponseBodyDto responseBodyDto;
 
     private final MapRepositorySupport mapRepositorySupport;
@@ -52,8 +50,6 @@ public class MapService {
                 .content(mapRequestDto.getContent())
                 .category(mapRequestDto.getCategory())
                 .address(mapRequestDto.getAddress())
-                .mapx(mapRequestDto.getMapx())
-                .mapy(mapRequestDto.getMapy())
                 .build();
 
         mapRepository.save(map);
@@ -87,8 +83,6 @@ public class MapService {
                         .category(map.getCategory())
                         .title(map.getTitle())
                         .address(map.getAddress())
-                        .mapx(map.getMapx())
-                        .mapy(map.getMapy())
                         .mapInfo(mapRequestDto.getMapInfos())
                         .imgUrls(mapImgs)
                         .createdAt(map.getCreatedAt())
@@ -114,17 +108,17 @@ public class MapService {
     public ResponseEntity<?> getAllMap(Long mapNo) {
         Map map = validateMap(mapNo);
 
-        List<MapImg> mapImgs = mapImgRepository.findAllByMap(map);
-        List<String> iList = new ArrayList<>();
+        List<MapImg> mapImgTemp = mapImgRepository.findAllByMap(map);
+        List<String> mapImgs = new ArrayList<>();
 
-        for (MapImg i : mapImgs) {
-            iList.add(i.getMapImgUrl());
+        for (MapImg i : mapImgTemp) {
+            mapImgs.add(i.getMapImgUrl());
         }
 
-        List<MapInfo> mapInfos = mapInfoRepository.findAllByMap(map);
+        List<MapInfo> mapInfoTemp = mapInfoRepository.findAllByMap(map);
         List<String> infoList = new ArrayList<>();
 
-        for (MapInfo i : mapInfos) {
+        for (MapInfo i : mapInfoTemp) {
             infoList.add(i.getMapInfo());
         }
 
@@ -145,10 +139,8 @@ public class MapService {
                         .content(map.getContent())
                         .star(map.getStar())
                         .view(map.getView())
-                        .imgUrls(iList)
+                        .imgUrls(mapImgs)
                         .mapInfo(infoList)
-                        .mapx(map.getMapx())
-                        .mapy(map.getMapy())
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
                         .build(),
@@ -157,45 +149,8 @@ public class MapService {
     }
 
     @Transactional
-    public ResponseEntity<?> mapUpdate(MapPutRequestDto putRequestDto, Long mapNo) {
-        Member member = validateMember(putRequestDto.getMemberNo());
-        Map map = validateMap(mapNo);
-        map.validateMember(member);
-
-
-        List<MapInfo> mapInfos = new ArrayList<>();
-
-        for (String mapInfo : putRequestDto.getMapInfos()) {
-            mapInfos.add(
-                    MapInfo.builder()
-                            .map(map)
-                            .mapInfo(mapInfo)
-                            .build()
-            );
-        }
-
-        map.updateMap(putRequestDto, mapInfos);
-
-//        return responseBodyDto.success(MapDetailResponseDto.builder()
-//                        .mapNo(map.getMapNo())
-//                        .category(map.getCategory())
-//                        .title(map.getTitle())
-//                        .address(map.getAddress())
-//                        .mapx(map.getMapx())
-//                        .mapy(map.getMapy())
-//                        .mapInfo(putRequestDto.getMapInfos())
-//                        .createdAt(map.getCreatedAt())
-//                        .moditiedAt(map.getModifiedAt())
-//                        .build(),
-//                "수정 성공"
-//        );
-        return responseBodyDto.success("수정 성공");
-    }
-
-
-    @Transactional
-    public ResponseEntity<?> mapUpdateTest(MapPutRequestDto putRequestDto, Long mapNo, List<MultipartFile> multipartFiles) {
-        Member member = validateMember(putRequestDto.getMemberNo());
+    public ResponseEntity<?> mapUpdate(MapPutRequestDto requestDto, Long mapNo, List<MultipartFile> multipartFiles) {
+        Member member = validateMember(requestDto.getMemberNo());
         Map map = validateMap(mapNo);
         map.validateMember(member);
         validateFile(multipartFiles);
@@ -203,7 +158,7 @@ public class MapService {
 
         List<MapInfo> mapInfos = new ArrayList<>();
 
-        for (String mapinfo : putRequestDto.getMapInfos()) {
+        for (String mapinfo : requestDto.getMapInfos()) {
             mapInfos.add(
                     MapInfo.builder()
                             .map(map)
@@ -211,11 +166,16 @@ public class MapService {
                             .build()
             );
         }
+        List<MapInfo> infoDelete = mapInfoRepository.findAllByMap(map);
+        mapInfoRepository.deleteAll(infoDelete);
+        mapInfoRepository.saveAll(mapInfos);
+
 
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
         for (MapImg i : temp) {
             s3UploadService.deleteFile(i.getMapImgUrl());
         }
+        mapImgRepository.deleteAll(temp);
 
         List<String> mapImgs = s3UploadService.upload(multipartFiles);
 
@@ -228,22 +188,32 @@ public class MapService {
                             .build()
             );
         }
+        mapImgRepository.saveAll(mapImgList);
 
-
-
-        map.updateMap(putRequestDto, mapInfos);
+        map.updateMap(requestDto);
 
         return responseBodyDto.success(MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
-                        .category(map.getCategory())
+                        .member(
+                                MemberResponseDto.builder()
+                                        .memberNo(map.getMember().getMemberNo())
+                                        .email(map.getMember().getEmail())
+                                        .role(map.getMember().getRole())
+                                        .nick(map.getMember().getNick())
+                                        .build()
+                        )
                         .title(map.getTitle())
                         .address(map.getAddress())
-                        .mapx(map.getMapx())
-                        .mapy(map.getMapy())
-                        .mapInfo(putRequestDto.getMapInfos())
+                        .category(map.getCategory())
+                        .content(map.getContent())
+                        .star(map.getStar())
+                        .view(map.getView())
+                        .imgUrls(mapImgs)
+                        .mapInfo(requestDto.getMapInfos())
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
                         .build(),
+
                 "수정 성공"
         );
     }
@@ -253,6 +223,10 @@ public class MapService {
         Member member = validateMember(memberNo);
         Map map = validateMap(mapNo);
         map.validateMember(member);
+        List<MapInfo> infoDelete = mapInfoRepository.findAllByMap(map);
+        mapInfoRepository.deleteAll(infoDelete);
+        List<MapImg> imgDelete = mapImgRepository.findAllByMap(map);
+        mapImgRepository.deleteAll(imgDelete);
         mapRepository.delete(map);
 
         return responseBodyDto.success("삭제 완료");
