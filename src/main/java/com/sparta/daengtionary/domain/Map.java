@@ -56,11 +56,11 @@ public class Map extends Timestamped {
     private List<MapImg> mapImgList;
 
     @OneToMany(mappedBy = "map", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true )
-    private List<MapInfo> mapInfoList;
+    private List<MapInfo> mapInfos;
 
     @Builder
     public Map(Long mapNo,Member member,String title,String category,String content,
-               String address,Double mapx,Double mapy,List<MapImg> mapImgList,List<MapInfo> mapInfoList){
+               String address,Double mapx,Double mapy,List<MapImg> mapImgList,List<MapInfo> mapInfos){
         this.mapNo = mapNo;
         this.member = member;
         this.title = title;
@@ -72,23 +72,23 @@ public class Map extends Timestamped {
         this.mapx = mapx;
         this.mapy = mapy;
         this.mapImgList = mapImgList;
-        this.mapInfoList = mapInfoList;
+        this.mapInfos = mapInfos;
     }
-    public void updateMap(MapPutRequestDto requestDto,List<MapInfo> mapInfoList){
+    public void updateMap(MapPutRequestDto requestDto,List<MapInfo> mapInfos){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();
         this.content = requestDto.getContent();
         this.address = requestDto.getAddress();
-        this.mapInfoList = mapInfoList;
+        this.mapInfos = mapInfos;
     }
 
 
-    public void updateMap(MapPutRequestDto requestDto,List<MapImg> mapImgList,List<MapInfo> mapInfoList){
+    public void updateMap(MapPutRequestDto requestDto,List<MapImg> mapImgList,List<MapInfo> mapInfos){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();
         this.content = requestDto.getContent();
         this.address = requestDto.getAddress();
-        this.mapInfoList = mapInfoList;
+        this.mapInfos = mapInfos;
         this.mapImgList = mapImgList;
     }
 
