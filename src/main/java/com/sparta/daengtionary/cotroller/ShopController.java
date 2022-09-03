@@ -18,7 +18,7 @@ public class ShopController {
 
     private final MapService mapService;
 
-    @PostMapping
+    @PostMapping("/create")
     public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         return mapService.createMap(mapRequestDto, mapImgs);
