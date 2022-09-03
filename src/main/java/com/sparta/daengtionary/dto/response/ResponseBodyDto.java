@@ -18,21 +18,21 @@ public class ResponseBodyDto {
         private String message;
     }
 
-    public ResponseEntity<?> success(Object data, String massage) {
+    public ResponseEntity<?> success(Object data, String message) {
         Body body = Body.builder()
                 .state(HttpStatus.OK.value())
                 .data(data)
-                .message(massage)
+                .message(message)
                 .build();
 
         return ResponseEntity.ok(body);
     }
 
     // 메시지만 있는 성공 응답
-    public ResponseEntity<?> success(String massage) {
+    public ResponseEntity<?> success(String message) {
         Body body = Body.builder()
                 .state(HttpStatus.OK.value())
-                .message(massage)
+                .message(message)
                 .build();
 
         return ResponseEntity.ok(body);

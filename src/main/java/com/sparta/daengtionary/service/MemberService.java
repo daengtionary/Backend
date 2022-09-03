@@ -38,7 +38,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class MemberService {
-
     private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final PasswordEncoder passwordEncoder;
@@ -106,6 +105,7 @@ public class MemberService {
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         TokenDto tokenDto = tokenProvider.generateToken(authentication);
+
         tokenToHeaders(tokenDto, response);
 
         return responseBodyDto.success(kakaoUser.getKakaoId() + "님 반갑습니다 :)");
@@ -178,18 +178,6 @@ public class MemberService {
                 .email(email)
                 .nick(nick)
                 .build();
-    }
-
-    public ResponseEntity<?> logout(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Refresh-Token"))) {
-            throw new CustomException(ErrorCode.INVAILID_TOKEN);
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-
-        tokenProvider.deleteRefreshToken(member);
-
-        return responseBodyDto.success("로그아웃 되었습니다 :)");
     }
 
 
@@ -266,5 +254,4 @@ public class MemberService {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
-
 }
