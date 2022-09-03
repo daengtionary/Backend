@@ -37,18 +37,9 @@ public class HospitalController {
     }
 
     @PatchMapping("/{mapNo}")
-    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
-        return mapService.mapUpdate(requestDto, mapNo);
-    }
-    @PutMapping("/{mapNo}")
-    public ResponseEntity<?> updatePutMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto) {
-        return mapService.mapUpdate(requestDto, mapNo);
-    }
-
-    @PatchMapping("/update-test/{mapNo}")
     public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
-        return mapService.mapUpdateTest(requestDto, mapNo,multipartFiles);
+        return mapService.mapUpdate(requestDto, mapNo,multipartFiles);
     }
 
     @DeleteMapping("/{mapNo}")

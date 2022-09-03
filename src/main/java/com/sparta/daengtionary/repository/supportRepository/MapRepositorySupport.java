@@ -1,7 +1,6 @@
 package com.sparta.daengtionary.repository.supportRepository;
 
 
-import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -97,8 +96,6 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.content,
                         map.star,
                         map.view,
-                        map.mapx,
-                        map.mapy,
                         map.address,
                         mapImg.mapImgUrl,
                         mapInfo1.mapInfo
@@ -122,15 +119,5 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         if (category.isEmpty()) return null;
         return map.category.eq(category);
     }
-
-//    private BooleanExpression eqOrderBy(String orderBy){
-//        if(orderBy == null || orderBy.isEmpty())
-//            return null;
-//
-//        if(orderBy.equals("new")) {
-//            return map.createdAt.eq()
-//        }
-//    }
-
 
 }
