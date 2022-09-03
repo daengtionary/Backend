@@ -74,13 +74,22 @@ public class Map extends Timestamped {
         this.mapImgList = mapImgList;
         this.mapInfoList = mapInfoList;
     }
-
-    public void updateMap(MapPutRequestDto requestDto,List<MapInfo> infos){
+    public void updateMap(MapPutRequestDto requestDto,List<MapInfo> mapInfoList){
         this.title = requestDto.getTitle();
         this.category = requestDto.getCategory();
         this.content = requestDto.getContent();
         this.address = requestDto.getAddress();
-        this.mapInfoList = infos;
+        this.mapInfoList = mapInfoList;
+    }
+
+
+    public void updateMap(MapPutRequestDto requestDto,List<MapImg> mapImgList,List<MapInfo> mapInfoList){
+        this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
+        this.content = requestDto.getContent();
+        this.address = requestDto.getAddress();
+        this.mapInfoList = mapInfoList;
+        this.mapImgList = mapImgList;
     }
 
     public void validateMember(Member member){
@@ -90,7 +99,7 @@ public class Map extends Timestamped {
     }
 
     public void viewUpdate(int view){
-        this.view = view;
+        this.view += view;
     }
 
     public void starUpdate(float star){

@@ -1,11 +1,7 @@
 package com.sparta.daengtionary.cotroller;
 
-import com.sparta.daengtionary.configration.error.CustomException;
-import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
-import com.sparta.daengtionary.dto.request.PageRequest;
-import com.sparta.daengtionary.service.AwsS3UploadService;
 import com.sparta.daengtionary.service.MapService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +17,6 @@ import java.util.List;
 public class ShopController {
 
     private final MapService mapService;
-
-
-    private final PageRequest pageRequest;
 
     @PostMapping
     public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,

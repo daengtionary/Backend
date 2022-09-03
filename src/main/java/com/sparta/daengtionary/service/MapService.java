@@ -18,13 +18,11 @@ import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -195,7 +193,7 @@ public class MapService {
 
 
     @Transactional
-    public ResponseEntity<?> mapUpdateTest(MapPutRequestDto putRequestDto, Long mapNo,List<MultipartFile> multipartFiles) {
+    public ResponseEntity<?> mapUpdateTest(MapPutRequestDto putRequestDto, Long mapNo, List<MultipartFile> multipartFiles) {
         Member member = validateMember(putRequestDto.getMemberNo());
         Map map = validateMap(mapNo);
         map.validateMember(member);
@@ -212,6 +210,24 @@ public class MapService {
                             .build()
             );
         }
+        List<MapImg> temp = mapImgRepository.findAllByMap(map);
+        for (MapImg i : temp) {
+            s3UploadService.deleteFile(i.getMapImgUrl());
+        }
+
+        List<String> mapImgs = s3UploadService.upload(multipartFiles);
+
+        List<MapImg> mapImgList = new ArrayList<>();
+        for (String img : mapImgs) {
+            mapImgList.add(
+                    MapImg.builder()
+                            .map(map)
+                            .mapImgUrl(img)
+                            .build()
+            );
+        }
+
+
 
         map.updateMap(putRequestDto, mapInfos);
 
