@@ -36,5 +36,5 @@ jobs:
       run: |
        docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
        docker build -t daengtionary .
-       docker tag daengtionary ${{ secrets.USERNAME }}/daengtionary:${GITHUB_SHA::7}
-       docker push ${{ secrets.USERNAME }}/daengtionary:${GITHUB_SHA::7}
+       docker tag daengtionary [zemiles]/daengtionary:${GITHUB_SHA::7}
+       docker push [zemiles]/daengtionary:${GITHUB_SHA::7}
