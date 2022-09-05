@@ -15,15 +15,26 @@ import javax.servlet.http.HttpServletRequest;
 public class MypageController {
     private final MypageService mypageService;
 
-    @PatchMapping("/update")
+    @PatchMapping("/updatemember")
     public ResponseEntity<?> updateByNick(@RequestBody MemberRequestDto.Update update,
                                           HttpServletRequest request) {
-        return mypageService.updateByNick(update, request);
+        return mypageService.updateByNick(update);
     }
 
     @PostMapping("/dog")
-    public ResponseEntity<?> createDogProfile(@RequestBody DogRequestDto requestDto,
-                                              HttpServletRequest request) {
-        return mypageService.createDogProfile(requestDto, request);
+    public ResponseEntity<?> createDogProfile(@RequestBody DogRequestDto requestDto) {
+        return mypageService.createDogProfile(requestDto);
+    }
+
+    @GetMapping("/memberinfo")
+    public ResponseEntity<?> getMemberInfo() {
+        return mypageService.getMemberInfo();
+    }
+
+    @PatchMapping("/updatedog/{dogNo}")
+    public ResponseEntity<?> updateByDog(@PathVariable Long dogNo,
+                                         @RequestBody DogRequestDto requestDto) {
+
+        return mypageService.updateByDog(dogNo, requestDto);
     }
 }

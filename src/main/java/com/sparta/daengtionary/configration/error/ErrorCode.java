@@ -14,6 +14,7 @@ public enum ErrorCode {
     NOT_VALIDCONTENT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","유효하지 않는 내용입니다."),
     NOT_VALIDURL(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","유효하지 않는 URL 입니다."),
 
+
     //회원가입
     DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_EMAIL", "이미 사용중인 email 입니다."),
     DUPLICATE_NICK(HttpStatus.BAD_REQUEST.value(), "DUPLICATE_NICK", "이미 사용중인 닉네임 입니다."),
@@ -25,12 +26,9 @@ public enum ErrorCode {
     NOT_FOUND_TOKEN(HttpStatus.BAD_REQUEST.value(), "NOT_FOUND_TOKEN", "존재하지 않는 Token 입니다."),
 
 
-
     //로그인
     WRONG_EMAIL(HttpStatus.BAD_REQUEST.value(), "WRONG_EMAIL", "존재하지 않는 email 입니다."),
     WRONG_PASSWORD(HttpStatus.BAD_REQUEST.value(), "WRONG_PASSWORD", "비밀번호가 일치하지 않습니다."),
-
-    //회원탈퇴
 
 
     //기타
@@ -44,14 +42,21 @@ public enum ErrorCode {
     MAP_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인의 게시글이 아닙니다."),
     MAP_WRONG_INPUT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","비어있는 항목을 채워주세요"),
 
+
     //댓글
 
+
     //챗팅
+
 
     //이미지
     WRONG_INPUT_IMAGE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","이미지는 반드시 있어야 됩니다."),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","이미지 업로드에 실패했습니다"),
-    WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","지원하지 않는 파일 형식입니다.");
+    WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","지원하지 않는 파일 형식입니다."),
+
+
+    // 반려견
+    NOT_FOUND_DOG_INFO(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "반려견 정보가 없습니다.");
 
 
 
