@@ -46,6 +46,14 @@ dependencies {
             "jakarta.annotation:jakarta.annotation-api",
             "com.querydsl:querydsl-apt:5.0.0:jpa")
 }
+jar {
+    enabled = false
+}
+bootJar{
+    archivesBaseName = 'app'
+    archiveFileName = 'app.jar'
+    archiveVersion = "0.0.0"
+}
 
 /*tasks.named('test') {
     useJUnitPlatform()
