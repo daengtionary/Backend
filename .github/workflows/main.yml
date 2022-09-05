@@ -1,24 +1,34 @@
-# name: daengtionaryCI
-# on:
-#   push:
-#     branches: [ "main" ]
-#   pull_request:
-#     branches: [ "main" ]
-    
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
+name: Java CI with Gradle
 
-#     steps:
-#     - uses: actions/checkout@v2
-#     - name: Set up JDK 11
-#       uses: actions/setup-java@v1
-#       with:
-#         java-version: 11
-#     - name: Grant execute permission for gradlew
-#       run: chmod +x gradlew
-#       shell: bash
-#     - name: Build with Gradle
-#       run: ./gradlew build
-#       shell: bash
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Build with Gradle
+      run: ./gradlew build
+    - name: Docker build
+      run: |
+       docker login -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }}
+       docker build -t daengtionary .
+       docker tag daengtionary ${{ secrets.DOCKER_REPO }}/daengtionary:${GITHUB_SHA::7}
+       docker push ${{ secrets.DOCKER_REPO }}/daengtionary:${GITHUB_SHA::7}
