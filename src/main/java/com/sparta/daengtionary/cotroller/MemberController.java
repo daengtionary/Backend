@@ -39,7 +39,13 @@ public class MemberController {
 
     @GetMapping("/kakao")
     public ResponseEntity<?> kakaoLogin(@RequestParam String code,
-                                        HttpServletResponse response)  throws JsonProcessingException {
+                                        HttpServletResponse response) throws JsonProcessingException {
         return memberService.kakaoLogin(code, response);
+    }
+
+    @PatchMapping("/update")
+    public ResponseEntity<?> updateByNick(@RequestBody MemberRequestDto.Update update,
+                                          HttpServletRequest request) {
+        return memberService.updateByNick(update, request);
     }
 }
