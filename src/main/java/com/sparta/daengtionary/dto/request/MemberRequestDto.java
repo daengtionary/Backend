@@ -23,4 +23,10 @@ public class MemberRequestDto {
         private String password;
     }
 
+    @Getter
+    @Setter
+    public static class Update {
+        private String nick;
+    }
+
 }

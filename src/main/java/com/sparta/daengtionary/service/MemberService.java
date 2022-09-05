@@ -178,6 +178,15 @@ public class MemberService {
                 .build();
     }
 
+    @Transactional
+    public ResponseEntity<?> updateByNick(MemberRequestDto.Update update,
+                                          HttpServletRequest request) {
+        Member member = tokenProvider.getMemberFromAuthentication();
+        member.update(update);
+
+        return responseBodyDto.success("닉네임이 수정되었습니다.");
+    }
+
 
     @Transactional(readOnly = true)
     public Member checkMemberByEmail(String email) {
