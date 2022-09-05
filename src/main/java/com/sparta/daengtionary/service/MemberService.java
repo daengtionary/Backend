@@ -11,14 +11,16 @@ import com.sparta.daengtionary.dto.request.KakaoUserInfoDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.dto.request.TokenDto;
 import com.sparta.daengtionary.dto.response.KakaoUserResponseDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.util.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -31,7 +33,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
@@ -176,15 +177,6 @@ public class MemberService {
                 .email(email)
                 .nick(nick)
                 .build();
-    }
-
-    @Transactional
-    public ResponseEntity<?> updateByNick(MemberRequestDto.Update update,
-                                          HttpServletRequest request) {
-        Member member = tokenProvider.getMemberFromAuthentication();
-        member.update(update);
-
-        return responseBodyDto.success("닉네임이 수정되었습니다.");
     }
 
 

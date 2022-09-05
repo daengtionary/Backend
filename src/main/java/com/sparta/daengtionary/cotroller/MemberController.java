@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -41,11 +40,5 @@ public class MemberController {
     public ResponseEntity<?> kakaoLogin(@RequestParam String code,
                                         HttpServletResponse response) throws JsonProcessingException {
         return memberService.kakaoLogin(code, response);
-    }
-
-    @PatchMapping("/update")
-    public ResponseEntity<?> updateByNick(@RequestBody MemberRequestDto.Update update,
-                                          HttpServletRequest request) {
-        return memberService.updateByNick(update, request);
     }
 }

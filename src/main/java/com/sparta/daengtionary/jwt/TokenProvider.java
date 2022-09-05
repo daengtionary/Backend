@@ -6,7 +6,6 @@ import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.RefreshToken;
 import com.sparta.daengtionary.domain.UserDetailsImpl;
 import com.sparta.daengtionary.dto.request.TokenDto;
-import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.RefreshTokenRepository;
 import io.jsonwebtoken.*;
@@ -14,7 +13,6 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -152,15 +150,11 @@ public class TokenProvider {
 
     public Member getMemberFromAuthentication() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null ||
-                AnonymousAuthenticationToken.class.isAssignableFrom(authentication.getClass())) {
-            return null;
-        }
 
         Optional<Member> member = memberRepository.findByEmail(authentication.getName());
 
         return member.orElseThrow(
-                () -> new CustomException(ErrorCode.WRONG_EMAIL)
+                () -> new CustomException(ErrorCode.INVAILID_TOKEN)
         );
     }
 
