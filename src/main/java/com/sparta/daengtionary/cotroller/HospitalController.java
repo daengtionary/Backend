@@ -27,6 +27,7 @@ public class HospitalController {
     @PostMapping()
     public ResponseEntity<?> getAllMapCategory(@RequestParam String orderby,
                                                Pageable pageable ) {
+        
         String category = "hospital";
         return mapService.getAllMapByCategory(category, orderby, pageable);
     }
