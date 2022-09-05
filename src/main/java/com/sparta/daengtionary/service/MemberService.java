@@ -10,6 +10,7 @@ import com.sparta.daengtionary.domain.UserDetailsImpl;
 import com.sparta.daengtionary.dto.request.KakaoUserInfoDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.dto.request.TokenDto;
+import com.sparta.daengtionary.dto.response.KakaoUserResponseDto;
 import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -50,7 +51,7 @@ public class MemberService {
 
     @Transactional
     public ResponseEntity<?> signup(MemberRequestDto.Signup signup) {
-        if (signup.getRole().ordinal() == 1) {
+        if (signup.getRole().ordinal() == 2) {
             if (!signup.getAdminCode().equals(adminCode)) {
                 throw new CustomException(ErrorCode.WRONG_ADMIN_CODE);
             }
@@ -75,16 +76,7 @@ public class MemberService {
 
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success(MemberResponseDto.builder()
-                        .memberNo(member.getMemberNo())
-                        .role(member.getRole())
-                        .email(member.getEmail())
-                        .nick(member.getNick())
-                        .createdAt(member.getCreatedAt())
-                        .modifiedAt(member.getModifiedAt())
-                        .build(),
-                member.getNick() + "님 반갑습니다 :)"
-        );
+        return responseBodyDto.success(member.getNick() + "님 반갑습니다 :)");
     }
 
     //카카오 로그인
@@ -108,7 +100,13 @@ public class MemberService {
 
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success(kakaoUser.getKakaoId() + "님 반갑습니다 :)");
+        return responseBodyDto.success(
+                KakaoUserResponseDto.builder()
+                        .email(kakaoUser.getEmail())
+                        .nick(kakaoUser.getNick())
+                        .build(),
+                kakaoUser.getNick() + "님 반갑습니다 :)"
+        );
     }
 
 
@@ -236,17 +234,7 @@ public class MemberService {
 
         memberRepository.save(member);
 
-        return responseBodyDto.success(
-                MemberResponseDto.builder()
-                        .memberNo(member.getMemberNo())
-                        .role(member.getRole())
-                        .email(member.getEmail())
-                        .nick(member.getNick())
-                        .createdAt(member.getCreatedAt())
-                        .modifiedAt(member.getModifiedAt())
-                        .build(),
-                member.getNick() + "님 가입을 축하힙니다 :)"
-        );
+        return responseBodyDto.success(member.getNick() + "님 가입을 축하힙니다 :)");
     }
 
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {

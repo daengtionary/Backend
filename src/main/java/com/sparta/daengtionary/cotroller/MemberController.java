@@ -16,6 +16,16 @@ import javax.servlet.http.HttpServletResponse;
 public class MemberController {
     private final MemberService memberService;
 
+    @GetMapping("/checkemail")
+    public ResponseEntity<?> checkDuplicateByEmail(@RequestParam String email) {
+        return memberService.checkDuplicateByEmail(email);
+    }
+
+    @GetMapping("/checknick")
+    public ResponseEntity<?> checkDuplicateByNick(@RequestParam String nick) {
+        return memberService.checkDuplicateByNick(nick);
+    }
+
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody MemberRequestDto.Signup signup) {
         return memberService.signup(signup);
