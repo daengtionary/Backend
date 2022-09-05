@@ -1,5 +1,6 @@
 package com.sparta.daengtionary.domain;
 
+import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.util.Authority;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
@@ -39,6 +40,10 @@ public class Member extends Timestamped {
         this.role = role;
         this.kakaoId = kakaoId;
 
+    }
+
+    public void update(MemberRequestDto.Update update) {
+        this.nick = update.getNick();
     }
 
 }
