@@ -6,7 +6,6 @@ import com.sparta.daengtionary.domain.Dog;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.DogRequestDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.MypageResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -15,8 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 @Service
@@ -25,6 +24,8 @@ public class MypageService {
     private final TokenProvider tokenProvider;
     private final ResponseBodyDto responseBodyDto;
     private final DogRepository dogRepository;
+    private final MapService mapService;
+    private final AwsS3UploadService s3UploadService;
 
     @Transactional
     public ResponseEntity<?> updateByNick(MemberRequestDto.Update update) {
@@ -35,8 +36,15 @@ public class MypageService {
     }
 
     @Transactional
-    public ResponseEntity<?> createDogProfile(DogRequestDto requestDto) {
+    public ResponseEntity<?> createDogProfile(DogRequestDto requestDto,
+                                              MultipartFile multipartFile) {
         Member member = tokenProvider.getMemberFromAuthentication();
+        String image = "";
+
+        if (!multipartFile.isEmpty()) {
+            validateImageFile(multipartFile);
+            image = s3UploadService.uploadDogImage(multipartFile);
+        }
 
         Dog dog = Dog.builder()
                 .member(member)
@@ -44,6 +52,7 @@ public class MypageService {
                 .breed(requestDto.getBreed())
                 .gender(requestDto.getGender())
                 .weight(requestDto.getWeight())
+                .image(image)
                 .build();
 
         dogRepository.save(dog);
@@ -90,5 +99,11 @@ public class MypageService {
         return optionalDog.orElseThrow(
                 () -> new CustomException(ErrorCode.NOT_FOUND_DOG_INFO)
         );
+    }
+
+    public void validateImageFile(MultipartFile multipartFile) {
+        if (multipartFile == null) {
+            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
+        }
     }
 }
