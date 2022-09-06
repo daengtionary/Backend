@@ -6,8 +6,7 @@ import com.sparta.daengtionary.service.MypageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/mypage")
@@ -15,23 +14,23 @@ import javax.servlet.http.HttpServletRequest;
 public class MypageController {
     private final MypageService mypageService;
 
-    @PatchMapping("/updatemember")
-    public ResponseEntity<?> updateByNick(@RequestBody MemberRequestDto.Update update,
-                                          HttpServletRequest request) {
+    @PatchMapping("/nick")
+    public ResponseEntity<?> updateByNick(@RequestBody MemberRequestDto.Update update) {
         return mypageService.updateByNick(update);
     }
 
     @PostMapping("/dog")
-    public ResponseEntity<?> createDogProfile(@RequestBody DogRequestDto requestDto) {
-        return mypageService.createDogProfile(requestDto);
+    public ResponseEntity<?> createDogProfile(@RequestPart(value = "data") DogRequestDto requestDto,
+                                              @RequestPart(value = "image", required = false) MultipartFile multipartFile) {
+        return mypageService.createDogProfile(requestDto, multipartFile);
     }
 
-    @GetMapping("/memberinfo")
+    @GetMapping("/info")
     public ResponseEntity<?> getMemberInfo() {
         return mypageService.getMemberInfo();
     }
 
-    @PatchMapping("/updatedog/{dogNo}")
+    @PatchMapping("/dog/{dogNo}")
     public ResponseEntity<?> updateByDog(@PathVariable Long dogNo,
                                          @RequestBody DogRequestDto requestDto) {
 
