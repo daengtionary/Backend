@@ -1,5 +1,5 @@
 FROM openjdk:11
 WORKDIR /build/libs
-COPY . .
+COPY app.jar /build/libs
 EXPOSE 80
-ENTRYPOINT ["java","-jar","/app.jar"]
+CMD java -jar /build/libs/app.jar
