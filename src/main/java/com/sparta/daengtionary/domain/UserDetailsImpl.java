@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.domain;
 
-import com.sparta.daengtionary.util.Authority;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -57,6 +56,10 @@ public class UserDetailsImpl implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Member getMember(){
+        return member;
     }
 
 }

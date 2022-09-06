@@ -1,23 +1,26 @@
 package com.sparta.daengtionary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.domain.MapImg;
+import com.sparta.daengtionary.domain.MapInfo;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class MapResponseDto {
-    private Long mapId;
+    private Long mapNo;
+    private String category;
     private String title;
     private String address;
-    private String category;
-    private int star;
-    private List<String> imgUrls;
-
-    private List<String> mapInfos;
-
+    private float star;
+    private String mapImgUrl;
+    private String mapInfo;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
 
@@ -25,17 +28,16 @@ public class MapResponseDto {
     private  LocalDateTime modifiedAt;
 
     @Builder
-    public MapResponseDto(Long mapId,String title,String address,String category,int star,
-                          List<String> imgUrls,List<String> mapInfos,LocalDateTime createdAt,LocalDateTime modifiedAt){
-        this.mapId = mapId;
+    public MapResponseDto(Long mapNo,String category,String title,String address,float star,
+                          String mapImgUrl,String mapInfo,LocalDateTime createdAt, LocalDateTime modifiedAt){
+        this.mapNo = mapNo;
+        this.category = category;
         this.title = title;
         this.address = address;
-        this.category = category;
         this.star = star;
-        this.imgUrls = imgUrls;
-        this.mapInfos = mapInfos;
+        this.mapImgUrl = mapImgUrl;
+        this.mapInfo = mapInfo;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
-
 }

@@ -23,14 +23,11 @@ public class MemberResponseDto {
     @Builder
     public MemberResponseDto(Long memberNo, Authority role, String email, String nick,
                              LocalDateTime createdAt, LocalDateTime modifiedAt) {
-
         this.memberNo = memberNo;
         this.role = role;
         this.email = email;
         this.nick = nick;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-
     }
-
 }

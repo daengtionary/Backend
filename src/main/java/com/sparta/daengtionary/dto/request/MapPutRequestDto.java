@@ -1,11 +1,11 @@
 package com.sparta.daengtionary.dto.request;
 
-import lombok.Getter;
 
+import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class MapRequestDto {
+public class MapPutRequestDto {
     private Long memberNo;
     private String title;
     private String category;

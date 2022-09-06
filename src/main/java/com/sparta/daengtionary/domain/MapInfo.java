@@ -1,15 +1,12 @@
 package com.sparta.daengtionary.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Entity
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MapInfo {
@@ -20,10 +17,17 @@ public class MapInfo {
 
     @JoinColumn(name = "map_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private Map map;
 
     @Column
     private String mapInfo;
+
+    @Builder
+    public MapInfo(Map map,String mapInfo){
+        this.map = map;
+        this.mapInfo = mapInfo;
+    }
+
+//    public mapInfoUpdate()
 
 }
