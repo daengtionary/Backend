@@ -31,4 +31,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/finalpj:app.jar
+          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
