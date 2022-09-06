@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.repository.DogRepository;
 import com.sparta.daengtionary.util.Authority;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,8 @@ import java.time.LocalDateTime;
 public class MemberResponseDto {
 
     private Long memberNo;
+
+    private MypageResponseDto mypageResponseDto;
     private Authority role;
     private String email;
     private String nick;
@@ -22,8 +25,9 @@ public class MemberResponseDto {
 
     @Builder
     public MemberResponseDto(Long memberNo, Authority role, String email, String nick,
-                             LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                             MypageResponseDto mypageResponseDto,LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.memberNo = memberNo;
+        this.mypageResponseDto = mypageResponseDto;
         this.role = role;
         this.email = email;
         this.nick = nick;

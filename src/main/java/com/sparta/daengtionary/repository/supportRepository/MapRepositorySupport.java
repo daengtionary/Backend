@@ -5,6 +5,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.domain.Map;
+import com.sparta.daengtionary.dto.response.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +18,8 @@ import java.util.List;
 import static com.sparta.daengtionary.domain.QMap.map;
 import static com.sparta.daengtionary.domain.QMapImg.mapImg;
 import static com.sparta.daengtionary.domain.QMapInfo.mapInfo1;
+import static com.sparta.daengtionary.domain.QCommunity.community;
+import static com.sparta.daengtionary.domain.QCommunityImg.communityImg1;
 
 @Repository
 public class MapRepositorySupport extends QuerydslRepositorySupport {
@@ -86,27 +89,23 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(content, pageable, content.size());
     }
 
-    public PageImpl<MapDetailResponseDto> findAllByMapDetail(String category, Pageable pageable) {
-        List<MapDetailResponseDto> content = queryFactory
+    public PageImpl<CommunityResponseDto> findAllByCommunity(Pageable pageable) {
+        List<CommunityResponseDto> content = queryFactory
                 .select(Projections.fields(
-                        MapDetailResponseDto.class,
-                        map.mapNo,
-                        map.category,
-                        map.title,
-                        map.content,
-                        map.star,
-                        map.view,
-                        map.address,
-                        mapImg.mapImgUrl,
-                        mapInfo1.mapInfo
+                        CommunityResponseDto.class,
+                        community.communityNo,
+                        community.title,
+                        community.content,
+                        community.view,
+                        communityImg1.communityImg,
+                        community.createdAt,
+                        community.modifiedAt
                 ))
-                .from(map)
-                .leftJoin(mapImg)
-                .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1)
-                .on(map.mapNo.eq(mapInfo1.map.mapNo))
-                .groupBy(map.mapNo)
-                .orderBy(map.mapNo.desc())
+                .from(community)
+                .leftJoin(communityImg1)
+                .on(community.communityNo.eq(communityImg1.communityNo))
+                .groupBy(community.communityNo)
+                .orderBy(community.createdAt.desc(),community.view.desc().nullsLast())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();

@@ -73,16 +73,6 @@ public class Map extends Timestamped {
         this.address = requestDto.getAddress();
     }
 
-
-//    public void updateMap(MapRequestDto requestDto, List<MapImg> mapImgList, List<MapInfo> infos) {
-//        this.title = requestDto.getTitle();
-//        this.category = requestDto.getCategory();
-//        this.content = requestDto.getContent();
-//        this.address = requestDto.getAddress();
-//        this.mapImgList = mapImgList;
-//        this.mapInfos = infos;
-//    }
-
     public void validateMember(Member member) {
         if (!this.member.equals(member)) {
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);

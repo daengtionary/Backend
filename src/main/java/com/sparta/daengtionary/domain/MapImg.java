@@ -9,9 +9,7 @@ import javax.persistence.*;
 
 @Getter
 @Entity
-@Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class MapImg {
 
     @Id
@@ -28,10 +26,6 @@ public class MapImg {
     @Builder
     public MapImg(Map map,String mapImgUrl){
         this.map = map;
-        this.mapImgUrl = mapImgUrl;
-    }
-
-    public void mapImgUpdate(String mapImgUrl){
         this.mapImgUrl = mapImgUrl;
     }
 
