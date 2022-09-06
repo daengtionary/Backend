@@ -58,6 +58,7 @@ jobs:
             docker stop server
             sleep 5
             docker run -d --rm --name server -p 80:8080 simplewhale
+            
 #      - name: Checkout
 #        uses: actions/checkout@v2
 #      - name: Login to Docker Hub
