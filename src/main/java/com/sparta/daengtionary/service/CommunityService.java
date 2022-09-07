@@ -7,6 +7,7 @@ import com.sparta.daengtionary.domain.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.dto.response.CommunityResponseDto;
+import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.repository.CommunityImgRepository;
 import com.sparta.daengtionary.repository.CommunityRepository;
@@ -82,7 +83,7 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllCommunitySort(String sort, Pageable pageable) {
+    public ResponseEntity<?> getCommunitySort(String sort, Pageable pageable) {
         PageImpl<CommunityResponseDto> responseDtos = mapRepositorySupport.findAllByCommunity(pageable);
 
         return responseBodyDto.success(responseDtos, "조회 완료");
@@ -93,16 +94,80 @@ public class CommunityService {
         Community community = validateCommunity(communityNo);
 
         List<CommunityImg> communityImgs = communityImgRepository.findAllByCommunity(community);
-        List<String> ComImgs = new ArrayList<>();
+        List<String> comImgs = new ArrayList<>();
         for (CommunityImg i : communityImgs) {
-            ComImgs.add(i.getCommunityImg());
+            comImgs.add(i.getCommunityImg());
         }
 
         return responseBodyDto.success(
                 CommunityResponseDto.builder()
-
-                        .build(),"조회 성공"
+                        .communityNo(community.getCommunityNo())
+                        .memberResponseDto(
+                                MemberResponseDto.builder()
+                                        .memberNo(community.getMember().getMemberNo())
+                                        .email(community.getMember().getEmail())
+                                        .role(community.getMember().getRole())
+                                        .nick(community.getMember().getNick())
+                                        .build()
+                        )
+                        .title(community.getTitle())
+                        .content(community.getContent())
+                        .view(community.getView())
+                        .communityImgUrl(comImgs)
+                        .createdAt(community.getCreatedAt())
+                        .modifiedAt(community.getModifiedAt())
+                        .build(), "조회 성공"
         );
+    }
+
+    @Transactional
+    public ResponseEntity<?> communityUpdate(CommunityRequestDto requestDto,Long communityNo,List<MultipartFile> multipartFiles){
+        Member member = validateMember(requestDto.getMemberNo());
+        Community community = validateCommunity(communityNo);
+        community.validateMember(member);
+        validateFile(multipartFiles);
+
+        List<CommunityImg> deleteTemp = communityImgRepository.findAllByCommunity(community);
+        for(CommunityImg i : deleteTemp){
+            s3UploadService.deleteFile(i.getCommunityImg());
+        }
+        communityImgRepository.deleteAll(deleteTemp);
+
+        List<String> comImgs = s3UploadService.upload(multipartFiles);
+
+        List<CommunityImg> saveTemp = new ArrayList<>();
+        for(String i : comImgs){
+            saveTemp.add(
+                    CommunityImg.builder()
+                            .community(community)
+                            .communityImg(i)
+                            .build()
+            );
+        }
+        communityImgRepository.saveAll(saveTemp);
+
+        community.updateCommunity(requestDto);
+
+        return responseBodyDto.success(CommunityResponseDto.builder()
+                        .communityNo(community.getCommunityNo())
+                        .title(community.getTitle())
+                        .content(community.getContent())
+                        .communityImgUrl(comImgs)
+                        .createdAt(community.getCreatedAt())
+                        .modifiedAt(community.getModifiedAt())
+                .build(),"수정 성공");
+    }
+
+    @Transactional
+    public ResponseEntity<?> communityDelete(Long communityNo, Long memberNo){
+        Member member = validateMember(memberNo);
+        Community community = validateCommunity(communityNo);
+        community.validateMember(member);
+        List<CommunityImg> comDelete = communityImgRepository.findAllByCommunity(community);
+        communityImgRepository.deleteAll(comDelete);
+        communityRepository.delete(community);
+        
+        return responseBodyDto.success("삭제 성공");
     }
 
 
