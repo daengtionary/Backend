@@ -13,7 +13,7 @@ public class CommunityImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long communityNo;
+    private Long communityImgNo;
 
     @JoinColumn(name = "community_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
