@@ -1,7 +1,7 @@
-package com.sparta.daengtionary.repository;
+package com.sparta.daengtionary.repository.community;
 
-import com.sparta.daengtionary.domain.Community;
-import com.sparta.daengtionary.domain.CommunityImg;
+import com.sparta.daengtionary.domain.community.Community;
+import com.sparta.daengtionary.domain.community.CommunityImg;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
