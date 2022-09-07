@@ -72,7 +72,7 @@ public class MapService {
             mapImgList.add(
                     MapImg.builder()
                             .map(map)
-                            .imgUrl(img)
+                            .mapImgUrl(img)
                             .build()
             );
         }
@@ -81,7 +81,9 @@ public class MapService {
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
+                        .nick(member.getNick())
                         .category(map.getCategory())
+                        .content(map.getContent())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .mapInfo(mapRequestDto.getMapInfos())
@@ -113,7 +115,7 @@ public class MapService {
         List<String> mapImgs = new ArrayList<>();
 
         for (MapImg i : mapImgTemp) {
-            mapImgs.add(i.getImgUrl());
+            mapImgs.add(i.getMapImgUrl());
         }
 
         List<MapInfo> mapInfoTemp = mapInfoRepository.findAllByMap(map);
@@ -126,14 +128,7 @@ public class MapService {
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
-                        .member(
-                                MemberResponseDto.builder()
-                                        .memberNo(map.getMember().getMemberNo())
-                                        .email(map.getMember().getEmail())
-                                        .role(map.getMember().getRole())
-                                        .nick(map.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(map.getMember().getNick())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .category(map.getCategory())
@@ -174,7 +169,7 @@ public class MapService {
 
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
         for (MapImg i : temp) {
-            s3UploadService.deleteFile(i.getImgUrl());
+            s3UploadService.deleteFile(i.getMapImgUrl());
         }
         mapImgRepository.deleteAll(temp);
 
@@ -185,7 +180,7 @@ public class MapService {
             mapImgList.add(
                     MapImg.builder()
                             .map(map)
-                            .imgUrl(img)
+                            .mapImgUrl(img)
                             .build()
             );
         }
@@ -195,14 +190,7 @@ public class MapService {
 
         return responseBodyDto.success(MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
-                        .member(
-                                MemberResponseDto.builder()
-                                        .memberNo(map.getMember().getMemberNo())
-                                        .email(map.getMember().getEmail())
-                                        .role(map.getMember().getRole())
-                                        .nick(map.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(map.getMember().getNick())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .category(map.getCategory())
@@ -228,7 +216,7 @@ public class MapService {
         mapInfoRepository.deleteAll(infoDelete);
         List<MapImg> imgDelete = mapImgRepository.findAllByMap(map);
         for (MapImg i : imgDelete) {
-            s3UploadService.deleteFile(i.getImgUrl());
+            s3UploadService.deleteFile(i.getMapImgUrl());
         }
         mapImgRepository.deleteAll(imgDelete);
         mapRepository.delete(map);

@@ -11,7 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-@RequestMapping("trade")
+@RequestMapping("/trade")
 @RequiredArgsConstructor
 public class TradeController {
 
@@ -23,7 +23,7 @@ public class TradeController {
         return tradeService.createTrade(requestDto,multipartFiles);
     }
     @PostMapping()
-    public ResponseEntity<?> getTradeSort(@RequestPart String sort, Pageable pageable){
+    public ResponseEntity<?> getTradeSort(@RequestParam String sort, Pageable pageable){
         return tradeService.getTradeSort(sort,pageable);
     }
 
