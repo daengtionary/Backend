@@ -171,6 +171,12 @@ public class TradeService {
         return responseBodyDto.success("삭제 성공");
     }
 
+    @Transactional
+    public void tradeViewUpdate(Long tradeNo){
+        Trade trade = validateTrade(tradeNo);
+        trade.viewUpdate();
+    }
+
 
 
 

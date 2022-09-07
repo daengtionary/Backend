@@ -29,6 +29,7 @@ public class TradeController {
 
     @GetMapping("/{tradeNo}")
     public ResponseEntity<?> getTrade(@PathVariable Long tradeNo){
+        tradeService.tradeViewUpdate(tradeNo);
         return tradeService.getTrade(tradeNo);
     }
 

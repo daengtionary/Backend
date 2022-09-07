@@ -224,6 +224,12 @@ public class MapService {
         return responseBodyDto.success("삭제 완료");
     }
 
+    @Transactional
+    public void mapViewUpdate(Long mapNo){
+        Map map = validateMap(mapNo);
+        map.viewUpdate();
+    }
+
     private void validateFile(List<MultipartFile> multipartFiles) {
         if (multipartFiles == null) {
             throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);

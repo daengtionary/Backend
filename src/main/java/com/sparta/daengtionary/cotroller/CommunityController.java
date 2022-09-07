@@ -31,6 +31,7 @@ public class CommunityController {
 
     @GetMapping("/{comNo}")
     public ResponseEntity<?> getCommunity(@PathVariable Long comNo){
+        service.communityViewUpdate(comNo);
         return service.getCommunity(comNo);
     }
 
