@@ -6,8 +6,8 @@ import com.sparta.daengtionary.domain.Community;
 import com.sparta.daengtionary.domain.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
+import com.sparta.daengtionary.dto.response.CommunityDetatilResponseDto;
 import com.sparta.daengtionary.dto.response.CommunityResponseDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.CommunityImgRepository;
@@ -66,12 +66,13 @@ public class CommunityService {
         communityImgRepository.saveAll(communityImgs);
 
 
-        return responseBodyDto.success(CommunityResponseDto.builder()
+        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
+                        .nick(member.getNick())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())
-                        .imgUrl(communityImg)
+                        .imgList(communityImg)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build()
@@ -98,17 +99,13 @@ public class CommunityService {
         }
 
         return responseBodyDto.success(
-                CommunityResponseDto.builder()
+                CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
-                        .memberResponseDto(
-                                MemberResponseDto.builder()
-                                        .nick(community.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(community.getMember().getNick())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())
-                        .imgUrl(comImgs)
+                        .imgList(comImgs)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build(), "조회 성공"
@@ -143,11 +140,12 @@ public class CommunityService {
 
         community.updateCommunity(requestDto);
 
-        return responseBodyDto.success(CommunityResponseDto.builder()
+        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
                 .communityNo(community.getCommunityNo())
+                .nick(member.getNick())
                 .title(community.getTitle())
                 .content(community.getContent())
-                .imgUrl(comImgs)
+                .imgList(comImgs)
                 .createdAt(community.getCreatedAt())
                 .modifiedAt(community.getModifiedAt())
                 .build(), "수정 성공");

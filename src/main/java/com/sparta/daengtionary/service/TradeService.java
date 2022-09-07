@@ -4,11 +4,10 @@ import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.TradeResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
-import com.sparta.daengtionary.repository.MapImgRepository;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.TradeImgRepository;
 import com.sparta.daengtionary.repository.TradeRepository;
@@ -65,15 +64,16 @@ public class TradeService {
         tradeImgRepository.saveAll(tradeImgs);
 
         return responseBodyDto.success(
-                TradeResponseDto.builder()
+                TradeDetailResponseDto.builder()
                         .tradeNo(trade.getTradeNo())
+                        .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
                         .price(trade.getPrice())
                         .status(trade.getStatus())
                         .view(trade.getView())
                         .tradeImgUrl(tradeImgList)
-                        .createAt(trade.getCreatedAt())
+                        .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())
                         .build(),"생성완료"
         );
@@ -97,20 +97,16 @@ public class TradeService {
         }
 
         return responseBodyDto.success(
-                  TradeResponseDto.builder()
+                  TradeDetailResponseDto.builder()
                           .tradeNo(trade.getTradeNo())
-                          .memberResponseDto(
-                                  MemberResponseDto.builder()
-                                          .nick(trade.getMember().getNick())
-                                          .build()
-                          )
+                          .nick(trade.getMember().getNick())
                           .title(trade.getTitle())
                           .content(trade.getContent())
                           .price(trade.getPrice())
                           .view(trade.getView())
                           .status(trade.getStatus())
                           .tradeImgUrl(traImgs)
-                          .createAt(trade.getCreatedAt())
+                          .createdAt(trade.getCreatedAt())
                           .modifiedAt(trade.getModifiedAt())
                           .build(),"조회 성공"
         );
@@ -145,13 +141,14 @@ public class TradeService {
         trade.updateTrade(requestDto);
 
         return responseBodyDto.success(
-                      TradeResponseDto.builder()
+                      TradeDetailResponseDto.builder()
                               .tradeNo(trade.getTradeNo())
+                              .nick(member.getNick())
                               .title(trade.getTitle())
                               .content(trade.getContent())
                               .status(trade.getStatus())
                               .tradeImgUrl(tradeImgs)
-                              .createAt(trade.getCreatedAt())
+                              .createdAt(trade.getCreatedAt())
                               .modifiedAt(trade.getModifiedAt())
                               .build(),"수정 성공"
         );

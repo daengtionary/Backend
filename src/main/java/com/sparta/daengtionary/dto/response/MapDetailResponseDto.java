@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MapDetailResponseDto {
     private Long mapNo;
-    private MemberResponseDto member;
+    private String nick;
     private String title;
     private String address;
     private String category;
@@ -28,10 +28,10 @@ public class MapDetailResponseDto {
 
 
     @Builder
-    public MapDetailResponseDto(Long mapNo, MemberResponseDto member, String title, String address, String category,
+    public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
                                 String content, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
         this.mapNo = mapNo;
-        this.member = member;
+        this.nick = nick;
         this.title = title;
         this.address = address;
         this.category = category;

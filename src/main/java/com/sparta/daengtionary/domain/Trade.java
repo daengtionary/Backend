@@ -47,7 +47,7 @@ public class Trade extends Timestamped {
         this.title = title;
         this.content = content;
         this.price = price;
-        this.status = "거래중";
+        this.status = "판매중";
         this.view = 0;
     }
 

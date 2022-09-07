@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.domain.Map;
 import com.sparta.daengtionary.dto.response.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
+import com.sparta.daengtionary.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.TradeResponseDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -42,7 +43,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.category,
                         map.title,
                         map.address,
-                        mapImg.imgUrl,
+                        map.view,
+                        mapImg.mapImgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
@@ -50,7 +52,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1).fetchJoin()
+                .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(map.category.eq(category))
                 .groupBy(map.mapNo)
@@ -71,7 +73,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.category,
                         map.title,
                         map.address,
-                        mapImg.imgUrl,
+                        mapImg.mapImgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
@@ -79,7 +81,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1).fetchJoin()
+                .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(map.category.eq(category))
                 .groupBy(map.mapNo)
@@ -96,8 +98,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.fields(
                         CommunityResponseDto.class,
                         community.communityNo,
+                        community.member.nick,
                         community.title,
-                        community.content,
                         community.view,
                         communityImg1.communityImg,
                         community.createdAt,
@@ -120,10 +122,12 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.fields(
                         TradeResponseDto.class,
                         trade.tradeNo,
+                        trade.member.nick,
                         trade.title,
                         trade.content,
                         trade.view,
                         trade.status,
+                        tradeImg1.tradeImg,
                         trade.createdAt,
                         trade.modifiedAt
                 ))

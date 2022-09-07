@@ -19,12 +19,12 @@ public class MapImg {
     private Map map;
 
     @Column(nullable = false)
-    private String imgUrl;
+    private String mapImgUrl;
 
     @Builder
-    public MapImg(Map map, String imgUrl){
+    public MapImg(Map map, String mapImgUrl){
         this.map = map;
-        this.imgUrl = imgUrl;
+        this.mapImgUrl = mapImgUrl;
     }
 
 }
