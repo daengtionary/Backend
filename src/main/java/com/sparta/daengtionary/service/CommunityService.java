@@ -5,6 +5,7 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Community;
 import com.sparta.daengtionary.domain.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
+import com.sparta.daengtionary.domain.Trade;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.dto.response.CommunityDetatilResponseDto;
 import com.sparta.daengtionary.dto.response.CommunityResponseDto;
@@ -164,6 +165,12 @@ public class CommunityService {
         communityRepository.delete(community);
 
         return responseBodyDto.success("삭제 성공");
+    }
+
+    @Transactional
+    public void communityViewUpdate(Long communityNo){
+        Community community = validateCommunity(communityNo);
+        community.viewUpdate();
     }
 
 
