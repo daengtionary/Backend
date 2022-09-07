@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CommunityResponseDto {
     private Long communityNo;
+    private MemberResponseDto memberResponseDto;
     private String title;
     private String content;
     private int view;
@@ -23,8 +24,9 @@ public class CommunityResponseDto {
 
     @Builder
     public CommunityResponseDto(Long communityNo, String title, String content, int view,
-                                List<String> communityImgUrl, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                                MemberResponseDto memberResponseDto ,List<String> communityImgUrl, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
+        this.memberResponseDto = memberResponseDto;
         this.title = title;
         this.content = content;
         this.view = view;
