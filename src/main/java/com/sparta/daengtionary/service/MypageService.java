@@ -24,8 +24,22 @@ public class MypageService {
     private final TokenProvider tokenProvider;
     private final ResponseBodyDto responseBodyDto;
     private final DogRepository dogRepository;
-    private final MapService mapService;
     private final AwsS3UploadService s3UploadService;
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getMemberInfo() {
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        return responseBodyDto.success(MypageResponseDto.MemberInfo.builder()
+                        .memberNo(member.getMemberNo())
+                        .email(member.getEmail())
+                        .nick(member.getNick())
+                        .dogs(member.getDogs())
+                        .createdAt(member.getCreatedAt())
+                        .modifiedAt(member.getModifiedAt())
+                        .build()
+                , member.getNick() + "님의 정보가 조회되었습니다 :)");
+    }
 
     @Transactional
     public ResponseEntity<?> updateByNick(MemberRequestDto.Update update) {
@@ -60,35 +74,50 @@ public class MypageService {
         return responseBodyDto.success(requestDto.getName() + " 프로필이 작성되었습니다 :)");
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> getMemberInfo() {
-        Member member = tokenProvider.getMemberFromAuthentication();
+    @Transactional
+    public ResponseEntity<?> updateByDogProfile(Long dogNo,
+                                                DogRequestDto requestDto,
+                                                MultipartFile multipartFile) {
+        Dog dog = checkByDogInfo(dogNo);
 
-        return responseBodyDto.success(MypageResponseDto.MemberInfo.builder()
-                        .memberNo(member.getMemberNo())
-                        .email(member.getEmail())
-                        .nick(member.getNick())
-                        .dogs(member.getDogs())
-                        .createdAt(member.getCreatedAt())
-                        .modifiedAt(member.getModifiedAt())
-                        .build()
-                , member.getNick() + "님의 정보가 조회되었습니다 :)");
+        s3UploadService.deleteFile(dog.getImage());
+        validateImageFile(multipartFile);
+
+        String image = s3UploadService.uploadDogImage(multipartFile);
+
+        dog.updateByProfile(requestDto, image);
+
+        return responseBodyDto.success(requestDto.getName() + " 정보가 수정되었습니다 :)");
     }
 
     @Transactional
-    public ResponseEntity<?> updateByDog(Long dogNo,
-                                         DogRequestDto requestDto) {
+    public ResponseEntity<?> updateByDogImage(Long dogNo,
+                                              MultipartFile multipartFile) {
         Dog dog = checkByDogInfo(dogNo);
+        s3UploadService.deleteFile(dog.getImage());
 
-        dog.update(requestDto);
+        validateImageFile(multipartFile);
+        String image = s3UploadService.uploadDogImage(multipartFile);
 
-        return responseBodyDto.success(MypageResponseDto.DogInfo.builder()
-                        .name(dog.getName())
-                        .breed(dog.getBreed())
-                        .gender(dog.getGender())
-                        .weight(dog.getWeight())
-                        .build(),
-                requestDto.getName() + " 정보가 수정되었습니다 :)");
+        dog.updateByImage(image);
+
+        return responseBodyDto.success(dog.getName() + " 정보가 수정되었습니다 :)");
+    }
+
+    public ResponseEntity<?> deleteByDogProfile(Long dogNo) {
+        Dog dog = checkByDogInfo(dogNo);
+        dogRepository.delete(dog);
+
+        return responseBodyDto.success(dog.getName() + "정보가 삭제되었습니다 :)");
+    }
+
+    public ResponseEntity<?> deleteByDogImage(Long dogNo) {
+        Dog dog = checkByDogInfo(dogNo);
+        s3UploadService.deleteFile(dog.getImage());
+
+        dog.updateByImage(null);
+
+        return responseBodyDto.success(dog.getName() + "이미지가 삭제되었습니다 :)");
     }
 
 

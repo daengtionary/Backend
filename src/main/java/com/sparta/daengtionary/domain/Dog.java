@@ -45,11 +45,15 @@ public class Dog {
         this.image = image;
     }
 
-    public void update(DogRequestDto requestDto) {
+    public void updateByProfile(DogRequestDto requestDto, String image) {
         this.name = requestDto.getName();
         this.breed = requestDto.getBreed();
         this.gender = requestDto.getGender();
         this.weight = requestDto.getWeight();
-        this.image = requestDto.getImage();
+        this.image = image;
+    }
+
+    public void updateByImage(String image) {
+        this.image = image;
     }
 }
