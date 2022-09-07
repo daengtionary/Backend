@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.community;
 
 import lombok.Builder;
 import lombok.Getter;

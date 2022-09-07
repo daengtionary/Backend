@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.map;
 
 
 import lombok.*;

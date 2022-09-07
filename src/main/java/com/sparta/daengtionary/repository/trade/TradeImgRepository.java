@@ -1,7 +1,7 @@
-package com.sparta.daengtionary.repository;
+package com.sparta.daengtionary.repository.trade;
 
-import com.sparta.daengtionary.domain.Trade;
-import com.sparta.daengtionary.domain.TradeImg;
+import com.sparta.daengtionary.domain.trade.Trade;
+import com.sparta.daengtionary.domain.trade.TradeImg;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

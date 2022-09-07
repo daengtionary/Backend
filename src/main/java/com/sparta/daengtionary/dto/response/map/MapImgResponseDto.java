@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.dto.response;
+package com.sparta.daengtionary.dto.response.map;
 
 import lombok.Builder;
 import lombok.Data;
