@@ -43,7 +43,7 @@ public class HospitalController {
     }
 
     @DeleteMapping("/{mapNo}")
-    public ResponseEntity<?> deleteMap(@PathVariable Long mapNo, @RequestParam Long memberNo) {
-        return mapService.mapDelete(mapNo, memberNo);
+    public ResponseEntity<?> deleteMap(@PathVariable Long mapNo) {
+        return mapService.mapDelete(mapNo);
     }
 }

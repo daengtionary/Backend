@@ -41,8 +41,8 @@ public class CommunityController {
     }
 
     @DeleteMapping("/{comNo}")
-    public ResponseEntity<?> deleteCommunity(@PathVariable Long comNo, @PathVariable Long memberNo){
-        return service.communityDelete(comNo,memberNo);
+    public ResponseEntity<?> deleteCommunity(@PathVariable Long comNo){
+        return service.communityDelete(comNo);
     }
 
 }

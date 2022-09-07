@@ -6,8 +6,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.domain.Map;
 import com.sparta.daengtionary.dto.response.CommunityResponseDto;
-import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.MapResponseDto;
+import com.sparta.daengtionary.dto.response.TradeResponseDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -20,6 +20,8 @@ import static com.sparta.daengtionary.domain.QMapImg.mapImg;
 import static com.sparta.daengtionary.domain.QMapInfo.mapInfo1;
 import static com.sparta.daengtionary.domain.QCommunity.community;
 import static com.sparta.daengtionary.domain.QCommunityImg.communityImg1;
+import static com.sparta.daengtionary.domain.QTrade.trade;
+import static com.sparta.daengtionary.domain.QTradeImg.tradeImg1;
 
 @Repository
 public class MapRepositorySupport extends QuerydslRepositorySupport {
@@ -40,7 +42,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.category,
                         map.title,
                         map.address,
-                        mapImg.mapImgUrl,
+                        mapImg.imgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
@@ -69,7 +71,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.category,
                         map.title,
                         map.address,
-                        mapImg.mapImgUrl,
+                        mapImg.imgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
@@ -103,7 +105,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 ))
                 .from(community)
                 .leftJoin(communityImg1)
-                .on(community.communityNo.eq(communityImg1.communityNo))
+                .on(community.communityNo.eq(communityImg1.community.communityNo))
                 .groupBy(community.communityNo)
                 .orderBy(community.createdAt.desc(),community.view.desc().nullsLast())
                 .offset(pageable.getOffset())
@@ -111,6 +113,30 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
 
         return new PageImpl<>(content, pageable, content.size());
+    }
+
+    public PageImpl<TradeResponseDto> findAllByTrade(Pageable pageable){
+        List<TradeResponseDto> content = queryFactory
+                .select(Projections.fields(
+                        TradeResponseDto.class,
+                        trade.tradeNo,
+                        trade.title,
+                        trade.content,
+                        trade.view,
+                        trade.status,
+                        trade.createdAt,
+                        trade.modifiedAt
+                ))
+                .from(trade)
+                .leftJoin(tradeImg1)
+                .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
+                .groupBy(trade.tradeNo)
+                .orderBy(trade.createdAt.desc(),trade.view.desc().nullsLast())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        return new PageImpl<>(content,pageable,content.size());
     }
 
 

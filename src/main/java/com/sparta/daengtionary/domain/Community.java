@@ -45,6 +45,9 @@ public class Community extends Timestamped {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
     }
+    public void viewUpdate() {
+        this.view += 1;
+    }
 
     public void validateMember(Member member) {
         if (!this.member.equals(member)) {

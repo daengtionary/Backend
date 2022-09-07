@@ -3,7 +3,6 @@ package com.sparta.daengtionary.domain;
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
-import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
