@@ -31,25 +31,20 @@ public class CommunityReview extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column(nullable = false)
-    private int star;
-
     @Column
     private String imgUrl;
 
     @Builder
-    public CommunityReview(Member member, Community community, ReviewRequestDto requestDto,
+    public CommunityReview(Member member, Community community,String content,
                            String imgUrl){
         this.member = member;
         this.community = community;
-        this.content = requestDto.getContent();
-        this.star = requestDto.getStar();
+        this.content = content;
         this.imgUrl = imgUrl;
     }
 
     public void communityReviewUpdate(ReviewRequestDto requestDto,String imgUrl){
         this.content = requestDto.getContent();
-        this.star = requestDto.getStar();
         this.imgUrl = imgUrl;
     }
 

@@ -5,7 +5,10 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
+import com.sparta.daengtionary.domain.community.CommunityReview;
+import com.sparta.daengtionary.domain.community.community.CommunityReviewRepository;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
+import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.dto.response.community.CommunityDetatilResponseDto;
 import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
@@ -37,6 +40,8 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
+
+    private final CommunityReviewRepository communityReviewRepository;
     private final String imgPath = "/map/image";
 
 
@@ -99,6 +104,20 @@ public class CommunityService {
             comImgs.add(i.getCommunityImg());
         }
 
+        List<CommunityReview> reviews = communityReviewRepository.findAllByCommunity(community);
+        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+
+        for(CommunityReview i : reviews){
+            reviewResponseDtos.add(
+                        ReviewResponseDto.builder()
+                                .reviewNo(i.getCommunityReviewNo())
+                                .nick(i.getMember().getNick())
+                                .content(i.getContent())
+                                .imgUrl(i.getImgUrl())
+                                .build()
+            );
+        }
+
         return responseBodyDto.success(
                 CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
@@ -107,6 +126,7 @@ public class CommunityService {
                         .content(community.getContent())
                         .view(community.getView())
                         .imgList(comImgs)
+                        .reviewList(reviewResponseDtos)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build(), "조회 성공"

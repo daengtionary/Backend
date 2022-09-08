@@ -22,4 +22,12 @@ public class ReviewResponseDto {
         this.imgUrl = imgUrl;
     }
 
+    @Builder
+    public ReviewResponseDto(Long reviewNo, String nick, String content,  String imgUrl){
+        this.reviewNo = reviewNo;
+        this.nick = nick;
+        this.content = content;
+        this.imgUrl = imgUrl;
+    }
+
 }
