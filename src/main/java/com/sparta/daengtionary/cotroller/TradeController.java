@@ -1,6 +1,8 @@
 package com.sparta.daengtionary.cotroller;
 
+import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
+import com.sparta.daengtionary.service.TradeReviewService;
 import com.sparta.daengtionary.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +18,7 @@ import java.util.List;
 public class TradeController {
 
     private final TradeService tradeService;
+    private final TradeReviewService tradeReviewService;
 
     @PostMapping("/create")
     public ResponseEntity<?> createTrade(@RequestPart(value = "data")TradeRequestDto requestDto,
@@ -41,6 +44,24 @@ public class TradeController {
     @DeleteMapping("/{tradeNo}")
     public ResponseEntity<?> deleteTrade(@PathVariable Long tradeNo){
         return tradeService.tradeDelete(tradeNo);
+    }
+
+    @PostMapping("/review/create/{tradeNo}")
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
+                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long tradeNo){
+        return tradeReviewService.createTradeReview(tradeNo,requestDto,multipartFile);
+    }
+
+    @PatchMapping("/review/{tradeNo}/{reviewNo}")
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
+                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long tradeNo,
+                                              @PathVariable Long reviewNo){
+        return tradeReviewService.updateTradeReview(tradeNo,reviewNo,requestDto,multipartFile);
+    }
+
+    @DeleteMapping("/review/{tradeNo}/{reviewNo}")
+    public ResponseEntity<?> deleteRoomReview(@PathVariable Long tradeNo,@PathVariable Long reviewNo){
+        return tradeReviewService.deleteTradeReview(tradeNo,reviewNo);
     }
 
 }
