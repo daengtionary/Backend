@@ -51,7 +51,4 @@ public class TradeReview extends Timestamped {
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
     }
-
-
-
 }

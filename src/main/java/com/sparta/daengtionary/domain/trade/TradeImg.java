@@ -22,7 +22,8 @@ public class TradeImg {
     private String tradeImg;
 
     @Builder
-    public TradeImg(Trade trade,String tradeImg){
+    public TradeImg(Long tradeImgNo, Trade trade,String tradeImg){
+        this.tradeImgNo = tradeImgNo;
         this.trade = trade;
         this.tradeImg = tradeImg;
     }
