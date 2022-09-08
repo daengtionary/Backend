@@ -9,4 +9,5 @@ public class DogRequestDto {
     private String breed;
     private Gender gender;
     private Float weight;
+    private String image;
 }

@@ -6,7 +6,6 @@ import java.util.List;
 
 @Getter
 public class MapPutRequestDto {
-    private Long memberNo;
     private String title;
     private String category;
     private String content;

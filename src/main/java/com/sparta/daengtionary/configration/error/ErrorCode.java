@@ -40,11 +40,12 @@ public enum ErrorCode {
     MAP_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"NOT_FOUND","해당 게시물을 찾을 수 없습니다."),
     MAP_DUPLICATE_TITLE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","중복된 제목이거나 주소입니다."),
     MAP_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인의 게시글이 아닙니다."),
+    MAP_WRONG_ROLE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","게시글은 사업자 회원만 작성 가능합니다."),
     MAP_WRONG_INPUT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","비어있는 항목을 채워주세요"),
 
 
     //댓글
-
+    REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"NOT_FOUND","해당 게시물을 찾을 수 없습니다."),
 
     //챗팅
 
@@ -53,6 +54,7 @@ public enum ErrorCode {
     WRONG_INPUT_IMAGE(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","이미지는 반드시 있어야 됩니다."),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","이미지 업로드에 실패했습니다"),
     WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","지원하지 않는 파일 형식입니다."),
+    WRONG_IMAGE_PATH(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","경로가 지정되지 않았습니다"),
 
 
     // 반려견

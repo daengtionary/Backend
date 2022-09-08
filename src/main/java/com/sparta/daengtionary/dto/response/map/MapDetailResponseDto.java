@@ -1,6 +1,7 @@
-package com.sparta.daengtionary.dto.response;
+package com.sparta.daengtionary.dto.response.map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MapDetailResponseDto {
     private Long mapNo;
-    private MemberResponseDto member;
+    private String nick;
     private String title;
     private String address;
     private String category;
@@ -21,6 +22,7 @@ public class MapDetailResponseDto {
     private int view;
     private List<String> imgUrls;
     private List<String> mapInfo;
+    private List<ReviewResponseDto> mapReviewList;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -28,10 +30,10 @@ public class MapDetailResponseDto {
 
 
     @Builder
-    public MapDetailResponseDto(Long mapNo, MemberResponseDto member, String title, String address, String category,
-                                String content, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
+    public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
+                                String content, List<ReviewResponseDto> mapReviewList, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
         this.mapNo = mapNo;
-        this.member = member;
+        this.nick = nick;
         this.title = title;
         this.address = address;
         this.category = category;
@@ -40,6 +42,7 @@ public class MapDetailResponseDto {
         this.view = view;
         this.imgUrls = imgUrls;
         this.mapInfo = mapInfo;
+        this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
         this.moditiedAt = moditiedAt;
     }

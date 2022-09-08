@@ -43,45 +43,71 @@ public class AwsS3UploadService {
 
 
     @PostConstruct
-    public AmazonS3Client amazonS3Client(){
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey,secretKey);
+    public AmazonS3Client amazonS3Client() {
+        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
         return (AmazonS3Client) AmazonS3ClientBuilder.standard()
                 .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
-
-    public List<String> upload(List<MultipartFile> multipartFiles){
+///map/image
+    public List<String> uploadListImg(List<MultipartFile> multipartFiles,String path) {
         List<String> imgUrlList = new ArrayList<>();
+        vaildatePath(path);
 
-        for(MultipartFile file : multipartFiles){
+        for (MultipartFile file : multipartFiles) {
             String fileName = createFileName(file.getOriginalFilename());
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setContentLength(file.getSize());
             objectMetadata.setContentType(file.getContentType());
 
-            try(InputStream inputStream = file.getInputStream()){
-                amazonS3.putObject(new PutObjectRequest(bucket+"/map/image",fileName,inputStream,objectMetadata)
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3.getUrl(bucket+"/map/image",fileName).toString());
-            }catch (IOException e){
+                imgUrlList.add(amazonS3.getUrl(bucket + path, fileName).toString());
+            } catch (IOException e) {
                 throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
             }
         }
         return imgUrlList;
     }
+//
+    public String uploadImage(MultipartFile multipartFile,String path) {
+        String image = "";
+        vaildatePath(path);
 
-    public void deleteFile(String fileName){
-        DeleteObjectRequest request = new DeleteObjectRequest(bucket,fileName);
+        String fileName = createFileName(multipartFile.getOriginalFilename());
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(multipartFile.getSize());
+        objectMetadata.setContentType(multipartFile.getContentType());
+
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+            image = amazonS3.getUrl(bucket + path, fileName).toString();
+        } catch (IOException e) {
+            throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
+        }
+        return image;
+    }
+
+    public void vaildatePath(String path){
+        if(path == null){
+            throw new CustomException(ErrorCode.WRONG_IMAGE_PATH);
+        }
+    }
+
+    public void deleteFile(String fileName) {
+        DeleteObjectRequest request = new DeleteObjectRequest(bucket, fileName);
         amazonS3.deleteObject(request);
     }
 
 
-    private String createFileName(String fileName){
+    private String createFileName(String fileName) {
         return UUID.randomUUID().toString().concat(getFileExtension(fileName));
     }
 
-    private String getFileExtension(String fileName){
+    private String getFileExtension(String fileName) {
         if (fileName.length() == 0) {
             throw new CustomException(ErrorCode.WRONG_INPUT_IMAGE);
         }
@@ -94,7 +120,7 @@ public class AwsS3UploadService {
         fileValidate.add(".JPEG");
         fileValidate.add(".PNG");
         String idxFileName = fileName.substring(fileName.lastIndexOf("."));
-        if(!fileValidate.contains(idxFileName)){
+        if (!fileValidate.contains(idxFileName)) {
             throw new CustomException(ErrorCode.WRONG_IMAGE_FORMAT);
         }
         return fileName.substring(fileName.lastIndexOf("."));
