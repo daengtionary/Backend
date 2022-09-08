@@ -1,5 +1,4 @@
-package com.sparta.daengtionary.domain.map;
-
+package com.sparta.daengtionary.domain.community;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
@@ -15,18 +14,19 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class MapReview extends Timestamped {
+public class CommunityReview extends Timestamped {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mapReviewNo;
+    private Long communityReviewNo;
 
-    @JoinColumn(name = "memberNo", nullable = false)
+    @JoinColumn(name = "memberNo",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "mapNo",nullable = false)
+    @JoinColumn(name = "communityNo",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private Map map;
+    private Community community;
 
     @Column(nullable = false)
     private String content;
@@ -38,23 +38,26 @@ public class MapReview extends Timestamped {
     private String imgUrl;
 
     @Builder
-    public MapReview(Member member,Map map, String content,int star,String imgUrl){
+    public CommunityReview(Member member, Community community, ReviewRequestDto requestDto,
+                           String imgUrl){
         this.member = member;
-        this.map = map;
-        this.content = content;
-        this.star = star;
-        this.imgUrl = imgUrl;
-    }
-
-    public void mapReviewUpdate(ReviewRequestDto requestDto, String imgUrl){
+        this.community = community;
         this.content = requestDto.getContent();
         this.star = requestDto.getStar();
         this.imgUrl = imgUrl;
     }
 
-    public void validateMember(Member member) {
-        if (!this.member.equals(member)) {
+    public void communityReviewUpdate(ReviewRequestDto requestDto,String imgUrl){
+        this.content = requestDto.getContent();
+        this.star = requestDto.getStar();
+        this.imgUrl = imgUrl;
+    }
+
+    public void validateMember(Member member){
+        if(!this.member.equals(member)){
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
     }
+
+
 }

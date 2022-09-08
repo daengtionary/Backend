@@ -3,7 +3,7 @@ package com.sparta.daengtionary.cotroller;
 
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
-import com.sparta.daengtionary.dto.request.MapReviewRequestDto;
+import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.service.MapReviewService;
 import com.sparta.daengtionary.service.MapService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +27,7 @@ public class HospitalController {
         return mapService.createMap(mapRequestDto, mapImgs);
     }
 
-    @PostMapping()
+    @GetMapping()
     public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
                                                Pageable pageable ) {
         String category = "hospital";
@@ -52,13 +52,13 @@ public class HospitalController {
     }
 
     @PostMapping("/review/create/{mapNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data")MapReviewRequestDto requestDto,
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
                                           @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo){
         return mapReviewService.createMapReview(mapNo,requestDto,multipartFile);
     }
 
     @PatchMapping("/review/{mapNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") MapReviewRequestDto requestDto,
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo,
                                              @PathVariable Long reviewNo){
         return mapReviewService.updateMapReview(mapNo,reviewNo,requestDto,multipartFile);

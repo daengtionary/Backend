@@ -12,7 +12,7 @@ import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.response.map.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.map.MapResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
-import com.sparta.daengtionary.dto.response.map.MapReviewResponseDto;
+import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.map.MapImgRepository;
 import com.sparta.daengtionary.repository.map.MapInfoRepository;
@@ -105,10 +105,6 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMapByCategory(String category,String direction ,String address, Pageable pageable) {
-//        if (orderBy.equals("popular")) {
-//            PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
-//            return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
-//        }
 
         PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction,address, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
@@ -133,12 +129,12 @@ public class MapService {
             infoList.add(i.getMapInfo());
         }
         List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
-        List<MapReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
 
         for (MapReview i : reviews) {
             reviewResponseDtos.add(
-                    MapReviewResponseDto.builder()
-                            .mapReviewNo(i.getMapReviewNo())
+                    ReviewResponseDto.builder()
+                            .reviewNo(i.getMapReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
                             .star(i.getStar())

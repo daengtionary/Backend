@@ -10,8 +10,8 @@ import com.sparta.daengtionary.dto.response.community.CommunityDetatilResponseDt
 import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
-import com.sparta.daengtionary.repository.community.CommunityImgRepository;
-import com.sparta.daengtionary.repository.community.CommunityRepository;
+import com.sparta.daengtionary.domain.community.community.CommunityImgRepository;
+import com.sparta.daengtionary.domain.community.community.CommunityRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
