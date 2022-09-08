@@ -5,8 +5,10 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.domain.trade.Trade;
 import com.sparta.daengtionary.domain.trade.TradeImg;
+import com.sparta.daengtionary.domain.trade.TradeReview;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -14,6 +16,7 @@ import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.trade.TradeImgRepository;
 import com.sparta.daengtionary.repository.trade.TradeRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
+import com.sparta.daengtionary.repository.trade.TradeReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +38,8 @@ public class TradeService {
     private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
+
+    private final TradeReviewRepository tradeReviewRepository;
 
     private final MapRepositorySupport mapRepositorySupport;
     private final String imgPath = "/map/image";
@@ -99,6 +104,20 @@ public class TradeService {
             traImgs.add(i.getTradeImg());
         }
 
+        List<TradeReview> reviews = tradeReviewRepository.findAllByTrade(trade);
+        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+
+        for(TradeReview i : reviews){
+            reviewResponseDtos.add(
+                    ReviewResponseDto.builder()
+                            .reviewNo(i.getTradeReviewNo())
+                            .nick(i.getMember().getNick())
+                            .content(i.getContent())
+                            .imgUrl(i.getImgUrl())
+                            .build()
+            );
+        }
+
         return responseBodyDto.success(
                   TradeDetailResponseDto.builder()
                           .tradeNo(trade.getTradeNo())
@@ -109,6 +128,7 @@ public class TradeService {
                           .view(trade.getView())
                           .status(trade.getStatus())
                           .tradeImgUrl(traImgs)
+                          .reviewList(reviewResponseDtos)
                           .createdAt(trade.getCreatedAt())
                           .modifiedAt(trade.getModifiedAt())
                           .build(),"조회 성공"

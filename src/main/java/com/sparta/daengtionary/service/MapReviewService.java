@@ -33,11 +33,11 @@ public class MapReviewService {
     private final String imgPath = "/map/review";
 
     @Transactional
-    public ResponseEntity<?> createMapReview(Long mapNo, ReviewRequestDto requestDto, MultipartFile requestImgUrl) {
+    public ResponseEntity<?> createMapReview(Long mapNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = mapService.validateMap(mapNo);
-        validateFile(requestImgUrl);
-        String reviewImg = s3UploadService.uploadImage(requestImgUrl, imgPath);
+        validateFile(multipartFile);
+        String reviewImg = s3UploadService.uploadImage(multipartFile, imgPath);
 
         MapReview mapReview = MapReview.builder()
                 .member(member)
