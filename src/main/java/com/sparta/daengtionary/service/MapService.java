@@ -51,7 +51,7 @@ public class MapService {
         //제목과 업종, 주소가 같다면 처리 불가
 //        isDuplicateCheck(mapRequestDto); 실제 서비스 시작시에 실행
         validateFile(multipartFiles);
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
+        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         Map map = Map.builder()
                 .member(member)
@@ -104,13 +104,13 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, Pageable pageable) {
-        if (orderBy.equals("popular")) {
-            PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
-            return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
-        }
+    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, String address, Pageable pageable) {
+//        if (orderBy.equals("popular")) {
+//            PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
+//            return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
+//        }
 
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, address, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
 
     }
@@ -135,7 +135,7 @@ public class MapService {
         List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
         List<MapReviewResponseDto> reviewResponseDtos = new ArrayList<>();
 
-        for(MapReview i : reviews){
+        for (MapReview i : reviews) {
             reviewResponseDtos.add(
                     MapReviewResponseDto.builder()
                             .mapReviewNo(i.getMapReviewNo())
@@ -196,7 +196,7 @@ public class MapService {
         }
         mapImgRepository.deleteAll(temp);
 
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
+        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         List<MapImg> mapImgList = new ArrayList<>();
         for (String img : mapImgs) {
@@ -248,7 +248,7 @@ public class MapService {
     }
 
     @Transactional
-    public void mapViewUpdate(Long mapNo){
+    public void mapViewUpdate(Long mapNo) {
         Map map = validateMap(mapNo);
         map.viewUpdate();
     }
@@ -276,9 +276,9 @@ public class MapService {
         );
     }
 
-    private void validateMemberRole(Member member){
+    private void validateMemberRole(Member member) {
         String temp = String.valueOf(member.getRole());
-        if(!temp.equals("BUSINESS")){
+        if (!temp.equals("BUSINESS")) {
             throw new CustomException(ErrorCode.MAP_WRONG_ROLE);
         }
     }

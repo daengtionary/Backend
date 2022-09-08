@@ -20,11 +20,11 @@ public class MapReview extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mapReviewNo;
 
-    @JoinColumn(name = "member_id", nullable = false)
+    @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "map_id",nullable = false)
+    @JoinColumn(name = "mapNo",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;
 
@@ -57,6 +57,4 @@ public class MapReview extends Timestamped {
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
     }
-
-
 }

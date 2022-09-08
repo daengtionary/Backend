@@ -14,7 +14,7 @@ public class TradeImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tradeImgNo;
 
-    @JoinColumn(name = "trade_id", nullable = false)
+    @JoinColumn(name = "tradeNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Trade trade;
 
