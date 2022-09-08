@@ -86,9 +86,9 @@ public class TradeService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getTradeSort(String sort, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtos = mapRepositorySupport.findAllByTrade(pageable);
+        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(pageable);
 
-        return responseBodyDto.success(responseDtos, "조회 완료");
+        return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
@@ -102,10 +102,10 @@ public class TradeService {
         }
 
         List<TradeReview> reviews = tradeReviewRepository.findAllByTrade(trade);
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
 
         for(TradeReview i : reviews){
-            reviewResponseDtos.add(
+            reviewResponseDtoList.add(
                     ReviewResponseDto.builder()
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
@@ -125,7 +125,7 @@ public class TradeService {
                           .view(trade.getView())
                           .status(trade.getStatus())
                           .tradeImgUrl(traImgs)
-                          .reviewList(reviewResponseDtos)
+                          .reviewList(reviewResponseDtoList)
                           .createdAt(trade.getCreatedAt())
                           .modifiedAt(trade.getModifiedAt())
                           .build(),"조회 성공"
@@ -133,7 +133,7 @@ public class TradeService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTradeByMyPost() {
+    public ResponseEntity<?> getMyPostByTrade() {
         Member member = tokenProvider.getMemberFromAuthentication();
 
         List<Trade> tradeList = tradeRepository.findByMember(member);
@@ -154,7 +154,7 @@ public class TradeService {
             );
         }
 
-        return responseBodyDto.success(tradeResponseDtoList, "조회 완료");
+        return responseBodyDto.success(tradeResponseDtoList, "조회 성공");
     }
 
     @Transactional

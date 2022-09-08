@@ -6,15 +6,17 @@ import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.community.CommunityReview;
-import com.sparta.daengtionary.domain.community.community.CommunityReviewRepository;
+import com.sparta.daengtionary.domain.trade.Trade;
+import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
+import com.sparta.daengtionary.repository.community.CommunityReviewRepository;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.dto.response.community.CommunityDetatilResponseDto;
 import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
-import com.sparta.daengtionary.domain.community.community.CommunityImgRepository;
-import com.sparta.daengtionary.domain.community.community.CommunityRepository;
+import com.sparta.daengtionary.repository.community.CommunityImgRepository;
+import com.sparta.daengtionary.repository.community.CommunityRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -30,26 +32,20 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CommunityService {
-
     private final AwsS3UploadService s3UploadService;
-
     private final ResponseBodyDto responseBodyDto;
-
     private final MapRepositorySupport mapRepositorySupport;
-
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
-
     private final CommunityReviewRepository communityReviewRepository;
     private final String imgPath = "/map/image";
-
 
     @Transactional
     public ResponseEntity<?> createCommunity(CommunityRequestDto requestDto, List<MultipartFile> multipartFileList) {
         Member member = tokenProvider.getMemberFromAuthentication();
         validateFile(multipartFileList);
-        List<String> communityImg = s3UploadService.uploadListImg(multipartFileList,imgPath);
+        List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
 
         Community community = Community.builder()
                 .member(member)
@@ -81,17 +77,16 @@ public class CommunityService {
                         .imgList(communityImg)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
-                        .build()
-                , "커뮤니티 생성 완료"
+                        .build(),
+                "커뮤니티 생성 완료"
         );
-
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getCommunitySort(String sort, Pageable pageable) {
-        PageImpl<CommunityResponseDto> responseDtos = mapRepositorySupport.findAllByCommunity(pageable);
+        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(pageable);
 
-        return responseBodyDto.success(responseDtos, "조회 완료");
+        return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
@@ -105,16 +100,16 @@ public class CommunityService {
         }
 
         List<CommunityReview> reviews = communityReviewRepository.findAllByCommunity(community);
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
 
-        for(CommunityReview i : reviews){
-            reviewResponseDtos.add(
-                        ReviewResponseDto.builder()
-                                .reviewNo(i.getCommunityReviewNo())
-                                .nick(i.getMember().getNick())
-                                .content(i.getContent())
-                                .imgUrl(i.getImgUrl())
-                                .build()
+        for (CommunityReview i : reviews) {
+            reviewResponseDtoList.add(
+                    ReviewResponseDto.builder()
+                            .reviewNo(i.getCommunityReviewNo())
+                            .nick(i.getMember().getNick())
+                            .content(i.getContent())
+                            .imgUrl(i.getImgUrl())
+                            .build()
             );
         }
 
@@ -126,11 +121,35 @@ public class CommunityService {
                         .content(community.getContent())
                         .view(community.getView())
                         .imgList(comImgs)
-                        .reviewList(reviewResponseDtos)
+                        .reviewList(reviewResponseDtoList)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build(), "조회 성공"
         );
+    }
+    
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getMyPostByCommunity() {
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        List<Community> communityList = communityRepository.findByMember(member);
+        List<CommunityResponseDto> communityResponseDtoList = new ArrayList<>();
+
+        for (Community community : communityList) {
+            communityResponseDtoList.add(
+                    CommunityResponseDto.builder()
+                            .communityNo(community.getCommunityNo())
+                            .nick(community.getMember().getNick())
+                            .title(community.getTitle())
+                            .view(community.getView())
+                            .communityImg(community.getCommunityImgs().get(0).getCommunityImg())
+                            .createdAt(community.getCreatedAt())
+                            .modifiedAt(community.getModifiedAt())
+                            .build()
+            );
+        }
+        
+        return responseBodyDto.success(communityResponseDtoList, "조회 성공");
     }
 
     @Transactional
@@ -146,7 +165,7 @@ public class CommunityService {
         }
         communityImgRepository.deleteAll(deleteImg);
 
-        List<String> comImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
+        List<String> comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         List<CommunityImg> saveImg = new ArrayList<>();
         for (String i : comImgs) {
@@ -187,12 +206,12 @@ public class CommunityService {
         return responseBodyDto.success("삭제 성공");
     }
 
+
     @Transactional
-    public void communityViewUpdate(Long communityNo){
+    public void communityViewUpdate(Long communityNo) {
         Community community = validateCommunity(communityNo);
         community.viewUpdate();
     }
-
 
     @Transactional(readOnly = true)
     public Community validateCommunity(Long communityNo) {
@@ -206,6 +225,4 @@ public class CommunityService {
             throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
         }
     }
-
-
 }

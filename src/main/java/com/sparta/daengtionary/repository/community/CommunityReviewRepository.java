@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.domain.community.community;
+package com.sparta.daengtionary.repository.community;
 
 import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityReview;

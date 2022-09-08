@@ -107,7 +107,7 @@ public class MapService {
     public ResponseEntity<?> getAllMapByCategory(String category,String direction ,String address, Pageable pageable) {
 
         PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction,address, pageable);
-        return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
+        return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
 
     }
 
@@ -129,10 +129,10 @@ public class MapService {
             infoList.add(i.getMapInfo());
         }
         List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
-        List<ReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
 
         for (MapReview i : reviews) {
-            reviewResponseDtos.add(
+            reviewResponseDtoList.add(
                     ReviewResponseDto.builder()
                             .reviewNo(i.getMapReviewNo())
                             .nick(i.getMember().getNick())
@@ -155,7 +155,7 @@ public class MapService {
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(infoList)
-                        .mapReviewList(reviewResponseDtos)
+                        .mapReviewList(reviewResponseDtoList)
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
                         .build(),
