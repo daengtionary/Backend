@@ -5,7 +5,7 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityReview;
-import com.sparta.daengtionary.domain.community.community.CommunityReviewRepository;
+import com.sparta.daengtionary.repository.community.CommunityReviewRepository;
 import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;

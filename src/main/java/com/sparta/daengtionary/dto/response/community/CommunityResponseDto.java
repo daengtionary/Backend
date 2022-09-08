@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 public class CommunityResponseDto {
-
     private Long communityNo;
     private String nick;
     private String title;
@@ -18,12 +17,13 @@ public class CommunityResponseDto {
     private String communityImg;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
-
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
-    private  LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
+
+
     @Builder
-    public CommunityResponseDto(Long communityNo,String nick,String title, int view, String communityImg,
-                                LocalDateTime createdAt, LocalDateTime modifiedAt){
+    public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg,
+                                LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
         this.title = title;
@@ -31,6 +31,5 @@ public class CommunityResponseDto {
         this.communityImg = communityImg;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-
     }
 }

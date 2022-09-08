@@ -2,6 +2,7 @@ package com.sparta.daengtionary.cotroller;
 
 import com.sparta.daengtionary.dto.request.DogRequestDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
+import com.sparta.daengtionary.service.CommunityService;
 import com.sparta.daengtionary.service.MypageService;
 import com.sparta.daengtionary.service.TradeService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
+    private final CommunityService communityService;
     private final TradeService tradeService;
 
     @GetMapping("/info")
@@ -21,9 +23,14 @@ public class MypageController {
         return mypageService.getMemberInfo();
     }
 
-    @GetMapping("/trade/mypost")
-    public ResponseEntity<?> getTradeByMyPost() {
-        return tradeService.getTradeByMyPost();
+    @GetMapping("/mypost/community")
+    public ResponseEntity<?> getMyPostByCommunity() {
+        return communityService.getMyPostByCommunity();
+    }
+
+    @GetMapping("/mypost/trade")
+    public ResponseEntity<?> getMyPostByTrade() {
+        return tradeService.getMyPostByTrade();
     }
 
     @PatchMapping("/nick")
