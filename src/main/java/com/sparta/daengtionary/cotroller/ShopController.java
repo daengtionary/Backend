@@ -20,16 +20,16 @@ public class ShopController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoom(@RequestPart(value = "data") MapRequestDto mapRequestDto,
-                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
+                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         return mapService.createMap(mapRequestDto, mapImgs);
     }
 
 
     @PostMapping
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String orderby,@RequestParam String address,
-                                               Pageable pageable ) {
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
+                                                Pageable pageable) {
         String category = "shop";
-        return mapService.getAllMapByCategory(category, orderby,address, pageable);
+        return mapService.getAllMapByCategory(category,direction ,address, pageable);
     }
 
     @GetMapping("/{mapNo}")
@@ -41,8 +41,8 @@ public class ShopController {
 
     @PatchMapping("/{mapNo}")
     public ResponseEntity<?> updateRoom(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
-                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
-        return mapService.mapUpdate(requestDto, mapNo,multipartFiles);
+                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+        return mapService.mapUpdate(requestDto, mapNo, multipartFiles);
     }
 
     @DeleteMapping("/{mapNo}")
