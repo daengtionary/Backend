@@ -1,7 +1,8 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.community;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
@@ -44,6 +45,9 @@ public class Community extends Timestamped {
     public void updateCommunity(CommunityRequestDto requestDto){
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+    }
+    public void viewUpdate() {
+        this.view += 1;
     }
 
     public void validateMember(Member member) {

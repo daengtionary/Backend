@@ -2,16 +2,16 @@ package com.sparta.daengtionary.service;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
-import com.sparta.daengtionary.domain.Community;
-import com.sparta.daengtionary.domain.CommunityImg;
+import com.sparta.daengtionary.domain.community.Community;
+import com.sparta.daengtionary.domain.community.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
-import com.sparta.daengtionary.dto.response.CommunityResponseDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
+import com.sparta.daengtionary.dto.response.community.CommunityDetatilResponseDto;
+import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
-import com.sparta.daengtionary.repository.CommunityImgRepository;
-import com.sparta.daengtionary.repository.CommunityRepository;
-import com.sparta.daengtionary.repository.MemberRepository;
+import com.sparta.daengtionary.jwt.TokenProvider;
+import com.sparta.daengtionary.repository.community.CommunityImgRepository;
+import com.sparta.daengtionary.repository.community.CommunityRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -35,15 +35,13 @@ public class CommunityService {
     private final MapRepositorySupport mapRepositorySupport;
 
     private final CommunityRepository communityRepository;
-
+    private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
-
-    private final MemberRepository memberRepository;
 
 
     @Transactional
     public ResponseEntity<?> createCommunity(CommunityRequestDto requestDto, List<MultipartFile> multipartFileList) {
-        Member member = validateMember(requestDto.getMemberNo());
+        Member member = tokenProvider.getMemberFromAuthentication();
         validateFile(multipartFileList);
         List<String> communityImg = s3UploadService.upload(multipartFileList);
 
@@ -68,12 +66,13 @@ public class CommunityService {
         communityImgRepository.saveAll(communityImgs);
 
 
-        return responseBodyDto.success(CommunityResponseDto.builder()
+        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
+                        .nick(member.getNick())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())
-                        .communityImgUrl(communityImg)
+                        .imgList(communityImg)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build()
@@ -100,20 +99,13 @@ public class CommunityService {
         }
 
         return responseBodyDto.success(
-                CommunityResponseDto.builder()
+                CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
-                        .memberResponseDto(
-                                MemberResponseDto.builder()
-                                        .memberNo(community.getMember().getMemberNo())
-                                        .email(community.getMember().getEmail())
-                                        .role(community.getMember().getRole())
-                                        .nick(community.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(community.getMember().getNick())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())
-                        .communityImgUrl(comImgs)
+                        .imgList(comImgs)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())
                         .build(), "조회 성공"
@@ -121,53 +113,63 @@ public class CommunityService {
     }
 
     @Transactional
-    public ResponseEntity<?> communityUpdate(CommunityRequestDto requestDto,Long communityNo,List<MultipartFile> multipartFiles){
-        Member member = validateMember(requestDto.getMemberNo());
+    public ResponseEntity<?> communityUpdate(CommunityRequestDto requestDto, Long communityNo, List<MultipartFile> multipartFiles) {
+        Member member = tokenProvider.getMemberFromAuthentication();
         Community community = validateCommunity(communityNo);
         community.validateMember(member);
         validateFile(multipartFiles);
 
-        List<CommunityImg> deleteTemp = communityImgRepository.findAllByCommunity(community);
-        for(CommunityImg i : deleteTemp){
+        List<CommunityImg> deleteImg = communityImgRepository.findAllByCommunity(community);
+        for (CommunityImg i : deleteImg) {
             s3UploadService.deleteFile(i.getCommunityImg());
         }
-        communityImgRepository.deleteAll(deleteTemp);
+        communityImgRepository.deleteAll(deleteImg);
 
         List<String> comImgs = s3UploadService.upload(multipartFiles);
 
-        List<CommunityImg> saveTemp = new ArrayList<>();
-        for(String i : comImgs){
-            saveTemp.add(
+        List<CommunityImg> saveImg = new ArrayList<>();
+        for (String i : comImgs) {
+            saveImg.add(
                     CommunityImg.builder()
                             .community(community)
                             .communityImg(i)
                             .build()
             );
         }
-        communityImgRepository.saveAll(saveTemp);
+        communityImgRepository.saveAll(saveImg);
 
         community.updateCommunity(requestDto);
 
-        return responseBodyDto.success(CommunityResponseDto.builder()
-                        .communityNo(community.getCommunityNo())
-                        .title(community.getTitle())
-                        .content(community.getContent())
-                        .communityImgUrl(comImgs)
-                        .createdAt(community.getCreatedAt())
-                        .modifiedAt(community.getModifiedAt())
-                .build(),"수정 성공");
+        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
+                .communityNo(community.getCommunityNo())
+                .nick(member.getNick())
+                .title(community.getTitle())
+                .content(community.getContent())
+                .imgList(comImgs)
+                .createdAt(community.getCreatedAt())
+                .modifiedAt(community.getModifiedAt())
+                .build(), "수정 성공");
     }
 
     @Transactional
-    public ResponseEntity<?> communityDelete(Long communityNo, Long memberNo){
-        Member member = validateMember(memberNo);
+    public ResponseEntity<?> communityDelete(Long communityNo) {
+        Member member = tokenProvider.getMemberFromAuthentication();
         Community community = validateCommunity(communityNo);
         community.validateMember(member);
-        List<CommunityImg> comDelete = communityImgRepository.findAllByCommunity(community);
-        communityImgRepository.deleteAll(comDelete);
+        List<CommunityImg> deleteImg = communityImgRepository.findAllByCommunity(community);
+        for (CommunityImg i : deleteImg) {
+            s3UploadService.deleteFile(i.getCommunityImg());
+        }
+        communityImgRepository.deleteAll(deleteImg);
         communityRepository.delete(community);
-        
+
         return responseBodyDto.success("삭제 성공");
+    }
+
+    @Transactional
+    public void communityViewUpdate(Long communityNo){
+        Community community = validateCommunity(communityNo);
+        community.viewUpdate();
     }
 
 
@@ -182,12 +184,6 @@ public class CommunityService {
         if (multipartFiles == null) {
             throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
         }
-    }
-
-    private Member validateMember(Long memberNo) {
-        return memberRepository.findById(memberNo).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
-        );
     }
 
 

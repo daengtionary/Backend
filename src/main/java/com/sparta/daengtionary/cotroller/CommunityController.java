@@ -31,6 +31,7 @@ public class CommunityController {
 
     @GetMapping("/{comNo}")
     public ResponseEntity<?> getCommunity(@PathVariable Long comNo){
+        service.communityViewUpdate(comNo);
         return service.getCommunity(comNo);
     }
 
@@ -41,8 +42,8 @@ public class CommunityController {
     }
 
     @DeleteMapping("/{comNo}")
-    public ResponseEntity<?> deleteCommunity(@PathVariable Long comNo, @PathVariable Long memberNo){
-        return service.communityDelete(comNo,memberNo);
+    public ResponseEntity<?> deleteCommunity(@PathVariable Long comNo){
+        return service.communityDelete(comNo);
     }
 
 }

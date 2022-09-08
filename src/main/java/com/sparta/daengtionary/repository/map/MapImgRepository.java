@@ -1,7 +1,7 @@
-package com.sparta.daengtionary.repository;
+package com.sparta.daengtionary.repository.map;
 
-import com.sparta.daengtionary.domain.Map;
-import com.sparta.daengtionary.domain.MapImg;
+import com.sparta.daengtionary.domain.map.MapImg;
+import com.sparta.daengtionary.domain.map.Map;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

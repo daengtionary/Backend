@@ -1,9 +1,7 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.map;
 
 
 import lombok.*;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 
@@ -14,7 +12,7 @@ public class MapImg {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mapImgId;
+    private Long mapImgNo;
 
     @JoinColumn(name = "map_id",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,7 +22,7 @@ public class MapImg {
     private String mapImgUrl;
 
     @Builder
-    public MapImg(Map map,String mapImgUrl){
+    public MapImg(Map map, String mapImgUrl){
         this.map = map;
         this.mapImgUrl = mapImgUrl;
     }

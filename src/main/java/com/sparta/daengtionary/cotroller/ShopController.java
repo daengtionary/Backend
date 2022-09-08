@@ -19,33 +19,34 @@ public class ShopController {
     private final MapService mapService;
 
     @PostMapping("/create")
-    public ResponseEntity<?> createMap(@RequestPart(value = "data") MapRequestDto mapRequestDto,
+    public ResponseEntity<?> createRoom(@RequestPart(value = "data") MapRequestDto mapRequestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         return mapService.createMap(mapRequestDto, mapImgs);
     }
 
 
     @PostMapping
-    public ResponseEntity<?> getAllMapCategory(@RequestParam String orderby,
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String orderby,
                                                Pageable pageable ) {
         String category = "shop";
         return mapService.getAllMapByCategory(category, orderby, pageable);
     }
 
     @GetMapping("/{mapNo}")
-    public ResponseEntity<?> getMap(@PathVariable Long mapNo) {
+    public ResponseEntity<?> getRoom(@PathVariable Long mapNo) {
+        mapService.mapViewUpdate(mapNo);
         return mapService.getAllMap(mapNo);
     }
 
 
     @PatchMapping("/{mapNo}")
-    public ResponseEntity<?> updateMap(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
+    public ResponseEntity<?> updateRoom(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
         return mapService.mapUpdate(requestDto, mapNo,multipartFiles);
     }
 
     @DeleteMapping("/{mapNo}")
-    public ResponseEntity<?> deleteMap(@PathVariable Long mapNo, @RequestParam Long memberNo) {
-        return mapService.mapDelete(mapNo, memberNo);
+    public ResponseEntity<?> deleteRoom(@PathVariable Long mapNo) {
+        return mapService.mapDelete(mapNo);
     }
 }

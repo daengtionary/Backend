@@ -1,9 +1,9 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.map;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
-import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

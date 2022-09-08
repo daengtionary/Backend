@@ -3,16 +3,18 @@ package com.sparta.daengtionary.service;
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.*;
+import com.sparta.daengtionary.domain.map.Map;
+import com.sparta.daengtionary.domain.map.MapImg;
+import com.sparta.daengtionary.domain.map.MapInfo;
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
-import com.sparta.daengtionary.dto.response.MapDetailResponseDto;
-import com.sparta.daengtionary.dto.response.MapResponseDto;
-import com.sparta.daengtionary.dto.response.MemberResponseDto;
+import com.sparta.daengtionary.dto.response.map.MapDetailResponseDto;
+import com.sparta.daengtionary.dto.response.map.MapResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
-import com.sparta.daengtionary.repository.MapImgRepository;
-import com.sparta.daengtionary.repository.MapInfoRepository;
-import com.sparta.daengtionary.repository.MapRepository;
-import com.sparta.daengtionary.repository.MemberRepository;
+import com.sparta.daengtionary.jwt.TokenProvider;
+import com.sparta.daengtionary.repository.map.MapImgRepository;
+import com.sparta.daengtionary.repository.map.MapInfoRepository;
+import com.sparta.daengtionary.repository.map.MapRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -31,16 +33,17 @@ public class MapService {
     private final MapRepository mapRepository;
     private final MapInfoRepository mapInfoRepository;
     private final MapImgRepository mapImgRepository;
-    private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
-
+    private final TokenProvider tokenProvider;
     private final MapRepositorySupport mapRepositorySupport;
-
     private final AwsS3UploadService s3UploadService;
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
-        Member member = validateMember(mapRequestDto.getMemberNo());
+        Member member = tokenProvider.getMemberFromAuthentication();
+        validateMemberRole(member);
+        //제목과 업종, 주소가 같다면 처리 불가
+//        isDuplicateCheck(mapRequestDto); 실제 서비스 시작시에 실행
         validateFile(multipartFiles);
         List<String> mapImgs = s3UploadService.upload(multipartFiles);
 
@@ -80,7 +83,9 @@ public class MapService {
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
+                        .nick(member.getNick())
                         .category(map.getCategory())
+                        .content(map.getContent())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .mapInfo(mapRequestDto.getMapInfos())
@@ -125,14 +130,7 @@ public class MapService {
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
-                        .member(
-                                MemberResponseDto.builder()
-                                        .memberNo(map.getMember().getMemberNo())
-                                        .email(map.getMember().getEmail())
-                                        .role(map.getMember().getRole())
-                                        .nick(map.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(map.getMember().getNick())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .category(map.getCategory())
@@ -150,7 +148,7 @@ public class MapService {
 
     @Transactional
     public ResponseEntity<?> mapUpdate(MapPutRequestDto requestDto, Long mapNo, List<MultipartFile> multipartFiles) {
-        Member member = validateMember(requestDto.getMemberNo());
+        Member member = tokenProvider.getMemberFromAuthentication();
         Map map = validateMap(mapNo);
         map.validateMember(member);
         validateFile(multipartFiles);
@@ -194,14 +192,7 @@ public class MapService {
 
         return responseBodyDto.success(MapDetailResponseDto.builder()
                         .mapNo(map.getMapNo())
-                        .member(
-                                MemberResponseDto.builder()
-                                        .memberNo(map.getMember().getMemberNo())
-                                        .email(map.getMember().getEmail())
-                                        .role(map.getMember().getRole())
-                                        .nick(map.getMember().getNick())
-                                        .build()
-                        )
+                        .nick(map.getMember().getNick())
                         .title(map.getTitle())
                         .address(map.getAddress())
                         .category(map.getCategory())
@@ -219,17 +210,26 @@ public class MapService {
     }
 
     @Transactional
-    public ResponseEntity<?> mapDelete(Long mapNo, Long memberNo) {
-        Member member = validateMember(memberNo);
+    public ResponseEntity<?> mapDelete(Long mapNo) {
+        Member member = tokenProvider.getMemberFromAuthentication();
         Map map = validateMap(mapNo);
         map.validateMember(member);
         List<MapInfo> infoDelete = mapInfoRepository.findAllByMap(map);
         mapInfoRepository.deleteAll(infoDelete);
         List<MapImg> imgDelete = mapImgRepository.findAllByMap(map);
+        for (MapImg i : imgDelete) {
+            s3UploadService.deleteFile(i.getMapImgUrl());
+        }
         mapImgRepository.deleteAll(imgDelete);
         mapRepository.delete(map);
 
         return responseBodyDto.success("삭제 완료");
+    }
+
+    @Transactional
+    public void mapViewUpdate(Long mapNo){
+        Map map = validateMap(mapNo);
+        map.viewUpdate();
     }
 
     private void validateFile(List<MultipartFile> multipartFiles) {
@@ -240,8 +240,10 @@ public class MapService {
 
 
     @Transactional(readOnly = true)
-    public void isDuplicateCheck(String title, String address) {
-        if (mapRepository.existsByTitle(title) && mapRepository.existsByAddress(address)) {
+    public void isDuplicateCheck(MapRequestDto requestDto) {
+        if (mapRepository.existsByTitle(requestDto.getTitle()) &&
+                mapRepository.existsByAddress(requestDto.getAddress()) &&
+                mapRepository.existsByCategory(requestDto.getCategory())) {
             throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
         }
     }
@@ -253,9 +255,11 @@ public class MapService {
         );
     }
 
-    private Member validateMember(Long memberNo) {
-        return memberRepository.findById(memberNo).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
-        );
+    private void validateMemberRole(Member member){
+        String temp = String.valueOf(member.getRole());
+        if(!temp.equals("BUSINESS")){
+            throw new CustomException(ErrorCode.MAP_WRONG_ROLE);
+        }
     }
+
 }

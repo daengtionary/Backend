@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.dto.response;
+package com.sparta.daengtionary.dto.response.community;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
@@ -10,28 +10,28 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class CommunityResponseDto {
+public class CommunityDetatilResponseDto {
     private Long communityNo;
-    private MemberResponseDto memberResponseDto;
+    private String nick;
     private String title;
     private String content;
     private int view;
-    private List<String> communityImgUrl;
+    private List<String> imgList;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime modifiedAt;
 
     @Builder
-    public CommunityResponseDto(Long communityNo, String title, String content, int view,
-                                MemberResponseDto memberResponseDto ,List<String> communityImgUrl, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view,
+                                       String nick , List<String> imgList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
-        this.memberResponseDto = memberResponseDto;
+        this.nick = nick;
         this.title = title;
         this.content = content;
         this.view = view;
-        this.communityImgUrl = communityImgUrl;
-        this.createAt = createdAt;
+        this.imgList = imgList;
+        this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
 }
