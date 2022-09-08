@@ -5,6 +5,7 @@ import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -43,6 +44,10 @@ public class Member extends Timestamped {
         this.nick = nick;
         this.role = role;
         this.kakaoId = kakaoId;
+    }
+
+    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
     }
 
     public void update(String nick) {

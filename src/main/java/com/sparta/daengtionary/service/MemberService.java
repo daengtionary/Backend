@@ -17,10 +17,7 @@ import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.util.Authority;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -67,6 +64,10 @@ public class MemberService {
     public ResponseEntity<?> login(MemberRequestDto.Login login,
                                    HttpServletResponse response) {
         Member member = checkMemberByEmail(login.getEmail());
+
+        if (!member.validatePassword(passwordEncoder, login.getPassword())) {
+            throw new CustomException(ErrorCode.WRONG_PASSWORD);
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword());
