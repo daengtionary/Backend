@@ -28,10 +28,10 @@ public class HospitalController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String orderby,@RequestParam String address,
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
                                                Pageable pageable ) {
         String category = "hospital";
-        return mapService.getAllMapByCategory(category, orderby,address ,pageable);
+        return mapService.getAllMapByCategory(category,direction,address ,pageable);
     }
 
     @GetMapping("/{mapNo}")

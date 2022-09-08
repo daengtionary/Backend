@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.repository.supportRepository;
 
 
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -11,6 +12,7 @@ import com.sparta.daengtionary.dto.response.map.MapResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
@@ -35,7 +37,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public PageImpl<MapResponseDto> findAllByMap(String category,String address ,Pageable pageable) {
+    public PageImpl<MapResponseDto> findAllByMap(String category,String direction ,String address, Pageable pageable) {
         List<MapResponseDto> content = queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
@@ -57,7 +59,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .where(eqCategory(category),
                         eqAddress(address))
                 .groupBy(map.mapNo)
-                .orderBy(map.mapNo.desc())
+                .orderBy(mapSort(pageable, direction))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -110,7 +112,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(communityImg1)
                 .on(community.communityNo.eq(communityImg1.community.communityNo))
                 .groupBy(community.communityNo)
-                .orderBy(community.createdAt.desc(),community.view.desc().nullsLast())
+                .orderBy(community.createdAt.desc(), community.view.desc().nullsLast())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -118,7 +120,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(content, pageable, content.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(Pageable pageable){
+    public PageImpl<TradeResponseDto> findAllByTrade(Pageable pageable) {
         List<TradeResponseDto> content = queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
@@ -136,12 +138,12 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
                 .groupBy(trade.tradeNo)
-                .orderBy(trade.createdAt.desc(),trade.view.desc().nullsLast())
+                .orderBy(trade.createdAt.desc(), trade.view.desc().nullsLast())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content,pageable,content.size());
+        return new PageImpl<>(content, pageable, content.size());
     }
 
 
@@ -150,14 +152,27 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return map.category.eq(category);
     }
 
-    private BooleanExpression eqAddress(String address){
-        if(address.isEmpty()) return null;
+    private BooleanExpression eqAddress(String address) {
+        if (address.isEmpty()) return null;
         return map.address.contains(address);
     }
 
+    private OrderSpecifier<?> mapSort(Pageable pageable, String direction) {
+        if (direction.isEmpty()) return null;
 
 
-//    private OrderSpecifier<?> mapSort(String sort){
-//
-//    }
+        if (!pageable.getSort().isEmpty()) {
+            for (Sort.Order order : pageable.getSort()) {
+                Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+                switch (order.getProperty()) {
+                    case "new":
+                        return new OrderSpecifier<>(dir, map.createdAt);
+                    case "popular":
+                        return new OrderSpecifier<>(dir, map.view);
+                }
+            }
+        }
+        return null;
+    }
+
 }

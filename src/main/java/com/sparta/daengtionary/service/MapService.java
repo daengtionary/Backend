@@ -104,13 +104,13 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category, String orderBy, String address, Pageable pageable) {
+    public ResponseEntity<?> getAllMapByCategory(String category,String direction ,String address, Pageable pageable) {
 //        if (orderBy.equals("popular")) {
 //            PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMapByPopular(category, pageable);
 //            return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
 //        }
 
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, address, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction,address, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 완료");
 
     }
