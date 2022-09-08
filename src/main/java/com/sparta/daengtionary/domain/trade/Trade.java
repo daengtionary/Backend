@@ -8,41 +8,36 @@ import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.procedure.spi.ParameterRegistrationImplementor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Entity
 @NoArgsConstructor
 public class Trade extends Timestamped {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tradeNo;
-
     @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
-
     @Column(nullable = false)
     private String title;
-
     @Column(nullable = false)
     private String content;
-
     @Column(nullable = false)
     private int price;
-
     @Column(nullable = false)
     private String status;
-
     @Column
     private int view;
+    @OneToMany(mappedBy = "trade")
+    private List<TradeImg> tradeImgs;
+
 
     @Builder
-    public Trade(Long tradeNo, Member member, String title, String content, int price){
+    public Trade(Long tradeNo, Member member, String title, String content, int price, List<TradeImg> tradeImg) {
         this.tradeNo = tradeNo;
         this.member = member;
         this.title = title;
@@ -52,14 +47,14 @@ public class Trade extends Timestamped {
         this.view = 0;
     }
 
-    public void updateTrade(TradeRequestDto requestDto){
+    public void updateTrade(TradeRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
         this.price = requestDto.getPrice();
         this.status = requestDto.getStatus();
     }
 
-    public void updateStatus(String status){
+    public void updateStatus(String status) {
         this.status = status;
     }
 
@@ -72,6 +67,4 @@ public class Trade extends Timestamped {
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
     }
-
-
 }

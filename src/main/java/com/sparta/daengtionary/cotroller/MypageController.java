@@ -3,6 +3,7 @@ package com.sparta.daengtionary.cotroller;
 import com.sparta.daengtionary.dto.request.DogRequestDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.service.MypageService;
+import com.sparta.daengtionary.service.TradeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +14,16 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MypageController {
     private final MypageService mypageService;
+    private final TradeService tradeService;
 
     @GetMapping("/info")
     public ResponseEntity<?> getMemberInfo() {
         return mypageService.getMemberInfo();
+    }
+
+    @GetMapping("/trade/mypost")
+    public ResponseEntity<?> getTradeByMyPost() {
+        return tradeService.getTradeByMyPost();
     }
 
     @PatchMapping("/nick")

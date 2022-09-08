@@ -31,24 +31,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class TradeService {
-
     private final TradeRepository tradeRepository;
     private final TradeImgRepository tradeImgRepository;
     private final AwsS3UploadService s3UploadService;
     private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
-
     private final TradeReviewRepository tradeReviewRepository;
-
     private final MapRepositorySupport mapRepositorySupport;
     private final String imgPath = "/map/image";
 
     @Transactional
-    public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles){
+    public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
         validateFile(multipartFiles);
-        List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles,imgPath);
+        List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         Trade trade = Trade.builder()
                 .member(member)
@@ -60,7 +57,7 @@ public class TradeService {
         tradeRepository.save(trade);
 
         List<TradeImg> tradeImgs = new ArrayList<>();
-        for(String img : tradeImgList){
+        for (String img : tradeImgList) {
             tradeImgs.add(
                     TradeImg.builder()
                             .trade(trade)
@@ -83,24 +80,24 @@ public class TradeService {
                         .tradeImgUrl(tradeImgList)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())
-                        .build(),"생성완료"
+                        .build(), "생성완료"
         );
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTradeSort(String sort, Pageable pageable){
+    public ResponseEntity<?> getTradeSort(String sort, Pageable pageable) {
         PageImpl<TradeResponseDto> responseDtos = mapRepositorySupport.findAllByTrade(pageable);
 
-        return responseBodyDto.success(responseDtos,"조회 완료");
+        return responseBodyDto.success(responseDtos, "조회 완료");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTrade(Long tradeNo){
+    public ResponseEntity<?> getTrade(Long tradeNo) {
         Trade trade = validateTrade(tradeNo);
 
         List<TradeImg> tradeImgs = tradeImgRepository.findAllByTrade(trade);
         List<String> traImgs = new ArrayList<>();
-        for(TradeImg i : tradeImgs){
+        for (TradeImg i : tradeImgs) {
             traImgs.add(i.getTradeImg());
         }
 
@@ -135,23 +132,48 @@ public class TradeService {
         );
     }
 
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getTradeByMyPost() {
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        List<Trade> tradeList = tradeRepository.findByMember(member);
+        List<TradeResponseDto> tradeResponseDtoList = new ArrayList<>();
+
+        for (Trade trade : tradeList) {
+            tradeResponseDtoList.add(
+                    TradeResponseDto.builder()
+                            .tradeNo(trade.getTradeNo())
+                            .nick(member.getNick())
+                            .title(trade.getTitle())
+                            .status(trade.getStatus())
+                            .view(trade.getView())
+                            .tradeImg(trade.getTradeImgs().get(0).getTradeImg())
+                            .createdAt(trade.getCreatedAt())
+                            .modifiedAt(trade.getModifiedAt())
+                            .build()
+            );
+        }
+
+        return responseBodyDto.success(tradeResponseDtoList, "조회 완료");
+    }
+
     @Transactional
-    public ResponseEntity<?> tradeUpdate(TradeRequestDto requestDto, Long tradeNo,List<MultipartFile> multipartFiles){
+    public ResponseEntity<?> tradeUpdate(TradeRequestDto requestDto, Long tradeNo, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = validateTrade(tradeNo);
         trade.validateMember(member);
         validateFile(multipartFiles);
 
         List<TradeImg> deleteImg = tradeImgRepository.findAllByTrade(trade);
-        for(TradeImg i : deleteImg){
+        for (TradeImg i : deleteImg) {
             s3UploadService.deleteFile(i.getTradeImg());
         }
         tradeImgRepository.deleteAll(deleteImg);
 
-        List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
+        List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         List<TradeImg> saveImg = new ArrayList<>();
-        for(String i : tradeImgs){
+        for (String i : tradeImgs) {
             saveImg.add(
                     TradeImg.builder()
                             .trade(trade)
@@ -164,23 +186,21 @@ public class TradeService {
         trade.updateTrade(requestDto);
 
         return responseBodyDto.success(
-                      TradeDetailResponseDto.builder()
-                              .tradeNo(trade.getTradeNo())
-                              .nick(member.getNick())
-                              .title(trade.getTitle())
-                              .content(trade.getContent())
-                              .status(trade.getStatus())
-                              .tradeImgUrl(tradeImgs)
-                              .createdAt(trade.getCreatedAt())
-                              .modifiedAt(trade.getModifiedAt())
-                              .build(),"수정 성공"
+                TradeDetailResponseDto.builder()
+                        .tradeNo(trade.getTradeNo())
+                        .nick(member.getNick())
+                        .title(trade.getTitle())
+                        .content(trade.getContent())
+                        .status(trade.getStatus())
+                        .tradeImgUrl(tradeImgs)
+                        .createdAt(trade.getCreatedAt())
+                        .modifiedAt(trade.getModifiedAt())
+                        .build(), "수정 성공"
         );
-
-
     }
 
     @Transactional
-    public ResponseEntity<?> tradeDelete(Long tradeNo){
+    public ResponseEntity<?> tradeDelete(Long tradeNo) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = validateTrade(tradeNo);
         trade.validateMember(member);
@@ -194,14 +214,12 @@ public class TradeService {
         return responseBodyDto.success("삭제 성공");
     }
 
+
     @Transactional
-    public void tradeViewUpdate(Long tradeNo){
+    public void tradeViewUpdate(Long tradeNo) {
         Trade trade = validateTrade(tradeNo);
         trade.viewUpdate();
     }
-
-
-
 
     @Transactional(readOnly = true)
     public Trade validateTrade(Long TradeNo) {
@@ -221,6 +239,4 @@ public class TradeService {
                 () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
         );
     }
-
-
 }
