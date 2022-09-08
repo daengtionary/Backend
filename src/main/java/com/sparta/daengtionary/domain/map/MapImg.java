@@ -14,7 +14,7 @@ public class MapImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mapImgNo;
 
-    @JoinColumn(name = "map_id",nullable = false)
+    @JoinColumn(name = "mapNo",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;
 

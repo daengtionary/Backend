@@ -20,7 +20,7 @@ public class Community extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long communityNo;
 
-    @JoinColumn(name = "mumber_id", nullable = false)
+    @JoinColumn(name = "mumberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 

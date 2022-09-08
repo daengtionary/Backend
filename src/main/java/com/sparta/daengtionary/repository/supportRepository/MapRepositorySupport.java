@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.repository.supportRepository;
 
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -34,7 +35,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public PageImpl<MapResponseDto> findAllByMap(String category, Pageable pageable) {
+    public PageImpl<MapResponseDto> findAllByMap(String category,String address ,Pageable pageable) {
         List<MapResponseDto> content = queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
@@ -53,7 +54,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapImg.map.mapNo))
                 .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
-                .where(map.category.eq(category))
+                .where(eqCategory(category),
+                        eqAddress(address))
                 .groupBy(map.mapNo)
                 .orderBy(map.mapNo.desc())
                 .offset(pageable.getOffset())
@@ -82,7 +84,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapImg.map.mapNo))
                 .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
-                .where(map.category.eq(category))
+                .where(eqCategory(category))
                 .groupBy(map.mapNo)
                 .orderBy(map.view.desc())
                 .offset(pageable.getOffset())
@@ -148,4 +150,14 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return map.category.eq(category);
     }
 
+    private BooleanExpression eqAddress(String address){
+        if(address.isEmpty()) return null;
+        return map.address.contains(address);
+    }
+
+
+
+//    private OrderSpecifier<?> mapSort(String sort){
+//
+//    }
 }

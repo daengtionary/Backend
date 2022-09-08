@@ -26,10 +26,10 @@ public class ShopController {
 
 
     @PostMapping
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String orderby,
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String orderby,@RequestParam String address,
                                                Pageable pageable ) {
         String category = "shop";
-        return mapService.getAllMapByCategory(category, orderby, pageable);
+        return mapService.getAllMapByCategory(category, orderby,address, pageable);
     }
 
     @GetMapping("/{mapNo}")
