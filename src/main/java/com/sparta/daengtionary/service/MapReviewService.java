@@ -5,9 +5,9 @@ import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.map.Map;
 import com.sparta.daengtionary.domain.map.MapReview;
-import com.sparta.daengtionary.dto.request.MapReviewRequestDto;
+import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
-import com.sparta.daengtionary.dto.response.map.MapReviewResponseDto;
+import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.map.MapRepository;
 import com.sparta.daengtionary.repository.map.MapReviewRepository;
@@ -33,7 +33,7 @@ public class MapReviewService {
     private final String imgPath = "/map/review";
 
     @Transactional
-    public ResponseEntity<?> createMapReview(Long mapNo, MapReviewRequestDto requestDto, MultipartFile requestImgUrl) {
+    public ResponseEntity<?> createMapReview(Long mapNo, ReviewRequestDto requestDto, MultipartFile requestImgUrl) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = mapService.validateMap(mapNo);
         validateFile(requestImgUrl);
@@ -50,8 +50,8 @@ public class MapReviewService {
         mapReviewRepository.save(mapReview);
         map.starUpdate(getReviewStarAvg(map));
 
-        return responseBodyDto.success(MapReviewResponseDto.builder()
-                .mapReviewNo(mapReview.getMapReviewNo())
+        return responseBodyDto.success(ReviewResponseDto.builder()
+                .reviewNo(mapReview.getMapReviewNo())
                 .nick(mapReview.getMember().getNick())
                 .content(mapReview.getContent())
                 .star(mapReview.getStar())
@@ -60,7 +60,7 @@ public class MapReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateMapReview(Long mapNo, Long mapReviewNo, MapReviewRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseEntity<?> updateMapReview(Long mapNo, Long mapReviewNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
         Member member = tokenProvider.getMemberFromAuthentication();
         mapService.validateMap(mapNo);
         MapReview mapReview = validateMapReview(mapReviewNo, member);
@@ -70,8 +70,8 @@ public class MapReviewService {
         mapReview.mapReviewUpdate(requestDto, reviewImg);
 
         return responseBodyDto.success(
-                MapReviewResponseDto.builder()
-                        .mapReviewNo(mapReview.getMapReviewNo())
+                ReviewResponseDto.builder()
+                        .reviewNo(mapReview.getMapReviewNo())
                         .nick(mapReview.getMember().getNick())
                         .content(mapReview.getContent())
                         .star(mapReview.getStar())

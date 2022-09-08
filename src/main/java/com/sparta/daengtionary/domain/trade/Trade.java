@@ -22,7 +22,7 @@ public class Trade extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long tradeNo;
 
-    @JoinColumn(name = "mumberNo", nullable = false)
+    @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 

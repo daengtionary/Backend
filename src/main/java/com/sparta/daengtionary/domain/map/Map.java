@@ -23,7 +23,7 @@ public class Map extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mapNo;
 
-    @JoinColumn(name = "mumberNo", nullable = false)
+    @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
