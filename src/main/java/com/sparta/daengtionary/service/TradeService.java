@@ -37,12 +37,13 @@ public class TradeService {
     private final TokenProvider tokenProvider;
 
     private final MapRepositorySupport mapRepositorySupport;
+    private final String imgPath = "/map/image";
 
     @Transactional
     public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles){
         Member member = tokenProvider.getMemberFromAuthentication();
         validateFile(multipartFiles);
-        List<String> tradeImgList = s3UploadService.upload(multipartFiles);
+        List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles,imgPath);
 
         Trade trade = Trade.builder()
                 .member(member)
@@ -127,7 +128,7 @@ public class TradeService {
         }
         tradeImgRepository.deleteAll(deleteImg);
 
-        List<String> tradeImgs = s3UploadService.upload(multipartFiles);
+        List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
 
         List<TradeImg> saveImg = new ArrayList<>();
         for(String i : tradeImgs){

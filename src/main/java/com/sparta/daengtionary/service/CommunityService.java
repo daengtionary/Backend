@@ -37,13 +37,14 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
+    private final String imgPath = "/map/image";
 
 
     @Transactional
     public ResponseEntity<?> createCommunity(CommunityRequestDto requestDto, List<MultipartFile> multipartFileList) {
         Member member = tokenProvider.getMemberFromAuthentication();
         validateFile(multipartFileList);
-        List<String> communityImg = s3UploadService.upload(multipartFileList);
+        List<String> communityImg = s3UploadService.uploadListImg(multipartFileList,imgPath);
 
         Community community = Community.builder()
                 .member(member)
@@ -125,7 +126,7 @@ public class CommunityService {
         }
         communityImgRepository.deleteAll(deleteImg);
 
-        List<String> comImgs = s3UploadService.upload(multipartFiles);
+        List<String> comImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
 
         List<CommunityImg> saveImg = new ArrayList<>();
         for (String i : comImgs) {

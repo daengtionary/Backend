@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.dto.response.map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.domain.map.MapReview;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,7 @@ public class MapDetailResponseDto {
     private int view;
     private List<String> imgUrls;
     private List<String> mapInfo;
+    private List<MapReviewResponseDto> mapReviewList;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -29,7 +31,7 @@ public class MapDetailResponseDto {
 
     @Builder
     public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
-                                String content, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
+                                String content, List<MapReviewResponseDto> mapReviewList, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
@@ -40,6 +42,7 @@ public class MapDetailResponseDto {
         this.view = view;
         this.imgUrls = imgUrls;
         this.mapInfo = mapInfo;
+        this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
         this.moditiedAt = moditiedAt;
     }
