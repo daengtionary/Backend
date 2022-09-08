@@ -6,15 +6,18 @@ import com.sparta.daengtionary.domain.*;
 import com.sparta.daengtionary.domain.map.Map;
 import com.sparta.daengtionary.domain.map.MapImg;
 import com.sparta.daengtionary.domain.map.MapInfo;
+import com.sparta.daengtionary.domain.map.MapReview;
 import com.sparta.daengtionary.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.response.map.MapDetailResponseDto;
 import com.sparta.daengtionary.dto.response.map.MapResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.dto.response.map.MapReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.map.MapImgRepository;
 import com.sparta.daengtionary.repository.map.MapInfoRepository;
 import com.sparta.daengtionary.repository.map.MapRepository;
+import com.sparta.daengtionary.repository.map.MapReviewRepository;
 import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -37,6 +40,9 @@ public class MapService {
     private final TokenProvider tokenProvider;
     private final MapRepositorySupport mapRepositorySupport;
     private final AwsS3UploadService s3UploadService;
+    private final MapReviewRepository mapReviewRepository;
+
+    private final String imgPath = "/map/image";
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
@@ -45,7 +51,7 @@ public class MapService {
         //제목과 업종, 주소가 같다면 처리 불가
 //        isDuplicateCheck(mapRequestDto); 실제 서비스 시작시에 실행
         validateFile(multipartFiles);
-        List<String> mapImgs = s3UploadService.upload(multipartFiles);
+        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
 
         Map map = Map.builder()
                 .member(member)
@@ -126,6 +132,20 @@ public class MapService {
         for (MapInfo i : mapInfoTemp) {
             infoList.add(i.getMapInfo());
         }
+        List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
+        List<MapReviewResponseDto> reviewResponseDtos = new ArrayList<>();
+
+        for(MapReview i : reviews){
+            reviewResponseDtos.add(
+                    MapReviewResponseDto.builder()
+                            .mapReviewNo(i.getMapReviewNo())
+                            .nick(i.getMember().getNick())
+                            .content(i.getContent())
+                            .star(i.getStar())
+                            .imgUrl(i.getImgUrl())
+                            .build()
+            );
+        }
 
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
@@ -139,6 +159,7 @@ public class MapService {
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(infoList)
+                        .mapReviewList(reviewResponseDtos)
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())
                         .build(),
@@ -175,7 +196,7 @@ public class MapService {
         }
         mapImgRepository.deleteAll(temp);
 
-        List<String> mapImgs = s3UploadService.upload(multipartFiles);
+        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles,imgPath);
 
         List<MapImg> mapImgList = new ArrayList<>();
         for (String img : mapImgs) {

@@ -50,9 +50,10 @@ public class AwsS3UploadService {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
-
-    public List<String> upload(List<MultipartFile> multipartFiles) {
+///map/image
+    public List<String> uploadListImg(List<MultipartFile> multipartFiles,String path) {
         List<String> imgUrlList = new ArrayList<>();
+        vaildatePath(path);
 
         for (MultipartFile file : multipartFiles) {
             String fileName = createFileName(file.getOriginalFilename());
@@ -61,18 +62,19 @@ public class AwsS3UploadService {
             objectMetadata.setContentType(file.getContentType());
 
             try (InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket + "/map/image", fileName, inputStream, objectMetadata)
+                amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3.getUrl(bucket + "/map/image", fileName).toString());
+                imgUrlList.add(amazonS3.getUrl(bucket + path, fileName).toString());
             } catch (IOException e) {
                 throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
             }
         }
         return imgUrlList;
     }
-
-    public String uploadDogImage(MultipartFile multipartFile) {
+//
+    public String uploadImage(MultipartFile multipartFile,String path) {
         String image = "";
+        vaildatePath(path);
 
         String fileName = createFileName(multipartFile.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -80,13 +82,19 @@ public class AwsS3UploadService {
         objectMetadata.setContentType(multipartFile.getContentType());
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            amazonS3.putObject(new PutObjectRequest(bucket + "/dog/image", fileName, inputStream, objectMetadata)
+            amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            image = amazonS3.getUrl(bucket + "/dog/image", fileName).toString();
+            image = amazonS3.getUrl(bucket + path, fileName).toString();
         } catch (IOException e) {
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
         }
         return image;
+    }
+
+    public void vaildatePath(String path){
+        if(path == null){
+            throw new CustomException(ErrorCode.WRONG_IMAGE_PATH);
+        }
     }
 
     public void deleteFile(String fileName) {

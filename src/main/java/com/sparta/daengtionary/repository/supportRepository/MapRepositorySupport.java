@@ -15,13 +15,13 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-import static com.sparta.daengtionary.domain.QMap.map;
-import static com.sparta.daengtionary.domain.QMapImg.mapImg;
-import static com.sparta.daengtionary.domain.QMapInfo.mapInfo1;
-import static com.sparta.daengtionary.domain.QCommunity.community;
-import static com.sparta.daengtionary.domain.QCommunityImg.communityImg1;
-import static com.sparta.daengtionary.domain.QTrade.trade;
-import static com.sparta.daengtionary.domain.QTradeImg.tradeImg1;
+import static com.sparta.daengtionary.domain.map.QMap.map;
+import static com.sparta.daengtionary.domain.map.QMapImg.mapImg;
+import static com.sparta.daengtionary.domain.map.QMapInfo.mapInfo1;
+import static com.sparta.daengtionary.domain.community.QCommunity.community;
+import static com.sparta.daengtionary.domain.community.QCommunityImg.communityImg1;
+import static com.sparta.daengtionary.domain.trade.QTrade.trade;
+import static com.sparta.daengtionary.domain.trade.QTradeImg.tradeImg1;
 
 @Repository
 public class MapRepositorySupport extends QuerydslRepositorySupport {
