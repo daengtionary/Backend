@@ -30,6 +30,7 @@ public class HospitalController {
     @GetMapping()
     public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
                                                Pageable pageable ) {
+        
         String category = "hospital";
         return mapService.getAllMapByCategory(category,direction,address ,pageable);
     }
