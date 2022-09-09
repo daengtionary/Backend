@@ -25,7 +25,7 @@ public class TradeController {
                                          @RequestPart(value = "imgUrl",required = false)List<MultipartFile> multipartFiles){
         return tradeService.createTrade(requestDto,multipartFiles);
     }
-    @PostMapping()
+    @GetMapping()
     public ResponseEntity<?> getTradeSort(@RequestParam String sort, Pageable pageable){
         return tradeService.getTradeSort(sort,pageable);
     }

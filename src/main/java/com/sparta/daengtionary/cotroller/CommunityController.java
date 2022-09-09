@@ -27,7 +27,7 @@ public class CommunityController {
         return service.createCommunity(requestDto,multipartFileList);
     }
 
-    @PostMapping()
+    @GetMapping()
     public ResponseEntity<?> getCommunitySort(@RequestParam String sort, Pageable pageable){
         return service.getCommunitySort(sort,pageable);
     }
