@@ -62,3 +62,4 @@ jobs:
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
             docker stop daeng
             docker run -d --rm --name daeng -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary
+
