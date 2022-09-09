@@ -57,5 +57,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
-            docker stop server
-            docker run -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary
+            docker stop latest
+            docker run -d --rm --name latest -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary
