@@ -38,12 +38,6 @@ public class CommunityController {
         return service.getCommunity(comNo);
     }
 
-    @GetMapping("/test/{comNo}")
-    public ResponseEntity<?> getCommunityTest(@PathVariable Long comNo){
-        service.communityViewUpdate(comNo);
-        return service.getCommunity(comNo);
-    }
-
     @PatchMapping("/{comNo}")
     public ResponseEntity<?> updateCommunity(@PathVariable Long comNo,@RequestPart(value = "data") CommunityRequestDto requestDto,
                                              @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles){
