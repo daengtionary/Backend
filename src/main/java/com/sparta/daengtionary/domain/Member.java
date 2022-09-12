@@ -8,7 +8,6 @@ import lombok.Setter;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +29,19 @@ public class Member extends Timestamped {
     private Long kakaoId;
     @OneToMany(mappedBy = "member")
     private List<Dog> dogs;
+
+    //동훈 websocket
+    @Column(nullable = false)
+    private String membername;
+
+    @Column(nullable = false)
+    private String nickname;
+
+    @Column(nullable = false)
+    private String id;
+
+    @Column(nullable = false)
+    private String memberid;
 
 
     public Member() {

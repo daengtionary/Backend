@@ -13,6 +13,10 @@ public class UserDetailsImpl implements UserDetails {
 
     private Member member;
 
+
+    private Long memberId;
+    private String nickname;
+
     public UserDetailsImpl(Member member) {
         this.member = member;
     }
@@ -35,6 +39,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
+
         return member.getEmail();
     }
 

@@ -4,6 +4,9 @@ import com.sparta.daengtionary.util.Authority;
 import lombok.Getter;
 import lombok.Setter;
 
+@Getter
+@Setter
+
 public class MemberRequestDto {
 
     @Getter
@@ -28,5 +31,12 @@ public class MemberRequestDto {
     public static class Update {
         private String nick;
     }
+
+    @Getter
+    @Setter
+    public static class MakeChat{
+        private Long memberid;
+    }
+
 
 }
