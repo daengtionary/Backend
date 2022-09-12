@@ -52,21 +52,21 @@ public class HospitalController {
         return mapService.mapDelete(mapNo);
     }
 
-    @PostMapping("/review/create/{mapNo}")
+    @PostMapping("/review/create/{hospitalNo}")
     public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo){
-        return mapReviewService.createMapReview(mapNo,requestDto,multipartFile);
+                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long hospitalNo){
+        return mapReviewService.createMapReview(hospitalNo,requestDto,multipartFile);
     }
 
-    @PatchMapping("/review/{mapNo}/{reviewNo}")
+    @PatchMapping("/review/{hospitalNo}/{reviewNo}")
     public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                             @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo,
+                                             @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long hospitalNo,
                                              @PathVariable Long reviewNo){
-        return mapReviewService.updateMapReview(mapNo,reviewNo,requestDto,multipartFile);
+        return mapReviewService.updateMapReview(hospitalNo,reviewNo,requestDto,multipartFile);
     }
 
-    @DeleteMapping("/review/{mapNo}/{reviewNo}")
-    public ResponseEntity<?> deleteRoomReview(@PathVariable Long mapNo,@PathVariable Long reviewNo){
-        return mapReviewService.deleteMapReview(mapNo,reviewNo);
+    @DeleteMapping("/review/{hospitalNo}/{reviewNo}")
+    public ResponseEntity<?> deleteRoomReview(@PathVariable Long hospitalNo,@PathVariable Long reviewNo){
+        return mapReviewService.deleteMapReview(hospitalNo,reviewNo);
     }
 }

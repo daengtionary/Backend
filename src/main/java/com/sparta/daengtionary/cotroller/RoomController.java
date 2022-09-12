@@ -35,38 +35,38 @@ public class RoomController {
         return mapService.getAllMapByCategory(category,direction,address, pageable);
     }
 
-    @GetMapping("/{mapNo}")
-    public ResponseEntity<?> getRoom(@PathVariable Long mapNo) {
-        mapService.mapViewUpdate(mapNo);
-        return mapService.getAllMap(mapNo);
+    @GetMapping("/{roomNo}")
+    public ResponseEntity<?> getRoom(@PathVariable Long roomNo) {
+        mapService.mapViewUpdate(roomNo);
+        return mapService.getAllMap(roomNo);
     }
 
-    @PatchMapping("/{mapNo}")
-    public ResponseEntity<?> updateRoom(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
+    @PatchMapping("/{roomNo}")
+    public ResponseEntity<?> updateRoom(@PathVariable Long roomNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
-        return mapService.mapUpdate(requestDto, mapNo,multipartFiles);
+        return mapService.mapUpdate(requestDto, roomNo,multipartFiles);
     }
 
-    @DeleteMapping("/{mapNo}")
-    public ResponseEntity<?> deleteRoom(@PathVariable Long mapNo) {
-        return mapService.mapDelete(mapNo);
+    @DeleteMapping("/{roomNo}")
+    public ResponseEntity<?> deleteRoom(@PathVariable Long roomNo) {
+        return mapService.mapDelete(roomNo);
     }
 
-    @PostMapping("/review/create/{mapNo}")
+    @PostMapping("/review/create/{roomNo}")
     public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo){
-        return mapReviewService.createMapReview(mapNo,requestDto,multipartFile);
+                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long roomNo){
+        return mapReviewService.createMapReview(roomNo,requestDto,multipartFile);
     }
 
-    @PatchMapping("/review/{mapNo}/{reviewNo}")
+    @PatchMapping("/review/{roomNo}/{reviewNo}")
     public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long mapNo,
+                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long roomNo,
                                               @PathVariable Long reviewNo){
-        return mapReviewService.updateMapReview(mapNo,reviewNo,requestDto,multipartFile);
+        return mapReviewService.updateMapReview(roomNo,reviewNo,requestDto,multipartFile);
     }
 
-    @DeleteMapping("/review/{mapNo}/{reviewNo}")
-    public ResponseEntity<?> deleteRoomReview(@PathVariable Long mapNo,@PathVariable Long reviewNo){
-        return mapReviewService.deleteMapReview(mapNo,reviewNo);
+    @DeleteMapping("/review/{roomNo}/{reviewNo}")
+    public ResponseEntity<?> deleteRoomReview(@PathVariable Long roomNo,@PathVariable Long reviewNo){
+        return mapReviewService.deleteMapReview(roomNo,reviewNo);
     }
 }
