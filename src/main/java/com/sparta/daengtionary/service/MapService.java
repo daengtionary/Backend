@@ -104,11 +104,21 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category,String direction ,String address, Pageable pageable) {
+    public ResponseEntity<?> getAllMapByCategory(String category, String direction, String address, Pageable pageable) {
+        String title,content,nick;
+        title = "";
+        content = "";
+        nick = "";
 
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction,address, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction, address, title, content, nick, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
 
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String direction, Pageable pageable) {
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
+        return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
     }
 
     @Transactional(readOnly = true)

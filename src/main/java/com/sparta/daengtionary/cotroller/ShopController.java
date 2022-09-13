@@ -35,6 +35,12 @@ public class ShopController {
         return mapService.getAllMapByCategory(category,direction ,address, pageable);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+                                          @RequestParam String address, @RequestParam String direction, Pageable pageable){
+        return mapService.getSearchMap("shop",title,content,nick,address,direction,pageable);
+    }
+
     @GetMapping("/{shopNo}")
     public ResponseEntity<?> getRoom(@PathVariable Long shopNo) {
         mapService.mapViewUpdate(shopNo);

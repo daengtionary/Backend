@@ -24,6 +24,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -83,9 +85,20 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getCommunitySort(String sort, Pageable pageable) {
-        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(pageable);
+    public ResponseEntity<?> getCommunitySort(String direction, Pageable pageable) {
+        String title,content,nick;
+        title = "";
+        content = "";
+        nick = "";
 
+        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
+
+        return responseBodyDto.success(responseDtoList, "조회 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getSearchCommunity(String title, String content, String nick, String direction, Pageable pageable) {
+        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -127,7 +140,7 @@ public class CommunityService {
                         .build(), "조회 성공"
         );
     }
-    
+
     @Transactional(readOnly = true)
     public ResponseEntity<?> getMyPostByCommunity() {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -148,7 +161,7 @@ public class CommunityService {
                             .build()
             );
         }
-        
+
         return responseBodyDto.success(communityResponseDtoList, "조회 성공");
     }
 

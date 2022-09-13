@@ -37,8 +37,9 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         this.queryFactory = queryFactory;
     }
 
-    public PageImpl<MapResponseDto> findAllByMap(String category,String direction ,String address, Pageable pageable) {
-        List<MapResponseDto> content = queryFactory
+    public PageImpl<MapResponseDto> findAllByMap(String category, String title, String content,
+                                                 String nick, String address, String direction, Pageable pageable) {
+        List<MapResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
                         map.mapNo,
@@ -56,19 +57,23 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapImg.map.mapNo))
                 .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
-                .where(eqCategory(category),
-                        eqAddress(address))
+                .where(eqCategory(category, "map"),
+                        eqMapAddress(address),
+                        eqTitle(title,"map"),
+                        eqContent(content,"map"),
+                        eqNick(nick,"map"))
                 .groupBy(map.mapNo)
-                .orderBy(mapSort(pageable, direction))
+                .orderBy(mapSort(pageable, direction,"map"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<CommunityResponseDto> findAllByCommunity(Pageable pageable) {
-        List<CommunityResponseDto> content = queryFactory
+    public PageImpl<CommunityResponseDto> findAllByCommunity(String title, String content, String nick,
+                                                             String direction, Pageable pageable) {
+        List<CommunityResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
                         CommunityResponseDto.class,
                         community.communityNo,
@@ -82,17 +87,21 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(community)
                 .leftJoin(communityImg1)
                 .on(community.communityNo.eq(communityImg1.community.communityNo))
+                .where(eqTitle(title,"community"),
+                        eqContent(content,"community"),
+                        eqNick(nick,"community"))
                 .groupBy(community.communityNo)
-                .orderBy(community.createdAt.desc(), community.view.desc().nullsLast())
+                .orderBy(mapSort(pageable, direction,"community"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(Pageable pageable) {
-        List<TradeResponseDto> content = queryFactory
+    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String categoty,
+                                                     String direction, int minPrice, int maxPrice, Pageable pageable) {
+        List<TradeResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
                         trade.tradeNo,
@@ -108,40 +117,107 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(trade)
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
+                .where(eqTitle(title,"trade"),
+                        eqContent(content,"trade"),
+                        eqNick(nick,"trade"),
+                        betPrice(minPrice, maxPrice),
+                        eqCategory(categoty,"trade"),
+                        eqStatus(status))
                 .groupBy(trade.tradeNo)
-                .orderBy(trade.createdAt.desc(), trade.view.desc().nullsLast())
+                .orderBy(mapSort(pageable, direction,"trade"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
 
-        return new PageImpl<>(content, pageable, content.size());
+        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-
-    private BooleanExpression eqCategory(String category) {
+    private BooleanExpression eqCategory(String category, String tableName) {
         if (category.isEmpty()) return null;
-        return map.category.eq(category);
+        if (tableName.equals("map")) return map.category.eq(category);
+        if (tableName.equals("trade")) return trade.category.eq(category);
+        return null;
     }
 
-    private BooleanExpression eqAddress(String address) {
-        if (address.isEmpty()) return null;
-        return map.address.contains(address);
+    private BooleanExpression eqMapAddress(String address) {
+        return address.isEmpty() ? null : map.address.contains(address);
     }
 
-    private OrderSpecifier<?> mapSort(Pageable pageable, String direction) {
+    private BooleanExpression eqTitle(String title, String tableName) {
+        if (title.isEmpty()) return null;
+        if (tableName.equals("map")) return map.title.contains(title);
+        if (tableName.equals("community")) return community.title.contains(title);
+        if (tableName.equals("trade")) return trade.title.contains(title);
+        return null;
+    }
+
+    private BooleanExpression eqContent(String content, String tableName) {
+        if (content.isEmpty()) return null;
+        if (tableName.equals("map")) return map.content.contains(content);
+        if (tableName.equals("community")) return community.content.contains(content);
+        if (tableName.equals("trade")) return trade.content.contains(content);
+
+        return null;
+    }
+
+    private BooleanExpression eqNick(String nick, String tableName) {
+        if (nick.isEmpty()) return null;
+        if (tableName.equals("map")) return map.member.nick.eq(nick);
+        if (tableName.equals("community")) return community.member.nick.eq(nick);
+        if (tableName.equals("trade")) return trade.member.nick.eq(nick);
+
+        return map.member.nick.eq(nick);
+
+    }
+
+    private BooleanExpression eqStatus(String status) {
+        return status.isEmpty() ? null : trade.status.eq(status);
+    }
+
+
+    private BooleanExpression betPrice(int minPrice, int maxPrice) {
+        return minPrice == 0 && maxPrice == 0 ? null : trade.price.between(minPrice, maxPrice);
+    }
+
+    private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
         if (direction.isEmpty()) return null;
 
 
         if (!pageable.getSort().isEmpty()) {
-            for (Sort.Order order : pageable.getSort()) {
-                Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-                switch (order.getProperty()) {
-                    case "new":
-                        return new OrderSpecifier<>(dir, map.createdAt);
-                    case "popular":
-                        return new OrderSpecifier<>(dir, map.view);
+            if(tableName.equals("map")){
+                for (Sort.Order order : pageable.getSort()) {
+                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+                    switch (order.getProperty()) {
+                        case "new":
+                            return new OrderSpecifier<>(dir, map.createdAt);
+                        case "popular":
+                            return new OrderSpecifier<>(dir, map.view);
+                    }
                 }
             }
+            if(tableName.equals("community")){
+                for (Sort.Order order : pageable.getSort()) {
+                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+                    switch (order.getProperty()) {
+                        case "new":
+                            return new OrderSpecifier<>(dir, community.createdAt);
+                        case "popular":
+                            return new OrderSpecifier<>(dir, community.view);
+                    }
+                }
+            }
+            if(tableName.equals("trade")){
+                for (Sort.Order order : pageable.getSort()) {
+                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+                    switch (order.getProperty()) {
+                        case "new":
+                            return new OrderSpecifier<>(dir, trade.createdAt);
+                        case "popular":
+                            return new OrderSpecifier<>(dir, trade.view);
+                    }
+                }
+            }
+
         }
         return null;
     }
