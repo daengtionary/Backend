@@ -110,7 +110,7 @@ public class MapService {
         content = "";
         nick = "";
 
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, direction, address, title, content, nick, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
 
     }
