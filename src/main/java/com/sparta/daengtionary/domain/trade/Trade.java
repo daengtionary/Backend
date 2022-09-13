@@ -26,6 +26,9 @@ public class Trade extends Timestamped {
     private String title;
     @Column(nullable = false)
     private String content;
+
+    @Column(nullable = false)
+    private String category;
     @Column(nullable = false)
     private int price;
     @Column(nullable = false)
@@ -37,11 +40,13 @@ public class Trade extends Timestamped {
 
 
     @Builder
-    public Trade(Long tradeNo, Member member, String title, String content, int price, List<TradeImg> tradeImg) {
+    public Trade(Long tradeNo, Member member, String title, String content, int price,
+                 String category) {
         this.tradeNo = tradeNo;
         this.member = member;
         this.title = title;
         this.content = content;
+        this.category = category;
         this.price = price;
         this.status = "판매중";
         this.view = 0;
@@ -50,6 +55,7 @@ public class Trade extends Timestamped {
     public void updateTrade(TradeRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
+        this.category = requestDto.getCategory();
         this.price = requestDto.getPrice();
         this.status = requestDto.getStatus();
     }

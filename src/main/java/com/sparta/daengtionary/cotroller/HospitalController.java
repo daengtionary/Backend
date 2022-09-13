@@ -7,6 +7,7 @@ import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.service.MapReviewService;
 import com.sparta.daengtionary.service.MapService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +34,11 @@ public class HospitalController {
         
         String category = "hospital";
         return mapService.getAllMapByCategory(category,direction,address ,pageable);
+    }
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+                                          @RequestParam String address, @RequestParam String direction, Pageable pageable){
+        return mapService.getSearchMap("hospital",title,content,nick,address,direction,pageable);
     }
 
     @GetMapping("/{mapNo}")

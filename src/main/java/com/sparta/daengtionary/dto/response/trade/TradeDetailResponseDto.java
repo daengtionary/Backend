@@ -17,6 +17,7 @@ public class TradeDetailResponseDto {
     private String title;
     private String content;
     private String status;
+    private String category;
     private int price;
     private int view;
     private List<String> tradeImgUrl;
@@ -28,7 +29,7 @@ public class TradeDetailResponseDto {
 
     @Builder
     public TradeDetailResponseDto(Long tradeNo, String nick, String title,
-                                  String content, int price, String status, int view, List<String> tradeImgUrl,
+                                  String content, int price, String status, String category, int view, List<String> tradeImgUrl,
                                   List<ReviewResponseDto> reviewList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.tradeNo = tradeNo;
         this.nick = nick;
@@ -36,6 +37,7 @@ public class TradeDetailResponseDto {
         this.content = content;
         this.price = price;
         this.status = status;
+        this.category = category;
         this.view = view;
         this.reviewList = reviewList;
         this.tradeImgUrl = tradeImgUrl;

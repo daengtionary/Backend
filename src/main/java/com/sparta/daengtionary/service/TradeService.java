@@ -9,6 +9,7 @@ import com.sparta.daengtionary.domain.trade.TradeReview;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
+import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -85,9 +86,24 @@ public class TradeService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTradeSort(String sort, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(pageable);
+    public ResponseEntity<?> getTradeSort(String direction, Pageable pageable) {
+        String title, content, nick, status, category;
+        title = "";
+        content = "";
+        nick = "";
+        status = "";
+        category = "";
+        int min, max;
+        min = 0;
+        max = 2000000000;
+        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
 
+        return responseBodyDto.success(responseDtoList, "조회 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String status, String category, String direction, int min, int max, Pageable pageable) {
+        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -104,7 +120,7 @@ public class TradeService {
         List<TradeReview> reviews = tradeReviewRepository.findAllByTrade(trade);
         List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
 
-        for(TradeReview i : reviews){
+        for (TradeReview i : reviews) {
             reviewResponseDtoList.add(
                     ReviewResponseDto.builder()
                             .reviewNo(i.getTradeReviewNo())
@@ -116,19 +132,19 @@ public class TradeService {
         }
 
         return responseBodyDto.success(
-                  TradeDetailResponseDto.builder()
-                          .tradeNo(trade.getTradeNo())
-                          .nick(trade.getMember().getNick())
-                          .title(trade.getTitle())
-                          .content(trade.getContent())
-                          .price(trade.getPrice())
-                          .view(trade.getView())
-                          .status(trade.getStatus())
-                          .tradeImgUrl(traImgs)
-                          .reviewList(reviewResponseDtoList)
-                          .createdAt(trade.getCreatedAt())
-                          .modifiedAt(trade.getModifiedAt())
-                          .build(),"조회 성공"
+                TradeDetailResponseDto.builder()
+                        .tradeNo(trade.getTradeNo())
+                        .nick(trade.getMember().getNick())
+                        .title(trade.getTitle())
+                        .content(trade.getContent())
+                        .price(trade.getPrice())
+                        .view(trade.getView())
+                        .status(trade.getStatus())
+                        .tradeImgUrl(traImgs)
+                        .reviewList(reviewResponseDtoList)
+                        .createdAt(trade.getCreatedAt())
+                        .modifiedAt(trade.getModifiedAt())
+                        .build(), "조회 성공"
         );
     }
 

@@ -35,6 +35,12 @@ public class RoomController {
         return mapService.getAllMapByCategory(category,direction,address, pageable);
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+                                          @RequestParam String address, @RequestParam String direction, Pageable pageable){
+        return mapService.getSearchMap("room",title,content,nick,address,direction,pageable);
+    }
+
     @GetMapping("/{roomNo}")
     public ResponseEntity<?> getRoom(@PathVariable Long roomNo) {
         mapService.mapViewUpdate(roomNo);
