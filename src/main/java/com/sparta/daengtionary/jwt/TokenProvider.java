@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 @Component
 public class TokenProvider {
 
+
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
     private static final long ACCESS_TOKEN_EXPIRE_TIME = 60 * 60 * 1000;              // 60분
@@ -41,6 +43,9 @@ public class TokenProvider {
     private final Key key;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MemberRepository memberRepository;
+
+    //동훈
+    private String secretkey;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey,
                          RefreshTokenRepository refreshTokenRepository,
@@ -50,6 +55,7 @@ public class TokenProvider {
         this.refreshTokenRepository = refreshTokenRepository;
         this.memberRepository = memberRepository;
     }
+
 
     // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
     public TokenDto generateToken(Authentication authentication) {
@@ -171,5 +177,8 @@ public class TokenProvider {
         RefreshToken refreshToken = checkRefreshToken(member);
         refreshTokenRepository.delete(refreshToken);
     }
+
+
+
 
 }
