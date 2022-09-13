@@ -6,6 +6,7 @@ import lombok.Getter;
 public class TradeRequestDto {
     private String title;
     private String content;
+    private String category;
     private int price;
     private String status;
 }
