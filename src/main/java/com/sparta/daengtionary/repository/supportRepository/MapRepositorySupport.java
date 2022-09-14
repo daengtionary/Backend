@@ -59,11 +59,11 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .where(eqCategory(category, "map"),
                         eqMapAddress(address),
-                        eqTitle(title,"map"),
-                        eqContent(content,"map"),
-                        eqNick(nick,"map"))
+                        eqTitle(title, "map"),
+                        eqContent(content, "map"),
+                        eqNick(nick, "map"))
                 .groupBy(map.mapNo)
-                .orderBy(mapSort(pageable, direction,"map"))
+                .orderBy(mapSort(pageable, direction, "map"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -87,11 +87,11 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(community)
                 .leftJoin(communityImg1)
                 .on(community.communityNo.eq(communityImg1.community.communityNo))
-                .where(eqTitle(title,"community"),
-                        eqContent(content,"community"),
-                        eqNick(nick,"community"))
+                .where(eqTitle(title, "community"),
+                        eqContent(content, "community"),
+                        eqNick(nick, "community"))
                 .groupBy(community.communityNo)
-                .orderBy(mapSort(pageable, direction,"community"))
+                .orderBy(mapSort(pageable, direction, "community"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -117,14 +117,14 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(trade)
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
-                .where(eqTitle(title,"trade"),
-                        eqContent(content,"trade"),
-                        eqNick(nick,"trade"),
+                .where(eqTitle(title, "trade"),
+                        eqContent(content, "trade"),
+                        eqNick(nick, "trade"),
                         betPrice(minPrice, maxPrice),
-                        eqCategory(categoty,"trade"),
+                        eqCategory(categoty, "trade"),
                         eqStatus(status))
                 .groupBy(trade.tradeNo)
-                .orderBy(mapSort(pageable, direction,"trade"))
+                .orderBy(mapSort(pageable, direction, "trade"))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -182,9 +182,9 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
     private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
         if (direction.isEmpty()) return null;
 
+        if (tableName.equals("map")) {
+            if (!pageable.getSort().isEmpty()) {
 
-        if (!pageable.getSort().isEmpty()) {
-            if(tableName.equals("map")){
                 for (Sort.Order order : pageable.getSort()) {
                     Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
                     switch (order.getProperty()) {
@@ -195,7 +195,9 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                     }
                 }
             }
-            if(tableName.equals("community")){
+        }
+        if (tableName.equals("community")) {
+            if (!pageable.getSort().isEmpty()) {
                 for (Sort.Order order : pageable.getSort()) {
                     Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
                     switch (order.getProperty()) {
@@ -206,7 +208,10 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                     }
                 }
             }
-            if(tableName.equals("trade")){
+        }
+        if (tableName.equals("trade")) {
+            if (!pageable.getSort().isEmpty()) {
+
                 for (Sort.Order order : pageable.getSort()) {
                     Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
                     switch (order.getProperty()) {
@@ -217,8 +222,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                     }
                 }
             }
-
         }
+
         return null;
     }
 

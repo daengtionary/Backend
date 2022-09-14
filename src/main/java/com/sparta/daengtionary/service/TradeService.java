@@ -79,6 +79,7 @@ public class TradeService {
                         .category(trade.getCategory())
                         .price(trade.getPrice())
                         .status(trade.getStatus())
+                        .category(trade.getCategory())
                         .view(trade.getView())
                         .tradeImgUrl(tradeImgList)
                         .createdAt(trade.getCreatedAt())
