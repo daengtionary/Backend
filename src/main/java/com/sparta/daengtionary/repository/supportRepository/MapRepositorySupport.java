@@ -168,8 +168,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         if (tableName.equals("community")) return community.member.nick.eq(nick);
         if (tableName.equals("trade")) return trade.member.nick.eq(nick);
 
-        return map.member.nick.eq(nick);
-
+        return null;
     }
 
     private BooleanExpression eqStatus(String status) {
