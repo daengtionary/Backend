@@ -53,6 +53,7 @@ public class TradeService {
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
+                .category(requestDto.getCategory())
                 .build();
 
         tradeRepository.save(trade);
@@ -75,6 +76,7 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
+                        .category(trade.getCategory())
                         .price(trade.getPrice())
                         .status(trade.getStatus())
                         .view(trade.getView())
