@@ -21,10 +21,14 @@ import java.util.List;
 import static com.sparta.daengtionary.domain.map.QMap.map;
 import static com.sparta.daengtionary.domain.map.QMapImg.mapImg;
 import static com.sparta.daengtionary.domain.map.QMapInfo.mapInfo1;
+import static com.sparta.daengtionary.domain.map.QMapReview.mapReview;
 import static com.sparta.daengtionary.domain.community.QCommunity.community;
 import static com.sparta.daengtionary.domain.community.QCommunityImg.communityImg1;
+import static com.sparta.daengtionary.domain.community.QCommunityReview.communityReview;
 import static com.sparta.daengtionary.domain.trade.QTrade.trade;
 import static com.sparta.daengtionary.domain.trade.QTradeImg.tradeImg1;
+import static com.sparta.daengtionary.domain.trade.QTradeReview.tradeReview;
+
 
 @Repository
 public class MapRepositorySupport extends QuerydslRepositorySupport {
@@ -47,6 +51,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.title,
                         map.address,
                         map.view,
+                        mapReview.countDistinct().as("reviewCount"),
                         mapImg.mapImgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
@@ -57,6 +62,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapImg.map.mapNo))
                 .leftJoin(mapInfo1)
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
+                .leftJoin(mapReview)
+                .on(map.mapNo.eq(mapReview.map.mapNo))
                 .where(eqCategory(category, "map"),
                         eqMapAddress(address),
                         eqTitle(title, "map"),
@@ -80,6 +87,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         community.member.nick,
                         community.title,
                         community.view,
+                        communityReview.countDistinct().as("reviewCount"),
                         communityImg1.communityImg,
                         community.createdAt,
                         community.modifiedAt
@@ -87,6 +95,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(community)
                 .leftJoin(communityImg1)
                 .on(community.communityNo.eq(communityImg1.community.communityNo))
+                .leftJoin(communityReview)
+                .on(community.communityNo.eq(communityReview.community.communityNo))
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
                         eqNick(nick, "community"))
@@ -110,6 +120,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         trade.content,
                         trade.view,
                         trade.status,
+                        tradeReview.countDistinct().as("reviewCount"),
                         tradeImg1.tradeImg,
                         trade.createdAt,
                         trade.modifiedAt
@@ -117,6 +128,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .from(trade)
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
+                .leftJoin(tradeReview)
+                .on(trade.tradeNo.eq(tradeReview.trade.tradeNo))
                 .where(eqTitle(title, "trade"),
                         eqContent(content, "trade"),
                         eqNick(nick, "trade"),
@@ -156,7 +169,6 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         if (tableName.equals("map")) return map.content.contains(content);
         if (tableName.equals("community")) return community.content.contains(content);
         if (tableName.equals("trade")) return trade.content.contains(content);
-
         return null;
     }
 
