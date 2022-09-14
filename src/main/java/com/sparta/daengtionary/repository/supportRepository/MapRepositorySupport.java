@@ -6,6 +6,8 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.map.Map;
 import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.map.MapResponseDto;
@@ -180,7 +182,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
     }
 
     private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
-        if (direction.isEmpty()) return null;
+        if (direction.isEmpty()) throw new CustomException(ErrorCode.MAP_WRONG_INPUT);
 
         if (tableName.equals("map")) {
             if (!pageable.getSort().isEmpty()) {
