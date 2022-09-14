@@ -32,8 +32,9 @@ public class WebConfig implements WebMvcConfigurer {
 //                        "https://ribborn.kr"
                         )
                 .allowedOriginPatterns("*")
-                .allowedMethods("POST", "GET","PATCH", "DELETE", "HEAD", "OPTIONS")
-//                .exposedHeaders("*")
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .exposedHeaders("*")
                 .allowCredentials(true);
     }
 
