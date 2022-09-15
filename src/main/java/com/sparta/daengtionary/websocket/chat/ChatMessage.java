@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.websocket.chat;
 
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sparta.daengtionary.domain.Member;
@@ -15,50 +14,31 @@ import javax.persistence.*;
 @Entity
 @Component
 @JsonAutoDetect
-//@NoArgsConstructor
-//@JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-
-//@AllArgsConstructor
 public class ChatMessage extends CreationDate {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "message_id", nullable = false)
-    private Long id;
-
+    private Long chatMessageNo;
     @Column(nullable = false)
-    private Long roomId;
-
+    private Long chatRoomNo;
     private String senderName;
-
     private Long senderId;
-
     private String senderNickname;
-
     @Column(nullable = false)
     private String message;
-
     @Column(nullable = false)
-//    @Enumerated(value = EnumType.STRING)
     private String type;
-
     @Column(nullable = false)
     private Boolean isRead;
-
     @Column
-    private String img; // 이미지 첨부시
-
-
-
+    private String img;
 
 
     public static ChatMessage createOf(MessageRequestDto requestDto, String senderName, String nickname) {
-
         ChatMessage message = new ChatMessage();
 
-        message.senderId = requestDto.getSenderId();
-        message.roomId = requestDto.getRoomId();
+        message.senderId = requestDto.getSenderNo();
+        message.chatRoomNo = requestDto.getChatRoomNo();
         message.senderName = senderName;
         message.message = requestDto.getMessage();
         message.isRead = requestDto.getIsRead();
@@ -69,8 +49,8 @@ public class ChatMessage extends CreationDate {
         return message;
     }
 
-    public ChatMessage(Long roomId, Long memberId, String message) {
-        this.roomId = roomId;
+    public ChatMessage(Long chatRoomNo, Long memberId, String message) {
+        this.chatRoomNo = chatRoomNo;
         this.senderId = memberId;
         this.message = message;
     }
@@ -80,7 +60,7 @@ public class ChatMessage extends CreationDate {
 
         ChatMessage message = new ChatMessage();
 
-        message.roomId = roomId;
+        message.chatRoomNo = roomId;
         message.senderId = roomId;
 //        message.message = "채팅방이 개설되었습니다.";
         message.isRead = true;
@@ -93,17 +73,17 @@ public class ChatMessage extends CreationDate {
 
         ChatMessage message = new ChatMessage();
 
-        message.roomId = roomId;
+        message.chatRoomNo = roomId;
 //        message.senderId = member.getId();
         message.senderName = member.getMembername();
-        message.message = member.getNickname()  + "님이 채팅방을 나갔습니다.";
+        message.message = member.getNickname() + "님이 채팅방을 나갔습니다.";
         message.isRead = true;
         message.type = "STATUS";
 
         return message;
     }
 
-    public ChatMessage(){
+    public ChatMessage() {
 
     }
 
@@ -115,4 +95,3 @@ public class ChatMessage extends CreationDate {
         this.isRead = true;
     }
 }
-

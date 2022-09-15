@@ -60,7 +60,7 @@ public class WebSocketController {
         String jwt = extractor.extract(token);
         String membername = jwtTokenProvider.getUserPk(jwt);
         String nickname = jwtTokenProvider.getNickName(jwt);
-        Long userId = requestDto.getSenderId();
+        Long userId = requestDto.getSenderNo();
 
         MessageResponseDto responseDto = messageService.saveMessage(requestDto, membername, nickname); //DB에 저장
         messageService.sendMessage(requestDto, membername, responseDto);// 메시지를 sub 주소로 발송해줌

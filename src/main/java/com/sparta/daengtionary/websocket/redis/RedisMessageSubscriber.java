@@ -38,9 +38,9 @@ public class RedisMessageSubscriber implements MessageListener {
             MessageRequestDto chatMessage = objectMapper.readValue(publishMessage, MessageRequestDto.class);
             System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!chatMessage = " + chatMessage);
             // 웹 소켓 구독자에게 채팅 메시지 send
-            messagingTemplate.convertAndSend("/sub/chat/room/"+chatMessage.getRoomId(), chatMessage);  // /sub/ewr2132dsfds  [메시지 ]
-            messagingTemplate.convertAndSend("/sub/chat/rooms/"+chatMessage.getRoomId(), chatMessage);
-            messagingTemplate.convertAndSend("/sub/"+chatMessage.getRoomId(), chatMessage);
+            messagingTemplate.convertAndSend("/sub/chat/room/"+chatMessage.getChatRoomNo(), chatMessage);  // /sub/ewr2132dsfds  [메시지 ]
+            messagingTemplate.convertAndSend("/sub/chat/rooms/"+chatMessage.getChatRoomNo(), chatMessage);
+            messagingTemplate.convertAndSend("/sub/"+chatMessage.getChatRoomNo(), chatMessage);
         } catch (Exception e) {
             e.printStackTrace();
         }

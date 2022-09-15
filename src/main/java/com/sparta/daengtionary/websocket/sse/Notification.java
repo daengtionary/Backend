@@ -2,7 +2,7 @@ package com.sparta.daengtionary.websocket.sse;
 
 
 import com.sparta.daengtionary.domain.Member;
-import com.sparta.daengtionary.websocket.TimeStamp;
+import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ import javax.persistence.*;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Notification extends TimeStamp {
+public class Notification extends Timestamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

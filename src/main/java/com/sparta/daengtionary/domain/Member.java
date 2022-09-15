@@ -31,16 +31,13 @@ public class Member extends Timestamped {
     private List<Dog> dogs;
 
     //동훈 websocket
-    @Column(nullable = false)
+    @Column
     private String membername;
-
-    @Column(nullable = false)
+    @Column
     private String nickname;
-
-    @Column(nullable = false)
+    @Column
     private String id;
-
-    @Column(nullable = false)
+    @Column
     private String memberid;
 
 

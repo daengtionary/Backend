@@ -35,8 +35,6 @@ public class MemberRequestDto {
     @Getter
     @Setter
     public static class MakeChat{
-        private Long memberid;
+        private Long memberNo;
     }
-
-
 }

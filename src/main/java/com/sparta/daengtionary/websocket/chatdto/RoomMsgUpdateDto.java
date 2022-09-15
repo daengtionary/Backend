@@ -17,7 +17,7 @@ public class RoomMsgUpdateDto {
     public static RoomMsgUpdateDto createFrom(MessageRequestDto requestDto){
         RoomMsgUpdateDto msgUpdateDto = new RoomMsgUpdateDto();
 
-        msgUpdateDto.roomId = requestDto.getRoomId();
+        msgUpdateDto.roomId = requestDto.getChatRoomNo();
         msgUpdateDto.message = requestDto.getMessage();
         msgUpdateDto.date = LocalDateTime.now();
 

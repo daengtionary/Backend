@@ -28,7 +28,7 @@ public interface ChatRoomRepository extends JpaRepository<ChatRoom, Long> {
             nativeQuery = true)
     List<RoomDto> findAllWith(@Param("member") Member member);
 
-    @Query("SELECT room FROM ChatRoom room JOIN FETCH room.acceptor JOIN FETCH room.requester WHERE room.id = :roomId")
+    @Query("SELECT room FROM ChatRoom room JOIN FETCH room.acceptor JOIN FETCH room.requester WHERE room.chatRoomNo = :roomId")
     Optional<ChatRoom> findByIdFetch(Long roomId);
 
     // 채팅방 찾아오기

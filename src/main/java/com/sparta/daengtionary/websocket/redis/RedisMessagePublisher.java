@@ -24,7 +24,7 @@ public class RedisMessagePublisher {
     public void publish(MessageRequestDto message){
         //채널에 메시지 전달  -> sub 클래스의 onMessage 메서드 자동 실행
         System.out.println(" 발행 완료  " );
-        redisTemplate.convertAndSend(String.valueOf(message.getRoomId()),message);
+        redisTemplate.convertAndSend(String.valueOf(message.getChatRoomNo()),message);
         System.out.println(" 발행 완료11  " );
 
     }
