@@ -5,9 +5,9 @@ import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -30,6 +30,16 @@ public class Member extends Timestamped {
     @OneToMany(mappedBy = "member")
     private List<Dog> dogs;
 
+    //동훈 websocket
+    @Column
+    private String membername;
+    @Column
+    private String nickname;
+    @Column
+    private String id;
+    @Column
+    private String memberid;
+
 
     public Member() {
     }
@@ -43,6 +53,10 @@ public class Member extends Timestamped {
         this.nick = nick;
         this.role = role;
         this.kakaoId = kakaoId;
+    }
+
+    public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
+        return passwordEncoder.matches(password, this.password);
     }
 
     public void update(String nick) {

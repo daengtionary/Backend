@@ -1,4 +1,4 @@
-package com.sparta.daengtionary.domain;
+package com.sparta.daengtionary.domain.map;
 
 import lombok.*;
 
@@ -13,9 +13,9 @@ public class MapInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long MapInfoId;
+    private Long MapInfoNo;
 
-    @JoinColumn(name = "map_id",nullable = false)
+    @JoinColumn(name = "mapNo",nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;
 
