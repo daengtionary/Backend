@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class CommunityReviewService {
     private final AwsS3UploadService s3UploadService;
-    private CommunityReviewRepository communityReviewRepository;
+    private final CommunityReviewRepository communityReviewRepository;
     private final ResponseBodyDto responseBodyDto;
     private final CommunityService communityService;
     private final TokenProvider tokenProvider;
@@ -28,7 +28,7 @@ public class CommunityReviewService {
 
 
     @Transactional
-    public ResponseEntity<?> createCommunityReview(Long communityNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseEntity<?> createCommunityReview(Long communityNo, String content, MultipartFile multipartFile) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Community community = communityService.validateCommunity(communityNo);
         validateFile(multipartFile);
@@ -37,7 +37,7 @@ public class CommunityReviewService {
         CommunityReview communityReview = CommunityReview.builder()
                 .member(member)
                 .community(community)
-                .content(requestDto.getContent())
+                .content(content)
                 .imgUrl(reviewImg)
                 .build();
 

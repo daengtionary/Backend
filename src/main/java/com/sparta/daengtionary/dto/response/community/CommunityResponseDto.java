@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class CommunityResponseDto {
     private Long communityNo;
     private String nick;
+    private String name;
     private String title;
     private String category;
     private int view;
@@ -25,11 +26,12 @@ public class CommunityResponseDto {
 
 
     @Builder
-    public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg,String category,
-                                Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg, String category,
+                                String name, Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
         this.title = title;
+        this.name = name;
         this.view = view;
         this.category = category;
         this.reviewCount = reviewCount;

@@ -57,9 +57,9 @@ public class CommunityController {
     }
 
     @PostMapping("/review/create/{comNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content,
                                           @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long comNo) {
-        return communityReviewService.createCommunityReview(comNo, requestDto, multipartFile);
+        return communityReviewService.createCommunityReview(comNo, content, multipartFile);
     }
 
     @PatchMapping("/review/{comNo}/{reviewNo}")

@@ -31,6 +31,7 @@ import static com.sparta.daengtionary.domain.trade.QTrade.trade;
 import static com.sparta.daengtionary.domain.trade.QTradeImg.tradeImg1;
 import static com.sparta.daengtionary.domain.trade.QTradeReview.tradeReview;
 import static com.sparta.daengtionary.domain.QWish.wish;
+import static com.sparta.daengtionary.domain.QDog.dog;
 
 
 @Repository
@@ -93,6 +94,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         community.member.nick,
                         community.title,
                         community.view,
+                        dog.name.as("name"),
                         communityReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         communityImg1.communityImg,
@@ -106,6 +108,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(communityReview.community.communityNo))
                 .leftJoin(wish)
                 .on(community.communityNo.eq(wish.community.communityNo))
+                .leftJoin(dog)
+                .on(community.member.memberNo.eq(dog.member.memberNo))
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
                         eqNick(nick, "community"),
