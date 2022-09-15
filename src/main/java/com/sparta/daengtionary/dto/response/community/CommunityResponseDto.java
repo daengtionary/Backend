@@ -25,12 +25,13 @@ public class CommunityResponseDto {
 
     @Builder
     public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg,
-                                Long reviewCount,LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                                Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
         this.title = title;
         this.view = view;
         this.reviewCount = reviewCount;
+        this.wishCount = wishCount;
         this.communityImg = communityImg;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
