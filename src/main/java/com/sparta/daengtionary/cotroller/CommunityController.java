@@ -33,9 +33,9 @@ public class CommunityController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchCommunity(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+    public ResponseEntity<?> getSearchCommunity(@RequestParam String category, @RequestParam String title, @RequestParam String content, @RequestParam String nick,
                                                 @RequestParam String direction, Pageable pageable) {
-        return service.getSearchCommunity(title, content, nick, direction, pageable);
+        return service.getSearchCommunity(category, title, content, nick, direction, pageable);
     }
 
 

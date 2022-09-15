@@ -48,6 +48,7 @@ public class CommunityService {
         Community community = Community.builder()
                 .member(member)
                 .title(requestDto.getTitle())
+                .category(requestDto.getCategory())
                 .content(requestDto.getContent())
                 .build();
 
@@ -70,6 +71,7 @@ public class CommunityService {
                         .communityNo(community.getCommunityNo())
                         .nick(member.getNick())
                         .title(community.getTitle())
+                        .category(community.getCategory())
                         .content(community.getContent())
                         .view(community.getView())
                         .imgList(communityImg)
@@ -82,19 +84,20 @@ public class CommunityService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getCommunitySort(String direction, Pageable pageable) {
-        String title,content,nick;
+        String category, title, content, nick;
+        category = "";
         title = "";
         content = "";
         nick = "";
 
-        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
+        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchCommunity(String title, String content, String nick, String direction, Pageable pageable) {
-        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
+    public ResponseEntity<?> getSearchCommunity(String category, String title, String content, String nick, String direction, Pageable pageable) {
+        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 

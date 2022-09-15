@@ -84,7 +84,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<CommunityResponseDto> findAllByCommunity(String title, String content, String nick,
+    public PageImpl<CommunityResponseDto> findAllByCommunity(String category,String title, String content, String nick,
                                                              String direction, Pageable pageable) {
         List<CommunityResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
@@ -108,7 +108,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(wish.community.communityNo))
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
-                        eqNick(nick, "community"))
+                        eqNick(nick, "community"),
+                        eqCategory(category,"community"))
                 .groupBy(community.communityNo)
                 .orderBy(mapSort(pageable, direction, "community"))
                 .offset(pageable.getOffset())
@@ -118,7 +119,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String categoty,
+    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String category,
                                                      String direction, int minPrice, int maxPrice, Pageable pageable) {
         List<TradeResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
@@ -146,7 +147,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "trade"),
                         eqNick(nick, "trade"),
                         betPrice(minPrice, maxPrice),
-                        eqCategory(categoty, "trade"),
+                        eqCategory(category, "trade"),
                         eqStatus(status))
                 .groupBy(trade.tradeNo)
                 .orderBy(mapSort(pageable, direction, "trade"))
@@ -160,6 +161,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     private BooleanExpression eqCategory(String category, String tableName) {
         if (category.isEmpty()) return null;
         if (tableName.equals("map")) return map.category.eq(category);
+        if(tableName.equals("community")) return community.category.eq(category);
         if (tableName.equals("trade")) return trade.category.eq(category);
         return null;
     }
