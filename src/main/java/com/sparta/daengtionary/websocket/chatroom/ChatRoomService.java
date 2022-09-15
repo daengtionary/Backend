@@ -1,59 +1,90 @@
 package com.sparta.daengtionary.websocket.chatroom;
 
-
-
 import com.sparta.daengtionary.configration.error.CustomException;
+import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
+import com.sparta.daengtionary.dto.request.MemberRequestDto;
+import com.sparta.daengtionary.dto.response.ResponseBodyDto;
+import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.websocket.chat.ChatMessage;
 import com.sparta.daengtionary.websocket.chat.ChatMessageRepository;
 import com.sparta.daengtionary.websocket.chatdto.MessageResponseDto;
 import com.sparta.daengtionary.websocket.chatdto.RoomDto;
 import com.sparta.daengtionary.websocket.chatdto.RoomResponseDto;
+import com.sparta.daengtionary.websocket.chatdto.response.ChatRoomResponseDto;
 import com.sparta.daengtionary.websocket.sse.NotificationRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-
-
-
+import java.util.Optional;
 
 import static com.sparta.daengtionary.configration.error.ErrorCode.*;
 import static com.sparta.daengtionary.websocket.chatroom.ChatRoomService.MemberTypeEnum.Type.REQUESTER;
 import static com.sparta.daengtionary.websocket.chatroom.ChatRoomService.MemberTypeEnum.Type.ACCEPTOR;
+
 @RequiredArgsConstructor
 @Service
 public class ChatRoomService {
-
     private final NotificationRepository notificationRepository;
     private final ChatRoomRepository roomRepository;
     private final ChatMessageRepository messageRepository;
-
     private final ChatMessage chatMessage;
     private final SimpMessageSendingOperations messagingTemplate;
     private final MemberRepository memberRepository;
+    private final TokenProvider tokenProvider;
+    private final ResponseBodyDto responseBodyDto;
 
     // 채팅방 만들기
+    public ResponseEntity<?> createChatRoom(HttpServletRequest request,
+                                            MemberRequestDto.MakeChat makeChat) {
+        // requester member 정보
+        Member requester = tokenProvider.getMemberFromAuthentication();
+
+        // acceptor member 정보
+        Member acceptor = checkMemberByMemberNo(makeChat.getMemberNo());
+
+        // 요청자와 응답자가 같을경우 error
+        if (requester.equals(acceptor)) {
+            throw new CustomException(CANNOT_CHAT_WITH_ME);
+        }
+
+        // 채팅방 찾기, 없을 경우 생성
+        ChatRoom chatRoom = checkChatRoomByMember(requester, acceptor);
+
+        // 채팅방 입장
+        chatRoom.enter();
+
+        return responseBodyDto.success(ChatRoomResponseDto.Create.builder()
+                        .chatRoomNo(chatRoom.getChatRoomNo())
+                        .build(),
+                "채탱방 생성 완료"
+        );
+    }
+
+
     @Transactional
-    public Long createRoom(Long memberid, Long acceptorId){
+    public Long createRoom(Long memberid, Long acceptorId) {
         // 유효성 검사
-        if (memberid.equals(acceptorId) ) {
+        if (memberid.equals(acceptorId)) {
             throw new CustomException(CANNOT_CHAT_WITH_ME);
         }
         // 채팅 상대 찾아오기
         Member acceptor = memberRepository.findById(acceptorId)
-                .orElseThrow( () -> new CustomException(NOT_FOUND_USER_INFO)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER_INFO)
                 );
         Member requester = memberRepository.findById(memberid)
-                .orElseThrow( () -> new CustomException(NOT_FOUND_USER_INFO)
+                .orElseThrow(() -> new CustomException(NOT_FOUND_USER_INFO)
                 );
         // 채팅방을 찾아보고, 없을 시 DB에 채팅방 저장
         ChatRoom chatRoom = roomRepository.findByMember(requester, acceptor)
-                .orElseGet( () -> {
+                .orElseGet(() -> {
                     ChatRoom c = roomRepository.save(ChatRoom.createOf(requester, acceptor));
 //               // 채팅방 개설 메시지 생성
 //                    notificationRepository.save(Notification.createOf(c, acceptor)); // 알림 작성 및 전달
@@ -66,7 +97,7 @@ public class ChatRoomService {
                 });
         chatRoom.enter(); // 채팅방에 들어간 상태로 변경 -> 람다를 사용해 일괄처리할 방법이 있는지 연구해 보도록 합니다.
 
-        return chatRoom.getId();
+        return chatRoom.getChatRoomNo();
     }
 
 
@@ -91,10 +122,10 @@ public class ChatRoomService {
         }
 
         if (chatRoom.getAccOut() && chatRoom.getReqOut()) {
-            roomRepository.deleteById(chatRoom.getId()); // 둘 다 나간 상태라면 방 삭제
+            roomRepository.deleteById(chatRoom.getChatRoomNo()); // 둘 다 나간 상태라면 방 삭제
         } else {
             // 채팅방 종료 메시지 전달 및 저장
-            messagingTemplate.convertAndSend("/sub/chat/room/" + chatRoom.getId(),
+            messagingTemplate.convertAndSend("/sub/chat/room/" + chatRoom.getChatRoomNo(),
                     MessageResponseDto.createFrom(
                             messageRepository.save(ChatMessage.createOutOf(id, member))
                     )
@@ -114,7 +145,7 @@ public class ChatRoomService {
         return getMessages(dtos, memberId, nickname);
     }
 
-    public List<RoomResponseDto> getMessages(List<RoomDto> roomDtos, Long memberId , String nickname) {
+    public List<RoomResponseDto> getMessages(List<RoomDto> roomDtos, Long memberId, String nickname) {
 
         List<RoomResponseDto> prefix = new ArrayList<>();
         List<RoomResponseDto> suffix = new ArrayList<>();
@@ -127,19 +158,19 @@ public class ChatRoomService {
                 if (!dto.getAccOut()) { // 만약 Acc(내)가 나가지 않았다면
                     int unreadCnt = messageRepository.countMsg(dto.getReqId(), dto.getRoomId());
                     if (dto.getAccFixed()) {
-                        prefix.add(RoomResponseDto.createOf(type,ACCEPTOR, dto, unreadCnt, false));
+                        prefix.add(RoomResponseDto.createOf(type, ACCEPTOR, dto, unreadCnt, false));
                     } else {
-                        suffix.add(RoomResponseDto.createOf(type,ACCEPTOR, dto, unreadCnt, false));
+                        suffix.add(RoomResponseDto.createOf(type, ACCEPTOR, dto, unreadCnt, false));
                     }
                 }
             } else if (dto.getReqId().equals(memberId)) {
                 if (!dto.getReqOut()) { // 만약 Req(내)가 나가지 않았다면
                     int unreadCnt = messageRepository.countMsg(dto.getAccId(), dto.getRoomId());
                     if (dto.getReqFixed()) {
-                        prefix.add(RoomResponseDto.createOf(type,REQUESTER, dto, unreadCnt, false));
+                        prefix.add(RoomResponseDto.createOf(type, REQUESTER, dto, unreadCnt, false));
 
                     } else {
-                        suffix.add(RoomResponseDto.createOf(type,REQUESTER, dto, unreadCnt, false));
+                        suffix.add(RoomResponseDto.createOf(type, REQUESTER, dto, unreadCnt, false));
                     }
                 }
             }
@@ -163,5 +194,22 @@ public class ChatRoomService {
             public static final String REQUESTER = "REQUESTER";
         }
     }
-}
 
+    @Transactional(readOnly = true)
+    public Member checkMemberByMemberNo(Long memberNo) {
+        Optional<Member> optionalMember = memberRepository.findById(memberNo);
+
+        return optionalMember.orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER_INFO)
+        );
+    }
+
+    @Transactional
+    public ChatRoom checkChatRoomByMember(Member requester, Member acceptor) {
+        Optional<ChatRoom> optionalChatRoom = roomRepository.findByMember(requester, acceptor);
+
+        return optionalChatRoom.orElseGet(
+                () -> roomRepository.save(ChatRoom.createOf(requester, acceptor))
+        );
+    }
+}

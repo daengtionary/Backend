@@ -12,9 +12,9 @@ import lombok.Setter;
 @AllArgsConstructor
 public class MessageRequestDto {
     // 메시지 타입 : 입장, 채팅
-    private Long roomId;
-    private Long senderId;
-    private String nickname;
+    private Long chatRoomNo;
+    private Long senderNo;
+    private String nick;
     private String message;
     private String type;
     private Boolean isRead;

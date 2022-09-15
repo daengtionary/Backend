@@ -25,8 +25,8 @@ public class MessageResponseDto {
 
     public MessageResponseDto(MessageRequestDto messageRequestDto) {
         this.messageId = Long.valueOf(messageRequestDto.getMessage());
-        this.senderId = messageRequestDto.getSenderId();
-        this.senderNickname = messageRequestDto.getNickname();
+        this.senderId = messageRequestDto.getSenderNo();
+        this.senderNickname = messageRequestDto.getNick();
         this.message = messageRequestDto.getMessage();
         this.isRead = messageRequestDto.getIsRead();
         this.type = messageRequestDto.getType();
@@ -38,7 +38,7 @@ public class MessageResponseDto {
         MessageResponseDto responseDto = new MessageResponseDto();
 
         responseDto.senderName = username;
-        responseDto.messageId = message.getId();
+        responseDto.messageId = message.getChatMessageNo();
         responseDto.message = message.getMessage();
         responseDto.date = message.getCreatedAt();
         responseDto.type = message.getType();
@@ -52,7 +52,7 @@ public class MessageResponseDto {
         MessageResponseDto responseDto = new MessageResponseDto();
 
         responseDto.senderId = message.getSenderId();
-        responseDto.messageId = message.getId();
+        responseDto.messageId = message.getChatMessageNo();
         responseDto.message = message.getMessage();
         responseDto.date = message.getCreatedAt();
         responseDto.type = message.getType();

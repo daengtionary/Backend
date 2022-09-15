@@ -13,7 +13,7 @@ import static com.sparta.daengtionary.websocket.chatroom.ChatRoomService.MemberT
 @NoArgsConstructor
 public class RoomResponseDto {
 
-    private Long roomId;
+    private Long chatRoomNo;
     private Long memberId;
     private String nickname;
     private String senderName;
@@ -28,7 +28,7 @@ public class RoomResponseDto {
 
         RoomResponseDto responseDto = new RoomResponseDto();
 
-        responseDto.roomId = dto.getRoomId();
+        responseDto.chatRoomNo = dto.getRoomId();
         responseDto.nickname = dto.getAccNickname();
         responseDto.message = dto.getMessage();
         responseDto.date = dto.getDate();

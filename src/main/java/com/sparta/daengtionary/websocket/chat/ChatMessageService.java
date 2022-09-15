@@ -10,7 +10,6 @@ import com.sparta.daengtionary.websocket.chatdto.RoomMsgUpdateDto;
 import com.sparta.daengtionary.websocket.chatroom.ChatRoom;
 import com.sparta.daengtionary.websocket.chatroom.ChatRoomRepository;
 import com.sparta.daengtionary.websocket.redis.RedisMessagePublisher;
-import com.sparta.daengtionary.websocket.sse.NotificationRepository;
 import com.sparta.daengtionary.websocket.sse.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -57,7 +56,7 @@ public class ChatMessageService {
 
         System.out.println("5555555555555555555555555555555555555 메시지찾기 getMessage nickname = " + nickname);
         // 메시지 찾아오기
-        List<ChatMessage> messages = messageRepository.findAllByRoomIdOrderByIdAsc(roomId);
+        List<ChatMessage> messages = messageRepository.findAllByChatRoomNoOrderByChatRoomNoAsc(roomId);
         // responseDto 만들기
 
 
@@ -76,9 +75,9 @@ public class ChatMessageService {
     @Transactional
     public void uploadChatMessageImg(MultipartFile img, MessageRequestDto requestDto) {
 
-        ChatRoom chatRoom = messageRepository.findByRoomId(requestDto.getRoomId());
+        ChatRoom chatRoom = messageRepository.findByChatRoomNo(requestDto.getChatRoomNo());
 
-        Member member = memberRepository.findById(requestDto.getSenderId()).orElseThrow(
+        Member member = memberRepository.findById(requestDto.getSenderNo()).orElseThrow(
                 () -> new IllegalArgumentException("해당하는 유저가 존재하지 않습니다")
         );
 
@@ -91,7 +90,7 @@ public class ChatMessageService {
             imageUrl = "No Message Image";
         }
 
-        ChatMessage message = new ChatMessage(requestDto.getRoomId(), requestDto.getSenderId() , requestDto.getMessage());
+        ChatMessage message = new ChatMessage(requestDto.getChatRoomNo(), requestDto.getSenderNo() , requestDto.getMessage());
 
         message.setImg(imageUrl);
 
@@ -115,8 +114,8 @@ public class ChatMessageService {
         MessageRequestDto sendMessageDto = new MessageRequestDto();
 
 
-        System.out.println("requestDto.getRoomId() = " + requestDto.getRoomId());
-        ChatRoom chatRoom = roomRepository.findByIdFetch(requestDto.getRoomId()).orElseThrow(
+        System.out.println("requestDto.getRoomId() = " + requestDto.getChatRoomNo());
+        ChatRoom chatRoom = roomRepository.findByIdFetch(requestDto.getChatRoomNo()).orElseThrow(
                 () -> new NullPointerException("해당 채팅방이 존재하지 않습니다.")
         );
         chatRoom.accOut(false);
@@ -145,7 +144,7 @@ public class ChatMessageService {
         redisMessagePublisher.publish(requestDto);
 
         messagingTemplate.convertAndSend("/sub/chat/rooms/" + memberId, msgUpdateDto); // 개별 채팅 목록 보기 업데이트
-        messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getRoomId(), responseDto); // 채팅방 내부로 메시지 전송
+        messagingTemplate.convertAndSend("/sub/chat/room/" + requestDto.getChatRoomNo(), responseDto); // 채팅방 내부로 메시지 전송
     }
 
 }

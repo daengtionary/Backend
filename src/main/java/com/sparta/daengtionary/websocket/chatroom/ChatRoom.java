@@ -4,7 +4,7 @@ package com.sparta.daengtionary.websocket.chatroom;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.sparta.daengtionary.domain.Member;
-import com.sparta.daengtionary.websocket.TimeStamp;
+import com.sparta.daengtionary.util.Timestamped;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -16,49 +16,40 @@ import static com.sparta.daengtionary.websocket.chatroom.ChatRoomService.MemberT
 @Entity
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
-//@NoArgsConstructor
-public class ChatRoom extends TimeStamp {
-
+public class ChatRoom extends Timestamped {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "room_id", nullable = false)
-    private Long id;
-
+    private Long chatRoomNo;
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member requester;
-
     @ManyToOne
     @JoinColumn(nullable = false)
     private Member acceptor;
-
     @Column(nullable = false)
     private Boolean reqOut;
-
     @Column(nullable = false)
     private Boolean accOut;
-
     @Column(nullable = false)
     private Boolean accFixed;
-
     @Column(nullable = false)
     private Boolean reqFixed;
 
 
-    public ChatRoom(){
+    public ChatRoom() {
 
     }
 
     public static ChatRoom createOf(Member requester, Member acceptor) {
-
         ChatRoom room = new ChatRoom();
+
         room.requester = requester;
         room.acceptor = acceptor;
         room.reqOut = false;
         room.accOut = true;
         room.accFixed = false;
         room.reqFixed = false;
-//        room.type = "START";
+
         return room;
     }
 
@@ -88,6 +79,4 @@ public class ChatRoom extends TimeStamp {
         this.accOut = false;
         this.reqOut = false;
     }
-
-
 }
