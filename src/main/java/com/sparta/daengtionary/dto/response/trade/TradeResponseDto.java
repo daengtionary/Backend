@@ -19,6 +19,8 @@ public class TradeResponseDto {
     private int view;
     private String tradeImg;
     private Long reviewCount;
+
+    private Long wishCount;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")

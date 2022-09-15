@@ -28,6 +28,7 @@ import static com.sparta.daengtionary.domain.community.QCommunityReview.communit
 import static com.sparta.daengtionary.domain.trade.QTrade.trade;
 import static com.sparta.daengtionary.domain.trade.QTradeImg.tradeImg1;
 import static com.sparta.daengtionary.domain.trade.QTradeReview.tradeReview;
+import static com.sparta.daengtionary.domain.QWish.wish;
 
 
 @Repository
@@ -52,6 +53,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         map.address,
                         map.view,
                         mapReview.countDistinct().as("reviewCount"),
+                        wish.countDistinct().as("wishCount"),
                         mapImg.mapImgUrl,
                         mapInfo1.mapInfo,
                         map.createdAt,
@@ -64,6 +66,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .leftJoin(mapReview)
                 .on(map.mapNo.eq(mapReview.map.mapNo))
+                .leftJoin(wish)
+                .on(map.mapNo.eq(wish.map.mapNo))
                 .where(eqCategory(category, "map"),
                         eqMapAddress(address),
                         eqTitle(title, "map"),
@@ -88,6 +92,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         community.title,
                         community.view,
                         communityReview.countDistinct().as("reviewCount"),
+                        wish.countDistinct().as("wishCount"),
                         communityImg1.communityImg,
                         community.createdAt,
                         community.modifiedAt
@@ -97,6 +102,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(communityImg1.community.communityNo))
                 .leftJoin(communityReview)
                 .on(community.communityNo.eq(communityReview.community.communityNo))
+                .leftJoin(wish)
+                .on(community.communityNo.eq(wish.community.communityNo))
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
                         eqNick(nick, "community"))
@@ -121,6 +128,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         trade.view,
                         trade.status,
                         tradeReview.countDistinct().as("reviewCount"),
+                        wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
                         trade.createdAt,
                         trade.modifiedAt
@@ -130,6 +138,8 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
                 .leftJoin(tradeReview)
                 .on(trade.tradeNo.eq(tradeReview.trade.tradeNo))
+                .leftJoin(wish)
+                .on(trade.tradeNo.eq(wish.trade.tradeNo))
                 .where(eqTitle(title, "trade"),
                         eqContent(content, "trade"),
                         eqNick(nick, "trade"),
@@ -203,7 +213,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, map.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, map.view);
+                            return new OrderSpecifier<>(dir, wish.countDistinct());
                     }
                 }
             }
@@ -216,7 +226,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, community.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, community.view);
+                            return new OrderSpecifier<>(dir, wish.countDistinct());
                     }
                 }
             }
@@ -230,7 +240,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, trade.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, trade.view);
+                            return new OrderSpecifier<>(dir, wish.countDistinct());
                     }
                 }
             }
