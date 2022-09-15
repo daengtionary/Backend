@@ -16,6 +16,7 @@ public class CommunityResponseDto {
     private int view;
     private String communityImg;
     private Long reviewCount;
+    private Long wishCount;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
