@@ -34,12 +34,12 @@ import static com.sparta.daengtionary.domain.QWish.wish;
 
 
 @Repository
-public class MapRepositorySupport extends QuerydslRepositorySupport {
+public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
 
 
-    public MapRepositorySupport(JPAQueryFactory queryFactory) {
+    public PostRepositorySupport(JPAQueryFactory queryFactory) {
         super(Map.class);
         this.queryFactory = queryFactory;
     }

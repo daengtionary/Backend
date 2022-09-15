@@ -6,6 +6,7 @@ import com.sparta.daengtionary.dto.request.MapRequestDto;
 import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.service.MapReviewService;
 import com.sparta.daengtionary.service.MapService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,6 +44,11 @@ public class HospitalController {
     public ResponseEntity<?> getHospital(@PathVariable Long mapNo) {
         mapService.mapViewUpdate(mapNo);
         return mapService.getAllMap(mapNo);
+    }
+
+    @GetMapping("/test/{mapNo}")
+    public ResponseEntity<?> getTest(@PathVariable Long mapNo){
+        return mapService.getTest(mapNo);
     }
 
     @PatchMapping("/{mapNo}")

@@ -20,6 +20,8 @@ public class MapDetailResponseDto {
     private String content;
     private float star;
     private int view;
+    private Long reviewCount;
+    private Long wishCount;
     private List<String> imgUrls;
     private List<String> mapInfo;
     private List<ReviewResponseDto> mapReviewList;
@@ -31,7 +33,9 @@ public class MapDetailResponseDto {
 
     @Builder
     public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
-                                String content, List<ReviewResponseDto> mapReviewList, float star, int view, List<String> imgUrls, List<String> mapInfo, LocalDateTime createdAt, LocalDateTime moditiedAt) {
+                                String content, Long reviewCount, Long wishCount, List<ReviewResponseDto> mapReviewList,
+                                float star, int view, List<String> imgUrls, List<String> mapInfo,
+                                LocalDateTime createdAt, LocalDateTime moditiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
@@ -42,6 +46,8 @@ public class MapDetailResponseDto {
         this.view = view;
         this.imgUrls = imgUrls;
         this.mapInfo = mapInfo;
+        this.reviewCount = reviewCount;
+        this.wishCount = wishCount;
         this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
         this.moditiedAt = moditiedAt;
