@@ -33,9 +33,9 @@ public class TradeController {
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchCommunity(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                                @RequestParam String status, @RequestParam String category, @RequestParam int min,
-                                                @RequestParam int max, @RequestParam String direction, Pageable pageable) {
-        return tradeService.getSearchTrade(title, content, nick, status, category, direction, min, max, pageable);
+                                                @RequestParam String status, @RequestParam String category, @RequestParam int minPrice,
+                                                @RequestParam int maxPrice, @RequestParam String direction, Pageable pageable) {
+        return tradeService.getSearchTrade(title, content, nick, status, category, direction, minPrice, maxPrice, pageable);
     }
 
 

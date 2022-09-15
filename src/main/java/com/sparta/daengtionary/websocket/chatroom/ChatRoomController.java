@@ -64,5 +64,4 @@ public class ChatRoomController {
         return ResponseEntity.ok().body(OkDto.valueOf("true"));
     }
 
-
 }

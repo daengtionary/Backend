@@ -76,6 +76,7 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
+                        .category(trade.getCategory())
                         .price(trade.getPrice())
                         .status(trade.getStatus())
                         .category(trade.getCategory())

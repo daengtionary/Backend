@@ -34,7 +34,7 @@ public class HospitalController {
         return mapService.getAllMapByCategory("hospital",direction,address ,pageable);
     }
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+    public ResponseEntity<?> getSearchHospital(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
                                           @RequestParam String address, @RequestParam String direction, Pageable pageable){
         return mapService.getSearchMap("hospital",title,content,nick,address,direction,pageable);
     }
