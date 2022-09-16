@@ -129,6 +129,7 @@ public class CommunityService {
                 CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
                         .nick(community.getMember().getNick())
+                        .breed(community.getMember().getDogs().get(0).getBreed())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())

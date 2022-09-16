@@ -16,6 +16,7 @@ public class CommunityDetatilResponseDto {
     private String nick;
     private String title;
     private String category;
+    private String breed;
     private String content;
     private int view;
     private List<String> imgList;
@@ -26,7 +27,7 @@ public class CommunityDetatilResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view, String category,
+    public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view, String category, String breed,
                                        String nick , List<String> imgList,List<ReviewResponseDto> reviewList ,LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
@@ -34,6 +35,7 @@ public class CommunityDetatilResponseDto {
         this.content = content;
         this.category = category;
         this.view = view;
+        this.breed = breed;
         this.imgList = imgList;
         this.reviewList = reviewList;
         this.createdAt = createdAt;
