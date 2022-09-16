@@ -2,10 +2,12 @@ package com.sparta.daengtionary.service;
 
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
+import com.sparta.daengtionary.domain.Wish;
 import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.community.CommunityReview;
+import com.sparta.daengtionary.repository.WishRepository;
 import com.sparta.daengtionary.repository.community.CommunityReviewRepository;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
@@ -38,6 +40,8 @@ public class CommunityService {
     private final CommunityImgRepository communityImgRepository;
     private final CommunityReviewRepository communityReviewRepository;
     private final String imgPath = "/map/image";
+
+    private final WishRepository wishRepository;
 
     @Transactional
     public ResponseEntity<?> createCommunity(CommunityRequestDto requestDto, List<MultipartFile> multipartFileList) {
@@ -125,6 +129,8 @@ public class CommunityService {
             );
         }
 
+        List<Wish> temp = wishRepository.findAllByCommunity(community);
+
         return responseBodyDto.success(
                 CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
@@ -134,6 +140,8 @@ public class CommunityService {
                         .content(community.getContent())
                         .view(community.getView())
                         .imgList(comImgs)
+                        .reviewCount((long) reviews.size())
+                        .wishCount((long) temp.size())
                         .reviewList(reviewResponseDtoList)
                         .createdAt(community.getCreatedAt())
                         .modifiedAt(community.getModifiedAt())

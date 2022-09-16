@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.cotroller;
 
-import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.service.TradeReviewService;
 import com.sparta.daengtionary.service.TradeService;
@@ -32,7 +31,7 @@ public class TradeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchCommunity(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+    public ResponseEntity<?> getSearchTrade(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
                                                 @RequestParam String status, @RequestParam String category, @RequestParam int minPrice,
                                                 @RequestParam int maxPrice, @RequestParam String direction, Pageable pageable) {
         return tradeService.getSearchTrade(title, content, nick, status, category, direction, minPrice, maxPrice, pageable);
@@ -57,18 +56,18 @@ public class TradeController {
     }
 
     @PostMapping("/review/create/{tradeNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,@PathVariable Long tradeNo) {
-        return tradeReviewService.createTradeReview(tradeNo, requestDto);
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content,@PathVariable Long tradeNo) {
+        return tradeReviewService.createTradeReview(tradeNo, content);
     }
 
     @PatchMapping("/review/{tradeNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long tradeNo,
+    public ResponseEntity<?> updateTradeReview(@RequestPart(value = "data") String content, @PathVariable Long tradeNo,
                                               @PathVariable Long reviewNo) {
-        return tradeReviewService.updateTradeReview(tradeNo, reviewNo, requestDto);
+        return tradeReviewService.updateTradeReview(tradeNo, reviewNo, content);
     }
 
     @DeleteMapping("/review/{tradeNo}/{reviewNo}")
-    public ResponseEntity<?> deleteRoomReview(@PathVariable Long tradeNo, @PathVariable Long reviewNo) {
+    public ResponseEntity<?> deleteTradeReview(@PathVariable Long tradeNo, @PathVariable Long reviewNo) {
         return tradeReviewService.deleteTradeReview(tradeNo, reviewNo);
     }
 

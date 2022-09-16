@@ -20,6 +20,8 @@ public class TradeDetailResponseDto {
     private String category;
     private int price;
     private int view;
+    private Long reviewCount;
+    private Long wishCount;
     private List<String> tradeImgUrl;
     private List<ReviewResponseDto> reviewList;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -28,7 +30,7 @@ public class TradeDetailResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public TradeDetailResponseDto(Long tradeNo, String nick, String title,
+    public TradeDetailResponseDto(Long tradeNo, String nick, String title,Long wishCount,Long reviewCount,
                                   String content, int price, String status, String category, int view, List<String> tradeImgUrl,
                                   List<ReviewResponseDto> reviewList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.tradeNo = tradeNo;
@@ -36,6 +38,8 @@ public class TradeDetailResponseDto {
         this.title = title;
         this.content = content;
         this.price = price;
+        this.wishCount = wishCount;
+        this.reviewCount = reviewCount;
         this.status = status;
         this.category = category;
         this.view = view;

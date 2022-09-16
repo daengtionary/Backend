@@ -14,6 +14,7 @@ import com.sparta.daengtionary.dto.response.map.MapResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
+import com.sparta.daengtionary.repository.WishRepository;
 import com.sparta.daengtionary.repository.map.MapImgRepository;
 import com.sparta.daengtionary.repository.map.MapInfoRepository;
 import com.sparta.daengtionary.repository.map.MapRepository;
@@ -42,6 +43,8 @@ public class MapService {
     private final PostRepositorySupport postRepositorySupport;
     private final AwsS3UploadService s3UploadService;
     private final MapReviewRepository mapReviewRepository;
+
+    private final WishRepository wishRepository;
 
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
@@ -149,17 +152,18 @@ public class MapService {
         }
         List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
         List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
-
         for (MapReview i : reviews) {
             reviewResponseDtoList.add(
                     ReviewResponseDto.builder()
                             .reviewNo(i.getMapReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
+                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
                             .star(i.getStar())
                             .build()
             );
         }
+        List<Wish> temp = wishRepository.findAllByMap(map);
 
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
@@ -173,6 +177,8 @@ public class MapService {
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(infoList)
+                        .reviewCount((long) reviews.size())
+                        .wishCount((long) temp.size())
                         .mapReviewList(reviewResponseDtoList)
                         .createdAt(map.getCreatedAt())
                         .moditiedAt(map.getModifiedAt())

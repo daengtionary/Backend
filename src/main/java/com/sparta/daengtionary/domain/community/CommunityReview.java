@@ -3,7 +3,6 @@ package com.sparta.daengtionary.domain.community;
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
-import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,8 +37,8 @@ public class CommunityReview extends Timestamped {
         this.content = content;
     }
 
-    public void communityReviewUpdate(ReviewRequestDto requestDto) {
-        this.content = requestDto.getContent();
+    public void communityReviewUpdate(String content) {
+        this.content = content;
     }
 
     public void validateMember(Member member) {

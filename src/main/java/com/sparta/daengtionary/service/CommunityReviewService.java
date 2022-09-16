@@ -6,7 +6,6 @@ import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityReview;
 import com.sparta.daengtionary.repository.community.CommunityReviewRepository;
-import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -14,17 +13,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class CommunityReviewService {
-    private final AwsS3UploadService s3UploadService;
     private final CommunityReviewRepository communityReviewRepository;
     private final ResponseBodyDto responseBodyDto;
     private final CommunityService communityService;
     private final TokenProvider tokenProvider;
-    private final String imgPath = "/map/review";
 
 
     @Transactional
@@ -49,12 +45,12 @@ public class CommunityReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateCommunityReview(Long communityNo, Long communityReviewNo, ReviewRequestDto requestDto) {
+    public ResponseEntity<?> updateCommunityReview(Long communityNo, Long communityReviewNo, String content) {
         Member member = tokenProvider.getMemberFromAuthentication();
         communityService.validateCommunity(communityNo);
         CommunityReview communityReview = validateCommunityReview(communityReviewNo, member);
 
-        communityReview.communityReviewUpdate(requestDto);
+        communityReview.communityReviewUpdate(content);
 
         return responseBodyDto.success(ReviewResponseDto.builder()
                 .reviewNo(communityReview.getCommunityReviewNo())
