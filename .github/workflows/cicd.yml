@@ -61,6 +61,6 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
             docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest daengtionary:latest
-            docker stop daengv
+            docker stop daengtionary
             sleep 5
-            docker run -d --rm --name daengv -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
+            docker run -d --rm --name daengtionary -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
