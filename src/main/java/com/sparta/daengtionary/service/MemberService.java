@@ -11,6 +11,7 @@ import com.sparta.daengtionary.dto.request.KakaoUserInfoDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.dto.request.TokenDto;
 import com.sparta.daengtionary.dto.response.KakaoUserResponseDto;
+import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
@@ -78,7 +79,13 @@ public class MemberService {
 
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success(member.getNick() + "님 반갑습니다 :)");
+        return responseBodyDto.success(MemberResponseDto.builder()
+                        .memberNo(member.getMemberNo())
+                        .nick(member.getNick())
+                        .email(member.getEmail())
+                        .role(member.getRole())
+                        .build(),
+                member.getNick() + "님 반갑습니다 :)");
     }
 
     //카카오 로그인

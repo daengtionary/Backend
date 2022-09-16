@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.sparta.daengtionary.repository.DogRepository;
 import com.sparta.daengtionary.util.Authority;
 import lombok.Builder;
@@ -9,6 +10,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class MemberResponseDto {
     private Long memberNo;
 
