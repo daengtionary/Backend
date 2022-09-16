@@ -1,5 +1,6 @@
 package com.sparta.daengtionary.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.daengtionary.util.Authority;
 import com.sparta.daengtionary.util.Timestamped;
 import lombok.Builder;
@@ -19,6 +20,7 @@ public class Member extends Timestamped {
     private Long memberNo;
     @Column(nullable = false)
     private String email;
+    @JsonIgnore
     @Column(nullable = false)
     private String password;
     @Column(nullable = false)
@@ -29,17 +31,6 @@ public class Member extends Timestamped {
     private Long kakaoId;
     @OneToMany(mappedBy = "member")
     private List<Dog> dogs;
-
-    //동훈 websocket
-    @Column
-    private String membername;
-    @Column
-    private String nickname;
-    @Column
-    private String id;
-    @Column
-    private String memberid;
-
 
     public Member() {
     }
