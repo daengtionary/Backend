@@ -48,6 +48,7 @@ jobs:
       - name: Docker build
         run: |
           docker build -t daengtionary .
+          docker tag daengtionary:latest ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
       ## 4 이미지를 서버에서 run
       - name: Deploy
