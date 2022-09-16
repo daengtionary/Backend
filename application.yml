@@ -1,6 +1,0 @@
-# application.yml
-management:
-  endpoint:
-  endpoints:
-    web:
-      base-path: /kukecd
