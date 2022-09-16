@@ -22,6 +22,10 @@ public class Community extends Timestamped {
     @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    @Column(nullable = false)
+    private String category;
+
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
@@ -33,9 +37,10 @@ public class Community extends Timestamped {
 
 
     @Builder
-    public Community(Long communityNo, Member member, String title, String content) {
+    public Community(Long communityNo, Member member,String category, String title, String content) {
         this.communityNo = communityNo;
         this.member = member;
+        this.category = category;
         this.title = title;
         this.content = content;
         this.view = 0;
@@ -43,6 +48,7 @@ public class Community extends Timestamped {
 
     public void updateCommunity(CommunityRequestDto requestDto) {
         this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
         this.content = requestDto.getContent();
     }
 

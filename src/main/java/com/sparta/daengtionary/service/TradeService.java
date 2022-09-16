@@ -9,14 +9,13 @@ import com.sparta.daengtionary.domain.trade.TradeReview;
 import com.sparta.daengtionary.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
-import com.sparta.daengtionary.dto.response.community.CommunityResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
 import com.sparta.daengtionary.repository.trade.TradeImgRepository;
 import com.sparta.daengtionary.repository.trade.TradeRepository;
-import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
+import com.sparta.daengtionary.repository.supportRepository.PostRepositorySupport;
 import com.sparta.daengtionary.repository.trade.TradeReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
@@ -39,7 +38,7 @@ public class TradeService {
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
     private final TradeReviewRepository tradeReviewRepository;
-    private final MapRepositorySupport mapRepositorySupport;
+    private final PostRepositorySupport postRepositorySupport;
     private final String imgPath = "/map/image";
 
     @Transactional
@@ -99,14 +98,14 @@ public class TradeService {
         int min, max;
         min = 0;
         max = 2000000000;
-        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String status, String category, String direction, int min, int max, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtoList = mapRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -129,7 +128,6 @@ public class TradeService {
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .imgUrl(i.getImgUrl())
                             .build()
             );
         }

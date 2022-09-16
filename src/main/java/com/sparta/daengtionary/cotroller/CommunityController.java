@@ -33,9 +33,9 @@ public class CommunityController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchCommunity(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
+    public ResponseEntity<?> getSearchCommunity(@RequestParam String category, @RequestParam String title, @RequestParam String content, @RequestParam String nick,
                                                 @RequestParam String direction, Pageable pageable) {
-        return service.getSearchCommunity(title, content, nick, direction, pageable);
+        return service.getSearchCommunity(category, title, content, nick, direction, pageable);
     }
 
 
@@ -57,16 +57,14 @@ public class CommunityController {
     }
 
     @PostMapping("/review/create/{comNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long comNo) {
-        return communityReviewService.createCommunityReview(comNo, requestDto, multipartFile);
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content, @PathVariable Long comNo) {
+        return communityReviewService.createCommunityReview(comNo, content);
     }
 
     @PatchMapping("/review/{comNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long comNo,
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long comNo,
                                               @PathVariable Long reviewNo) {
-        return communityReviewService.updateCommunityReview(comNo, reviewNo, requestDto, multipartFile);
+        return communityReviewService.updateCommunityReview(comNo, reviewNo, requestDto);
     }
 
     @DeleteMapping("/review/{comNo}/{reviewNo}")

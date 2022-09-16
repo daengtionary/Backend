@@ -22,29 +22,21 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MapReviewService {
-
-    private final AwsS3UploadService s3UploadService;
     private final MapReviewRepository mapReviewRepository;
     private final ResponseBodyDto responseBodyDto;
     private final MapService mapService;
     private final TokenProvider tokenProvider;
-    private final MapRepository mapRepository;
 
-    private final String imgPath = "/map/review";
 
     @Transactional
-    public ResponseEntity<?> createMapReview(Long mapNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseEntity<?> createMapReview(Long mapNo, ReviewRequestDto requestDto) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = mapService.validateMap(mapNo);
-        validateFile(multipartFile);
-        String reviewImg = s3UploadService.uploadImage(multipartFile, imgPath);
-
         MapReview mapReview = MapReview.builder()
                 .member(member)
                 .map(map)
                 .content(requestDto.getContent())
                 .star(requestDto.getStar())
-                .imgUrl(reviewImg)
                 .build();
 
         mapReviewRepository.save(mapReview);
@@ -55,19 +47,16 @@ public class MapReviewService {
                 .nick(mapReview.getMember().getNick())
                 .content(mapReview.getContent())
                 .star(mapReview.getStar())
-                .imgUrl(mapReview.getImgUrl())
                 .build(), "리뷰 생성 완료");
     }
 
     @Transactional
-    public ResponseEntity<?> updateMapReview(Long mapNo, Long mapReviewNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseEntity<?> updateMapReview(Long mapNo, Long mapReviewNo, ReviewRequestDto requestDto) {
         Member member = tokenProvider.getMemberFromAuthentication();
         mapService.validateMap(mapNo);
         MapReview mapReview = validateMapReview(mapReviewNo, member);
-        s3UploadService.deleteFile(mapReview.getImgUrl());
-        String reviewImg = s3UploadService.uploadImage(multipartFile, imgPath);
 
-        mapReview.mapReviewUpdate(requestDto, reviewImg);
+        mapReview.mapReviewUpdate(requestDto);
 
         return responseBodyDto.success(
                 ReviewResponseDto.builder()
@@ -75,7 +64,6 @@ public class MapReviewService {
                         .nick(mapReview.getMember().getNick())
                         .content(mapReview.getContent())
                         .star(mapReview.getStar())
-                        .imgUrl(mapReview.getImgUrl())
                         .build(), "수정 성공"
         );
     }
@@ -85,7 +73,6 @@ public class MapReviewService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = mapService.validateMap(mapNo);
         MapReview mapReview = validateMapReview(mapReviewNo, member);
-        s3UploadService.deleteFile(mapReview.getImgUrl());
         mapReviewRepository.delete(mapReview);
 
         return responseBodyDto.success("삭제 성공");
@@ -101,13 +88,6 @@ public class MapReviewService {
         float size = reviewList.size();
         starAvg = (float) starAvg / size;
         return (float) (Math.round(starAvg * 1000) /1000.0);
-    }
-
-
-    private void validateFile(MultipartFile multipartFile) {
-        if (multipartFile == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
     }
 
     private MapReview validateMapReview(Long mapReviewNo, Member member) {

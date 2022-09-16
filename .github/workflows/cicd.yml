@@ -48,7 +48,7 @@ jobs:
       - name: Docker build
         run: |
           docker build -t daengtionary .
-          docker tag daengtionary ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
+          docker tag daengtionary:latest ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
       ## 4 이미지를 서버에서 run
       - name: Deploy
@@ -60,5 +60,7 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
-            docker stop daeng
-            docker run -d --rm --name daeng -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary
+            docker tag ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest daengtionary:latest
+            docker stop daengv
+            sleep 5
+            docker run -d --rm --name daengv -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest

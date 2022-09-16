@@ -18,7 +18,8 @@ import com.sparta.daengtionary.repository.map.MapImgRepository;
 import com.sparta.daengtionary.repository.map.MapInfoRepository;
 import com.sparta.daengtionary.repository.map.MapRepository;
 import com.sparta.daengtionary.repository.map.MapReviewRepository;
-import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
+import com.sparta.daengtionary.repository.supportRepository.PostDetailRepositorySupport;
+import com.sparta.daengtionary.repository.supportRepository.PostRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +39,11 @@ public class MapService {
     private final MapImgRepository mapImgRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
-    private final MapRepositorySupport mapRepositorySupport;
+    private final PostRepositorySupport postRepositorySupport;
     private final AwsS3UploadService s3UploadService;
     private final MapReviewRepository mapReviewRepository;
+
+    private final PostDetailRepositorySupport postDetailRepositorySupport;
 
     private final String imgPath = "/map/image";
 
@@ -110,14 +113,20 @@ public class MapService {
         content = "";
         nick = "";
 
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
 
     }
 
     @Transactional(readOnly = true)
+    public ResponseEntity<?> getTest(Long mapNo){
+        List<MapDetailResponseDto> mapDetailResponseDtoPage = postDetailRepositorySupport.findByMapDetail(mapNo);
+        return responseBodyDto.success(mapDetailResponseDtoPage,"조회 성공");
+    }
+
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String direction, Pageable pageable) {
-        PageImpl<MapResponseDto> mapResponseDtoPage = mapRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
+        PageImpl<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
     }
 
@@ -148,7 +157,6 @@ public class MapService {
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
                             .star(i.getStar())
-                            .imgUrl(i.getImgUrl())
                             .build()
             );
         }

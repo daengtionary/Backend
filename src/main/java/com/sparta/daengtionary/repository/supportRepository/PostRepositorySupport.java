@@ -31,15 +31,16 @@ import static com.sparta.daengtionary.domain.trade.QTrade.trade;
 import static com.sparta.daengtionary.domain.trade.QTradeImg.tradeImg1;
 import static com.sparta.daengtionary.domain.trade.QTradeReview.tradeReview;
 import static com.sparta.daengtionary.domain.QWish.wish;
+import static com.sparta.daengtionary.domain.QDog.dog;
 
 
 @Repository
-public class MapRepositorySupport extends QuerydslRepositorySupport {
+public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     private final JPAQueryFactory queryFactory;
 
 
-    public MapRepositorySupport(JPAQueryFactory queryFactory) {
+    public PostRepositorySupport(JPAQueryFactory queryFactory) {
         super(Map.class);
         this.queryFactory = queryFactory;
     }
@@ -84,7 +85,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<CommunityResponseDto> findAllByCommunity(String title, String content, String nick,
+    public PageImpl<CommunityResponseDto> findAllByCommunity(String category,String title, String content, String nick,
                                                              String direction, Pageable pageable) {
         List<CommunityResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
@@ -93,6 +94,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         community.member.nick,
                         community.title,
                         community.view,
+                        dog.breed.as("breed"),
                         communityReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         communityImg1.communityImg,
@@ -106,9 +108,12 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(communityReview.community.communityNo))
                 .leftJoin(wish)
                 .on(community.communityNo.eq(wish.community.communityNo))
+                .leftJoin(dog)
+                .on(community.member.memberNo.eq(dog.member.memberNo))
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
-                        eqNick(nick, "community"))
+                        eqNick(nick, "community"),
+                        eqCategory(category,"community"))
                 .groupBy(community.communityNo)
                 .orderBy(mapSort(pageable, direction, "community"))
                 .offset(pageable.getOffset())
@@ -118,7 +123,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String categoty,
+    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String category,
                                                      String direction, int minPrice, int maxPrice, Pageable pageable) {
         List<TradeResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
@@ -146,7 +151,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "trade"),
                         eqNick(nick, "trade"),
                         betPrice(minPrice, maxPrice),
-                        eqCategory(categoty, "trade"),
+                        eqCategory(category, "trade"),
                         eqStatus(status))
                 .groupBy(trade.tradeNo)
                 .orderBy(mapSort(pageable, direction, "trade"))
@@ -160,6 +165,7 @@ public class MapRepositorySupport extends QuerydslRepositorySupport {
     private BooleanExpression eqCategory(String category, String tableName) {
         if (category.isEmpty()) return null;
         if (tableName.equals("map")) return map.category.eq(category);
+        if(tableName.equals("community")) return community.category.eq(category);
         if (tableName.equals("trade")) return trade.category.eq(category);
         return null;
     }

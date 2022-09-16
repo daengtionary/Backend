@@ -34,22 +34,17 @@ public class MapReview extends Timestamped {
     @Column(nullable = false)
     private int star;
 
-    @Column
-    private String imgUrl;
-
     @Builder
-    public MapReview(Member member,Map map, String content,int star,String imgUrl){
+    public MapReview(Member member,Map map, String content,int star){
         this.member = member;
         this.map = map;
         this.content = content;
         this.star = star;
-        this.imgUrl = imgUrl;
     }
 
-    public void mapReviewUpdate(ReviewRequestDto requestDto, String imgUrl){
+    public void mapReviewUpdate(ReviewRequestDto requestDto){
         this.content = requestDto.getContent();
         this.star = requestDto.getStar();
-        this.imgUrl = imgUrl;
     }
 
     public void validateMember(Member member) {

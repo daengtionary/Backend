@@ -6,8 +6,6 @@ import com.sparta.daengtionary.domain.community.Community;
 import com.sparta.daengtionary.domain.community.CommunityImg;
 import com.sparta.daengtionary.domain.Member;
 import com.sparta.daengtionary.domain.community.CommunityReview;
-import com.sparta.daengtionary.domain.trade.Trade;
-import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import com.sparta.daengtionary.repository.community.CommunityReviewRepository;
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
@@ -17,15 +15,13 @@ import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.community.CommunityImgRepository;
 import com.sparta.daengtionary.repository.community.CommunityRepository;
-import com.sparta.daengtionary.repository.supportRepository.MapRepositorySupport;
+import com.sparta.daengtionary.repository.supportRepository.PostRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -36,7 +32,7 @@ import java.util.List;
 public class CommunityService {
     private final AwsS3UploadService s3UploadService;
     private final ResponseBodyDto responseBodyDto;
-    private final MapRepositorySupport mapRepositorySupport;
+    private final PostRepositorySupport postRepositorySupport;
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
@@ -52,6 +48,7 @@ public class CommunityService {
         Community community = Community.builder()
                 .member(member)
                 .title(requestDto.getTitle())
+                .category(requestDto.getCategory())
                 .content(requestDto.getContent())
                 .build();
 
@@ -74,6 +71,7 @@ public class CommunityService {
                         .communityNo(community.getCommunityNo())
                         .nick(member.getNick())
                         .title(community.getTitle())
+                        .category(community.getCategory())
                         .content(community.getContent())
                         .view(community.getView())
                         .imgList(communityImg)
@@ -86,19 +84,20 @@ public class CommunityService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getCommunitySort(String direction, Pageable pageable) {
-        String title,content,nick;
+        String category, title, content, nick;
+        category = "";
         title = "";
         content = "";
         nick = "";
 
-        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
+        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchCommunity(String title, String content, String nick, String direction, Pageable pageable) {
-        PageImpl<CommunityResponseDto> responseDtoList = mapRepositorySupport.findAllByCommunity(title, content, nick,  direction, pageable);
+    public ResponseEntity<?> getSearchCommunity(String category, String title, String content, String nick, String direction, Pageable pageable) {
+        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -121,7 +120,7 @@ public class CommunityService {
                             .reviewNo(i.getCommunityReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .imgUrl(i.getImgUrl())
+                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }

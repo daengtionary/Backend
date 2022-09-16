@@ -30,20 +30,15 @@ public class TradeReview extends Timestamped {
     @Column(nullable = false)
     private String content;
 
-    @Column
-    private String imgUrl;
-
     @Builder
-    public TradeReview(Member member,Trade trade,String content,String imgUrl){
+    public TradeReview(Member member,Trade trade,String content){
         this.member = member;
         this.trade = trade;
         this.content = content;
-        this.imgUrl = imgUrl;
     }
 
-    public void tradeReviewUpdate(ReviewRequestDto requestDto, String imgUrl){
+    public void tradeReviewUpdate(ReviewRequestDto requestDto){
         this.content = requestDto.getContent();
-        this.imgUrl = imgUrl;
     }
 
     public void validateMember(Member member){

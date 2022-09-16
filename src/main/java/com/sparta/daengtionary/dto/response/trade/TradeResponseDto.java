@@ -28,13 +28,14 @@ public class TradeResponseDto {
 
     @Builder
     public TradeResponseDto(Long tradeNo, String nick, String title, String status, String category, int view, String tradeImg,
-                            Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                            Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.tradeNo = tradeNo;
         this.nick = nick;
         this.title = title;
         this.status = status;
         this.category = category;
         this.reviewCount = reviewCount;
+        this.wishCount = wishCount;
         this.view = view;
         this.tradeImg = tradeImg;
         this.createdAt = createdAt;
