@@ -111,6 +111,7 @@ public class MemberService {
 
         return responseBodyDto.success(
                 KakaoUserResponseDto.builder()
+                        .memberNo(kakaoUser.getMemberNo())
                         .email(kakaoUser.getEmail())
                         .nick(kakaoUser.getNick())
                         .build(),
