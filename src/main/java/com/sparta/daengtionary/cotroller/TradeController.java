@@ -57,16 +57,14 @@ public class TradeController {
     }
 
     @PostMapping("/review/create/{tradeNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long tradeNo) {
-        return tradeReviewService.createTradeReview(tradeNo, requestDto, multipartFile);
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,@PathVariable Long tradeNo) {
+        return tradeReviewService.createTradeReview(tradeNo, requestDto);
     }
 
     @PatchMapping("/review/{tradeNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long tradeNo,
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long tradeNo,
                                               @PathVariable Long reviewNo) {
-        return tradeReviewService.updateTradeReview(tradeNo, reviewNo, requestDto, multipartFile);
+        return tradeReviewService.updateTradeReview(tradeNo, reviewNo, requestDto);
     }
 
     @DeleteMapping("/review/{tradeNo}/{reviewNo}")

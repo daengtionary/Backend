@@ -32,13 +32,13 @@ public class ShopController {
     public ResponseEntity<?> getAllShopCategory(@RequestParam String address, @RequestParam String direction,
                                                 Pageable pageable) {
         String category = "shop";
-        return mapService.getAllMapByCategory(category,direction ,address, pageable);
+        return mapService.getAllMapByCategory(category, direction, address, pageable);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                          @RequestParam String address, @RequestParam String direction, Pageable pageable){
-        return mapService.getSearchMap("shop",title,content,nick,address,direction,pageable);
+                                          @RequestParam String address, @RequestParam String direction, Pageable pageable) {
+        return mapService.getSearchMap("shop", title, content, nick, address, direction, pageable);
     }
 
     @GetMapping("/{shopNo}")
@@ -60,20 +60,18 @@ public class ShopController {
     }
 
     @PostMapping("/review/create/{shopNo}")
-    public ResponseEntity<?> createShopReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long shopNo){
-        return mapReviewService.createMapReview(shopNo,requestDto,multipartFile);
+    public ResponseEntity<?> createShopReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long shopNo) {
+        return mapReviewService.createMapReview(shopNo, requestDto);
     }
 
     @PatchMapping("/review/{shopNo}/{reviewNo}")
-    public ResponseEntity<?> updateShopReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long shopNo,
-                                              @PathVariable Long reviewNo){
-        return mapReviewService.updateMapReview(shopNo,reviewNo,requestDto,multipartFile);
+    public ResponseEntity<?> updateShopReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long shopNo,
+                                              @PathVariable Long reviewNo) {
+        return mapReviewService.updateMapReview(shopNo, reviewNo, requestDto);
     }
 
     @DeleteMapping("/review/{shopNo}/{reviewNo}")
-    public ResponseEntity<?> deleteShopReview(@PathVariable Long shopNo,@PathVariable Long reviewNo){
-        return mapReviewService.deleteMapReview(shopNo,reviewNo);
+    public ResponseEntity<?> deleteShopReview(@PathVariable Long shopNo, @PathVariable Long reviewNo) {
+        return mapReviewService.deleteMapReview(shopNo, reviewNo);
     }
 }

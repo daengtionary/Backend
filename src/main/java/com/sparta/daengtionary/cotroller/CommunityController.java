@@ -57,16 +57,14 @@ public class CommunityController {
     }
 
     @PostMapping("/review/create/{comNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content,
-                                          @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long comNo) {
-        return communityReviewService.createCommunityReview(comNo, content, multipartFile);
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content, @PathVariable Long comNo) {
+        return communityReviewService.createCommunityReview(comNo, content);
     }
 
     @PatchMapping("/review/{comNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl", required = false) MultipartFile multipartFile, @PathVariable Long comNo,
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long comNo,
                                               @PathVariable Long reviewNo) {
-        return communityReviewService.updateCommunityReview(comNo, reviewNo, requestDto, multipartFile);
+        return communityReviewService.updateCommunityReview(comNo, reviewNo, requestDto);
     }
 
     @DeleteMapping("/review/{comNo}/{reviewNo}")

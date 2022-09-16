@@ -20,36 +20,30 @@ public class CommunityReview extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long communityReviewNo;
 
-    @JoinColumn(name = "memberNo",nullable = false)
+    @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @JoinColumn(name = "communityNo",nullable = false)
+    @JoinColumn(name = "communityNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Community community;
 
     @Column(nullable = false)
     private String content;
 
-    @Column
-    private String imgUrl;
-
     @Builder
-    public CommunityReview(Member member, Community community,String content,
-                           String imgUrl){
+    public CommunityReview(Member member, Community community, String content) {
         this.member = member;
         this.community = community;
         this.content = content;
-        this.imgUrl = imgUrl;
     }
 
-    public void communityReviewUpdate(ReviewRequestDto requestDto,String imgUrl){
+    public void communityReviewUpdate(ReviewRequestDto requestDto) {
         this.content = requestDto.getContent();
-        this.imgUrl = imgUrl;
     }
 
-    public void validateMember(Member member){
-        if(!this.member.equals(member)){
+    public void validateMember(Member member) {
+        if (!this.member.equals(member)) {
             throw new CustomException(ErrorCode.MAP_WRONG_ACCESS);
         }
     }

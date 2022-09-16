@@ -26,20 +26,16 @@ public class TradeReviewService {
     private final ResponseBodyDto responseBodyDto;
     private final TradeService tradeService;
     private final TokenProvider tokenProvider;
-    private final String imgPath = "/map/review";
 
     @Transactional
-    public ResponseEntity<?> createTradeReview(Long tradeNo, ReviewRequestDto requestDto, MultipartFile multipartFile) {
+    public ResponseEntity<?> createTradeReview(Long tradeNo, ReviewRequestDto requestDto) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = tradeService.validateTrade(tradeNo);
-        validateFile(multipartFile);
-        String reviewImg = s3UploadService.uploadImage(multipartFile, imgPath);
 
         TradeReview tradeReview = TradeReview.builder()
                 .member(member)
                 .trade(trade)
                 .content(requestDto.getContent())
-                .imgUrl(reviewImg)
                 .build();
 
         tradeReviewRepository.save(tradeReview);
@@ -48,25 +44,21 @@ public class TradeReviewService {
                 .reviewNo(tradeReview.getTradeReviewNo())
                 .nick(tradeReview.getMember().getNick())
                 .content(tradeReview.getContent())
-                .imgUrl(tradeReview.getImgUrl())
                 .build(), "리뷰 생성 완료");
     }
 
     @Transactional
-    public ResponseEntity<?> updateTradeReview(Long tradeNo,Long tradeReviewNo, ReviewRequestDto requestDto, MultipartFile multipartFile ){
+    public ResponseEntity<?> updateTradeReview(Long tradeNo,Long tradeReviewNo, ReviewRequestDto requestDto ){
         Member member = tokenProvider.getMemberFromAuthentication();
         tradeService.validateTrade(tradeNo);
         TradeReview tradeReview = validateTradeReview(tradeReviewNo,member);
-        s3UploadService.deleteFile(tradeReview.getImgUrl());
-        String reviewImg = s3UploadService.uploadImage(multipartFile,imgPath);
 
-        tradeReview.tradeReviewUpdate(requestDto,reviewImg);
+        tradeReview.tradeReviewUpdate(requestDto);
 
         return responseBodyDto.success(ReviewResponseDto.builder()
                         .reviewNo(tradeReview.getTradeReviewNo())
                         .nick(tradeReview.getMember().getNick())
                         .content(tradeReview.getContent())
-                        .imgUrl(tradeReview.getImgUrl())
                 .build(),"수정 성공");
     }
 
@@ -75,18 +67,12 @@ public class TradeReviewService {
         Member member = tokenProvider.getMemberFromAuthentication();
         tradeService.validateTrade(tradeNo);
         TradeReview tradeReview = validateTradeReview(tradeReviewNo, member);
-        s3UploadService.deleteFile(tradeReview.getImgUrl());
         tradeReviewRepository.delete(tradeReview);
 
         return responseBodyDto.success("삭제 성공");
     }
 
 
-    private void validateFile(MultipartFile multipartFile) {
-        if (multipartFile == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
 
     private TradeReview validateTradeReview(Long tradeReviewNo, Member member) {
         TradeReview tradeReview = tradeReviewRepository.findById(tradeReviewNo).orElseThrow(

@@ -128,7 +128,6 @@ public class TradeService {
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .imgUrl(i.getImgUrl())
                             .build()
             );
         }
