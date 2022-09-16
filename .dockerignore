@@ -1,7 +1,7 @@
 node_modules
 npm-debug.log
 Dockerfile*
-docker-compose*
+docker-compose.blue.yaml
 .dockerignore
 .git
 .gitignore
