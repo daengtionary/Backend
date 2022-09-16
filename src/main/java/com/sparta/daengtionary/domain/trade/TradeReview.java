@@ -37,8 +37,8 @@ public class TradeReview extends Timestamped {
         this.content = content;
     }
 
-    public void tradeReviewUpdate(ReviewRequestDto requestDto){
-        this.content = requestDto.getContent();
+    public void tradeReviewUpdate(String content){
+        this.content = content;
     }
 
     public void validateMember(Member member){

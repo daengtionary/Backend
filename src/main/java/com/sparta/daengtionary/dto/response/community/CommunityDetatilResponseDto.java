@@ -19,6 +19,8 @@ public class CommunityDetatilResponseDto {
     private String breed;
     private String content;
     private int view;
+    private Long reviewCount;
+    private Long wishCount;
     private List<String> imgList;
     private List<ReviewResponseDto> reviewList;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
@@ -27,13 +29,15 @@ public class CommunityDetatilResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view, String category, String breed,
+    public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view, String category, String breed,Long reviewCount,Long wishCount,
                                        String nick , List<String> imgList,List<ReviewResponseDto> reviewList ,LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
         this.title = title;
         this.content = content;
         this.category = category;
+        this.reviewCount = reviewCount;
+        this.wishCount = wishCount;
         this.view = view;
         this.breed = breed;
         this.imgList = imgList;
