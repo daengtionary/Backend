@@ -10,15 +10,19 @@ import java.time.LocalDateTime;
 
 @Getter
 public class MemberResponseDto {
-
     private Long memberNo;
 
     private MypageResponseDto mypageResponseDto;
+
     private Authority role;
+
     private String email;
+
     private String nick;
+
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
+
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private  LocalDateTime modifiedAt;
 

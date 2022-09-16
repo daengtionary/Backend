@@ -49,13 +49,13 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND.value(),"NOT_FOUND","해당 게시물을 찾을 수 없습니다."),
 
     //챗팅
+    CANNOT_CHAT_WITH_ME(HttpStatus.BAD_REQUEST.value(), "CANNOT_CHAT_WITH_ME", "나 자신은 채팅의 대상이 될 수 없습니다."),
     NOT_FOUND_CHAT(HttpStatus.NOT_FOUND.value(), "C001", "해당 채팅방을 찾을 수 없습니다."),
     CHAT_USER_BANNED(HttpStatus.BAD_REQUEST.value(), "C002", "차단한 회원과는 채팅을 시도할 수 없습니다."),
     NOT_FOUND_BANNED(HttpStatus.NOT_FOUND.value(), "C003", "차단 목록을 찾을 수 없습니다."),
     ALREADY_BANNED(HttpStatus.BAD_REQUEST.value(), "C004", "이미 차단한 회원입니다."),
     NOT_FOUND_REQUESTER(HttpStatus.NOT_FOUND.value(), "C005", "차단을 요청한 회원을 찾을 수 없습니다."),
     EXIT_INVAILED(HttpStatus.BAD_REQUEST.value(), "C006", "'나가기'는 채팅방에 존재하는 회원만 접근 가능한 서비스입니다."),
-    CANNOT_CHAT_WITH_ME(HttpStatus.BAD_REQUEST.value(), "C006", "나 자신은 채팅의 대상이 될 수 없습니다."),
 
 
     //이미지
