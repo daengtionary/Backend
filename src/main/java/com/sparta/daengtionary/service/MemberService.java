@@ -11,6 +11,7 @@ import com.sparta.daengtionary.dto.request.KakaoUserInfoDto;
 import com.sparta.daengtionary.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.dto.request.TokenDto;
 import com.sparta.daengtionary.dto.response.KakaoUserResponseDto;
+import com.sparta.daengtionary.dto.response.MemberResponseDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
@@ -78,7 +79,13 @@ public class MemberService {
 
         tokenToHeaders(tokenDto, response);
 
-        return responseBodyDto.success(member.getNick() + "님 반갑습니다 :)");
+        return responseBodyDto.success(MemberResponseDto.builder()
+                        .memberNo(member.getMemberNo())
+                        .nick(member.getNick())
+                        .email(member.getEmail())
+                        .role(member.getRole())
+                        .build(),
+                member.getNick() + "님 반갑습니다 :)");
     }
 
     //카카오 로그인
@@ -104,6 +111,7 @@ public class MemberService {
 
         return responseBodyDto.success(
                 KakaoUserResponseDto.builder()
+                        .memberNo(kakaoUser.getMemberNo())
                         .email(kakaoUser.getEmail())
                         .nick(kakaoUser.getNick())
                         .build(),
@@ -121,7 +129,7 @@ public class MemberService {
         MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
         body.add("grant_type", "authorization_code");
         body.add("client_id", kakaoRestApiKey);
-        body.add("redirect_uri", "http://localhost:3000/kakao/callback");
+        body.add("redirect_uri", "http://fragohahbr.s3-website.ap-northeast-2.amazonaws.com/kakao/callback");
         body.add("code", code);
 
         // HTTP 요청 보내기

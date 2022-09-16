@@ -2,7 +2,6 @@ package com.sparta.daengtionary.cotroller;
 
 
 import com.sparta.daengtionary.dto.request.CommunityRequestDto;
-import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.service.CommunityReviewService;
 import com.sparta.daengtionary.service.CommunityService;
 import lombok.RequiredArgsConstructor;
@@ -62,13 +61,13 @@ public class CommunityController {
     }
 
     @PatchMapping("/review/{comNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long comNo,
+    public ResponseEntity<?> updateCommunityReview(@RequestPart(value = "data") String content, @PathVariable Long comNo,
                                               @PathVariable Long reviewNo) {
-        return communityReviewService.updateCommunityReview(comNo, reviewNo, requestDto);
+        return communityReviewService.updateCommunityReview(comNo, reviewNo, content);
     }
 
     @DeleteMapping("/review/{comNo}/{reviewNo}")
-    public ResponseEntity<?> deleteRoomReview(@PathVariable Long comNo, @PathVariable Long reviewNo) {
+    public ResponseEntity<?> deleteCommunityReview(@PathVariable Long comNo, @PathVariable Long reviewNo) {
         return communityReviewService.deleteCommunityReview(comNo, reviewNo);
     }
 }

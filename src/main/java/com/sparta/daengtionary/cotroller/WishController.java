@@ -19,12 +19,12 @@ public class WishController {
 
     @PostMapping("/community/{comNo}/wish")
     public ResponseEntity<?> createWishByCommunity(@PathVariable Long comNo){
-        return wishService.toggleWishByMap(comNo);
+        return wishService.toggleWishByCommunity(comNo);
     }
 
     @PostMapping("/trade/{tradeNo}/wish")
     public ResponseEntity<?> createWishByTrade(@PathVariable Long tradeNo){
-        return wishService.toggleWishByMap(tradeNo);
+        return wishService.toggleWishByTrade(tradeNo);
     }
 
 }

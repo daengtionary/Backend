@@ -5,12 +5,14 @@ import lombok.Getter;
 
 @Getter
 public class KakaoUserResponseDto {
+    private Long memberNo;
     private String email;
     private String nick;
 
 
     @Builder
-    public KakaoUserResponseDto(String email, String nick) {
+    public KakaoUserResponseDto(Long memberNo, String email, String nick) {
+        this.memberNo = memberNo;
         this.email = email;
         this.nick = nick;
     }

@@ -3,11 +3,8 @@ package com.sparta.daengtionary.service;
 import com.sparta.daengtionary.configration.error.CustomException;
 import com.sparta.daengtionary.configration.error.ErrorCode;
 import com.sparta.daengtionary.domain.Member;
-import com.sparta.daengtionary.domain.map.Map;
-import com.sparta.daengtionary.domain.map.MapReview;
 import com.sparta.daengtionary.domain.trade.Trade;
 import com.sparta.daengtionary.domain.trade.TradeReview;
-import com.sparta.daengtionary.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.dto.response.ResponseBodyDto;
 import com.sparta.daengtionary.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
@@ -16,26 +13,24 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
 public class TradeReviewService {
-    private final AwsS3UploadService s3UploadService;
-    private TradeReviewRepository tradeReviewRepository;
+    private final TradeReviewRepository tradeReviewRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TradeService tradeService;
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public ResponseEntity<?> createTradeReview(Long tradeNo, ReviewRequestDto requestDto) {
+    public ResponseEntity<?> createTradeReview(Long tradeNo, String  content) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = tradeService.validateTrade(tradeNo);
 
         TradeReview tradeReview = TradeReview.builder()
                 .member(member)
                 .trade(trade)
-                .content(requestDto.getContent())
+                .content(content)
                 .build();
 
         tradeReviewRepository.save(tradeReview);
@@ -48,12 +43,12 @@ public class TradeReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateTradeReview(Long tradeNo,Long tradeReviewNo, ReviewRequestDto requestDto ){
+    public ResponseEntity<?> updateTradeReview(Long tradeNo,Long tradeReviewNo, String content ){
         Member member = tokenProvider.getMemberFromAuthentication();
         tradeService.validateTrade(tradeNo);
         TradeReview tradeReview = validateTradeReview(tradeReviewNo,member);
 
-        tradeReview.tradeReviewUpdate(requestDto);
+        tradeReview.tradeReviewUpdate(content);
 
         return responseBodyDto.success(ReviewResponseDto.builder()
                         .reviewNo(tradeReview.getTradeReviewNo())

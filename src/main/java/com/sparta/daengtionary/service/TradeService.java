@@ -13,6 +13,7 @@ import com.sparta.daengtionary.dto.response.trade.TradeDetailResponseDto;
 import com.sparta.daengtionary.dto.response.trade.TradeResponseDto;
 import com.sparta.daengtionary.jwt.TokenProvider;
 import com.sparta.daengtionary.repository.MemberRepository;
+import com.sparta.daengtionary.repository.WishRepository;
 import com.sparta.daengtionary.repository.trade.TradeImgRepository;
 import com.sparta.daengtionary.repository.trade.TradeRepository;
 import com.sparta.daengtionary.repository.supportRepository.PostRepositorySupport;
@@ -39,6 +40,8 @@ public class TradeService {
     private final TokenProvider tokenProvider;
     private final TradeReviewRepository tradeReviewRepository;
     private final PostRepositorySupport postRepositorySupport;
+
+    private final WishRepository wishRepository;
     private final String imgPath = "/map/image";
 
     @Transactional
@@ -128,9 +131,11 @@ public class TradeService {
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
+                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }
+        List<Wish> temp = wishRepository.findAllByTrade(trade);
 
         return responseBodyDto.success(
                 TradeDetailResponseDto.builder()
@@ -142,6 +147,8 @@ public class TradeService {
                         .view(trade.getView())
                         .status(trade.getStatus())
                         .tradeImgUrl(traImgs)
+                        .reviewCount((long) reviews.size())
+                        .wishCount((long) temp.size())
                         .reviewList(reviewResponseDtoList)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())
