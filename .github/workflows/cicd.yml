@@ -64,3 +64,9 @@ jobs:
             docker stop daengtionary
             sleep 5
             docker run -d --rm --name daengtionary -p 80:8080 ${{ secrets.DOCKER_HUB_USERNAME }}/daengtionary:latest
+
+#    hooks:
+#      ApplicationStart:
+#        - location: deploy.sh
+#          timeout: 60
+#          runas: ubuntu
