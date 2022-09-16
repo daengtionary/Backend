@@ -23,22 +23,22 @@ public class RoomController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createRoom(@RequestPart(value = "data") MapRequestDto mapRequestDto,
-                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
+                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
         return mapService.createMap(mapRequestDto, mapImgs);
     }
 
 
     @GetMapping()
     public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
-                                               Pageable pageable ) {
+                                                Pageable pageable) {
         String category = "room";
-        return mapService.getAllMapByCategory(category,direction,address, pageable);
+        return mapService.getAllMapByCategory(category, direction, address, pageable);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                          @RequestParam String address, @RequestParam String direction, Pageable pageable){
-        return mapService.getSearchMap("room",title,content,nick,address,direction,pageable);
+                                          @RequestParam String address, @RequestParam String direction, Pageable pageable) {
+        return mapService.getSearchMap("room", title, content, nick, address, direction, pageable);
     }
 
     @GetMapping("/{roomNo}")
@@ -49,8 +49,8 @@ public class RoomController {
 
     @PatchMapping("/{roomNo}")
     public ResponseEntity<?> updateRoom(@PathVariable Long roomNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
-                                       @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
-        return mapService.mapUpdate(requestDto, roomNo,multipartFiles);
+                                        @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+        return mapService.mapUpdate(requestDto, roomNo, multipartFiles);
     }
 
     @DeleteMapping("/{roomNo}")
@@ -59,20 +59,18 @@ public class RoomController {
     }
 
     @PostMapping("/review/create/{roomNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                          @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long roomNo){
-        return mapReviewService.createMapReview(roomNo,requestDto,multipartFile);
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long roomNo) {
+        return mapReviewService.createMapReview(roomNo, requestDto);
     }
 
     @PatchMapping("/review/{roomNo}/{reviewNo}")
-    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto,
-                                              @RequestPart(value = "imgUrl",required = false)MultipartFile multipartFile,@PathVariable Long roomNo,
-                                              @PathVariable Long reviewNo){
-        return mapReviewService.updateMapReview(roomNo,reviewNo,requestDto,multipartFile);
+    public ResponseEntity<?> updateRoomReview(@RequestPart(value = "data") ReviewRequestDto requestDto, @PathVariable Long roomNo,
+                                              @PathVariable Long reviewNo) {
+        return mapReviewService.updateMapReview(roomNo, reviewNo, requestDto);
     }
 
     @DeleteMapping("/review/{roomNo}/{reviewNo}")
-    public ResponseEntity<?> deleteRoomReview(@PathVariable Long roomNo,@PathVariable Long reviewNo){
-        return mapReviewService.deleteMapReview(roomNo,reviewNo);
+    public ResponseEntity<?> deleteRoomReview(@PathVariable Long roomNo, @PathVariable Long reviewNo) {
+        return mapReviewService.deleteMapReview(roomNo, reviewNo);
     }
 }

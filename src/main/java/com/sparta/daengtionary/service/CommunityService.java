@@ -120,7 +120,7 @@ public class CommunityService {
                             .reviewNo(i.getCommunityReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .imgUrl(i.getImgUrl())
+                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }

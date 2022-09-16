@@ -157,7 +157,6 @@ public class MapService {
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
                             .star(i.getStar())
-                            .imgUrl(i.getImgUrl())
                             .build()
             );
         }

@@ -28,17 +28,14 @@ public class CommunityReviewService {
 
 
     @Transactional
-    public ResponseEntity<?> createCommunityReview(Long communityNo, String content, MultipartFile multipartFile) {
+    public ResponseEntity<?> createCommunityReview(Long communityNo, String content) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Community community = communityService.validateCommunity(communityNo);
-        validateFile(multipartFile);
-        String reviewImg = s3UploadService.uploadImage(multipartFile, imgPath);
 
         CommunityReview communityReview = CommunityReview.builder()
                 .member(member)
                 .community(community)
                 .content(content)
-                .imgUrl(reviewImg)
                 .build();
 
         communityReviewRepository.save(communityReview);
@@ -46,27 +43,25 @@ public class CommunityReviewService {
         return responseBodyDto.success(ReviewResponseDto.builder()
                 .reviewNo(communityReview.getCommunityReviewNo())
                 .nick(communityReview.getMember().getNick())
+                .memberImgUrl(communityReview.getMember().getDogs().get(0).getImage())
                 .content(communityReview.getContent())
-                .imgUrl(communityReview.getImgUrl())
                 .build(), "리뷰 생성 완료");
     }
 
     @Transactional
-    public ResponseEntity<?> updateCommunityReview(Long communityNo,Long communityReviewNo, ReviewRequestDto requestDto, MultipartFile multipartFile ){
+    public ResponseEntity<?> updateCommunityReview(Long communityNo, Long communityReviewNo, ReviewRequestDto requestDto) {
         Member member = tokenProvider.getMemberFromAuthentication();
         communityService.validateCommunity(communityNo);
-        CommunityReview communityReview = validateCommunityReview(communityReviewNo,member);
-        s3UploadService.deleteFile(communityReview.getImgUrl());
-        String reviewImg = s3UploadService.uploadImage(multipartFile,imgPath);
+        CommunityReview communityReview = validateCommunityReview(communityReviewNo, member);
 
-        communityReview.communityReviewUpdate(requestDto,reviewImg);
+        communityReview.communityReviewUpdate(requestDto);
 
         return responseBodyDto.success(ReviewResponseDto.builder()
                 .reviewNo(communityReview.getCommunityReviewNo())
                 .nick(communityReview.getMember().getNick())
+                .memberImgUrl(communityReview.getMember().getDogs().get(0).getImage())
                 .content(communityReview.getContent())
-                .imgUrl(communityReview.getImgUrl())
-                .build(),"수정 성공");
+                .build(), "수정 성공");
     }
 
     @Transactional
@@ -74,18 +69,11 @@ public class CommunityReviewService {
         Member member = tokenProvider.getMemberFromAuthentication();
         communityService.validateCommunity(communityNo);
         CommunityReview communityReview = validateCommunityReview(communityReviewNo, member);
-        s3UploadService.deleteFile(communityReview.getImgUrl());
         communityReviewRepository.delete(communityReview);
 
         return responseBodyDto.success("삭제 성공");
     }
 
-
-    private void validateFile(MultipartFile multipartFile) {
-        if (multipartFile == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
 
     private CommunityReview validateCommunityReview(Long communityReviewNo, Member member) {
         CommunityReview communityReview = communityReviewRepository.findById(communityReviewNo).orElseThrow(
