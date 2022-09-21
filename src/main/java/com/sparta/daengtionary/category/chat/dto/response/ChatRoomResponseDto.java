@@ -7,16 +7,18 @@ import lombok.Getter;
 
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ChatPersonalRoomResponseDto {
-    private Long chatNo;
+public class ChatRoomResponseDto {
+    private Long roomNo;
+    private String type;
     private String title;
     private Member creator;
     private Member target;
 
 
     @Builder
-    public ChatPersonalRoomResponseDto(Long chatNo, String title, Member creator, Member target) {
-        this.chatNo = chatNo;
+    public ChatRoomResponseDto(Long roomNo, String type, String title, Member creator, Member target) {
+        this.roomNo = roomNo;
+        this.type = type;
         this.title = title;
         this.creator = creator;
         this.target = target;

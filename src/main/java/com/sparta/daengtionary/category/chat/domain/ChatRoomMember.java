@@ -10,10 +10,10 @@ import javax.persistence.*;
 public class ChatRoomMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chatMemberNo;
-    @JoinColumn(name = "chatNo", nullable = false)
+    private Long roomMemberNo;
+    @JoinColumn(name = "roomNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
-    private ChatPersonalRoom chatPersonalRoom;
+    private ChatRoom chatRoom;
     @JoinColumn(name = "memberNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -24,10 +24,10 @@ public class ChatRoomMember {
     }
 
 
-    public static ChatRoomMember createChatRoomMember(ChatPersonalRoom chatPersonalRoom, Member member) {
+    public static ChatRoomMember createChatRoomMember(ChatRoom chatRoom, Member member) {
         ChatRoomMember chatRoomMember = new ChatRoomMember();
 
-        chatRoomMember.chatPersonalRoom = chatPersonalRoom;
+        chatRoomMember.chatRoom = chatRoom;
         chatRoomMember.member = member;
 
         return chatRoomMember;
