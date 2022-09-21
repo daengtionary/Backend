@@ -1,6 +1,20 @@
 package com.sparta.daengtionary.aop.supportrepository;
 
 
+import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
+import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
+import static com.sparta.daengtionary.category.trade.domain.QTradeReview.tradeReview;
+import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
+import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
+import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo1;
+import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
+import static com.sparta.daengtionary.category.community.domain.QCommunity.community;
+import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
+import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
+import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
+import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
+
+
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -8,8 +22,8 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
-import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.community.dto.response.CommunityResponseDto;
+import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.dto.response.MapResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
 import org.springframework.data.domain.PageImpl;
@@ -19,20 +33,6 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-
-import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
-import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
-import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo1;
-import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
-import static com.sparta.daengtionary.category.community.domain.QCommunity.community;
-import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
-import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
-import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
-import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
-import static com.sparta.daengtionary.category.trade.domain.QTradeReview.tradeReview;
-import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
-import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
-
 
 @Repository
 public class PostRepositorySupport extends QuerydslRepositorySupport {
@@ -44,6 +44,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         super(Map.class);
         this.queryFactory = queryFactory;
     }
+
 
     public PageImpl<MapResponseDto> findAllByMap(String category, String title, String content,
                                                  String nick, String address, String direction, Pageable pageable) {
@@ -85,7 +86,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<CommunityResponseDto> findAllByCommunity(String category,String title, String content, String nick,
+    public PageImpl<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
                                                              String direction, Pageable pageable) {
         List<CommunityResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
