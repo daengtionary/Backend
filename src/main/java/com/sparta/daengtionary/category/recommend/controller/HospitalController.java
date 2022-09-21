@@ -46,10 +46,6 @@ public class HospitalController {
         return mapService.getAllMap(mapNo);
     }
 
-    @GetMapping("/test/{mapNo}")
-    public ResponseEntity<?> getTest(@PathVariable Long mapNo) {
-        return mapService.getTest(mapNo);
-    }
 
     @PatchMapping("/{mapNo}")
     public ResponseEntity<?> updateHospital(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
