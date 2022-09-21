@@ -124,12 +124,6 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTest(Long mapNo){
-        List<MapDetailResponseDto> mapDetailResponseDtoPage = postDetailRepositorySupport.findByMapDetail(mapNo);
-        return responseBodyDto.success(mapDetailResponseDtoPage,"조회 성공");
-    }
-
-    @Transactional(readOnly = true)
     public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String direction, Pageable pageable) {
         PageImpl<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, direction, pageable);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
