@@ -5,8 +5,12 @@ import lombok.Getter;
 @Getter
 public class TradeRequestDto {
     private String title;
-    private String content;
-    private String category;
+    private String address;
+    private String stuffStatus;
+    private String exchange;
     private int price;
-    private String status;
+    private String content;
+    private String postStatus;
+
+
 }
