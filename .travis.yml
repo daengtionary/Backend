@@ -5,7 +5,10 @@ jdk:
 # Git Push할 Branch
 branches:
   only:
+    - main
     - temp
+    - release
+
 
 # gradlew 권한 추가
 before_install:
