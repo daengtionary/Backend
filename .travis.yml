@@ -22,6 +22,11 @@ cache:
 
 script: "./gradlew clean build"
 
+before_deploy:
+  - zip -r daeng-backeng *
+  - mkdir -p deploy
+  - mv daeng-backeng.zip deploy/daeng-backeng.zip
+
 deploy:
   - provider: s3
     access_key_id: $AWS_ACCESS_KEY # Travis repo settings에 설정된 값
