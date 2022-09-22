@@ -2,23 +2,19 @@ language: java
 jdk:
   - openjdk11
 
-# Git Push할 Branch
 branches:
   only:
     - main
     - temp
     - release
 
-
-# gradlew 권한 추가
-before_install:
-  - chmod +x gradlew
-
-# Travis CI 서버의 Home
 cache:
   directories:
     - '$HOME/.m2/repository'
     - '$HOME/.gradle'
+
+before_install:
+  - chmod +x gradlew
 
 script: "./gradlew clean build"
 
@@ -29,15 +25,31 @@ before_deploy:
 
 deploy:
   - provider: s3
-    access_key_id: $AWS_ACCESS_KEY # Travis repo settings에 설정된 값
-    secret_access_key: $AWS_SECRET_KEY # Travis repo settings에 설정된 값
-    bucket: daeng # 생성한 S3 버킷
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: daeng
+    key: daeng-backeng.zip
+    bundle_type: zip
+    application: daeng-backeng
+    deployment_group: daeng-backeng-group
     region: ap-northeast-2
-    skip_cleanup: true
-    acl: public_read
     wait-until-deployed: true
     on:
-      repo: daengtionary/backend #Github 주소
+      repo: daengtionary/backend
+      all_branch: true
+
+  - provider: codedeploy
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key: $AWS_SECRET_KEY
+    bucket: daeng
+    key: daeng-backeng.zip
+    bundle_type: zip
+    application: daeng-backeng
+    deployment_group: daeng-backeng-group
+    region: ap-northeast-2
+    wait-until-deployed: true
+    on:
+      repo: daengtionary/backend
       all_branch: true
 
 # CI 실행 완료시 메일로 알람
