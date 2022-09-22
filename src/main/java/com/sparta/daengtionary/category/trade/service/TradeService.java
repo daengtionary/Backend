@@ -55,9 +55,12 @@ public class TradeService {
         Trade trade = Trade.builder()
                 .member(member)
                 .title(requestDto.getTitle())
+                .address(requestDto.getAddress())
+                .stuffStatus(requestDto.getStuffStatus())
+                .exchange(requestDto.getExchange())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
-                .category(requestDto.getCategory())
+                .postStatus(requestDto.getPostStatus())
                 .build();
 
         tradeRepository.save(trade);
@@ -80,10 +83,11 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
-                        .category(trade.getCategory())
                         .price(trade.getPrice())
-                        .status(trade.getStatus())
-                        .category(trade.getCategory())
+                        .address(trade.getAddress())
+                        .exchange(trade.getExchange())
+                        .stuffStatus(trade.getStuffStatus())
+                        .postStatus(trade.getPostStatus())
                         .view(trade.getView())
                         .tradeImgUrl(tradeImgList)
                         .createdAt(trade.getCreatedAt())
@@ -94,23 +98,20 @@ public class TradeService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getTradeSort(String direction, Pageable pageable) {
-        String title, content, nick, status, category;
+        String title, content, nick, address, postStatus;
         title = "";
         content = "";
         nick = "";
-        status = "";
-        category = "";
-        int min, max;
-        min = 0;
-        max = 2000000000;
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+        address = "";
+        postStatus = "";
+        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address,postStatus,  direction,  pageable);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String status, String category, String direction, int min, int max, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String address, String postStatus, String direction, Pageable pageable) {
+        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address, postStatus, direction, pageable);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -147,7 +148,10 @@ public class TradeService {
                         .content(trade.getContent())
                         .price(trade.getPrice())
                         .view(trade.getView())
-                        .status(trade.getStatus())
+                        .address(trade.getAddress())
+                        .exchange(trade.getExchange())
+                        .stuffStatus(trade.getStuffStatus())
+                        .postStatus(trade.getPostStatus())
                         .tradeImgUrl(traImgs)
                         .reviewCount((long) reviews.size())
                         .wishCount((long) temp.size())
@@ -171,7 +175,6 @@ public class TradeService {
                             .tradeNo(trade.getTradeNo())
                             .nick(member.getNick())
                             .title(trade.getTitle())
-                            .status(trade.getStatus())
                             .view(trade.getView())
                             .tradeImg(trade.getTradeImgs().get(0).getTradeImg())
                             .createdAt(trade.getCreatedAt())
@@ -217,7 +220,6 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
-                        .status(trade.getStatus())
                         .tradeImgUrl(tradeImgs)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())

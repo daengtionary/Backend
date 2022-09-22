@@ -1,13 +1,13 @@
 package com.sparta.daengtionary.category.chat.service;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
-import com.sparta.daengtionary.category.chat.domain.ChatPersonalRoom;
+import com.sparta.daengtionary.category.chat.domain.ChatRoom;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.chat.dto.request.ChatRoomRequestDto;
-import com.sparta.daengtionary.category.chat.dto.response.ChatPersonalRoomResponseDto;
+import com.sparta.daengtionary.category.chat.dto.response.ChatRoomResponseDto;
 import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
-import com.sparta.daengtionary.category.chat.repository.ChatPersonalRoomRepository;
+import com.sparta.daengtionary.category.chat.repository.ChatRoomRepository;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ import static com.sparta.daengtionary.aop.exception.ErrorCode.*;
 public class ChatRoomService {
     private final TokenProvider tokenProvider;
     private final MemberRepository memberRepository;
-    private final ChatPersonalRoomRepository chatPersonalRoomRepository;
+    private final ChatRoomRepository chatRoomRepository;
     private final ResponseBodyDto responseBodyDto;
 
     @Transactional
@@ -44,34 +44,35 @@ public class ChatRoomService {
         }
 
         // 채팅방이 존재하면 가져오고 없으면 생성
-        ChatPersonalRoom chatPersonalRoom = checkChatPersonalRoomByChatMember(creator, target);
+        ChatRoom chatRoom = checkChatPersonalRoomByChatMember(creator, target);
 
-        return responseBodyDto.success(ChatPersonalRoomResponseDto.builder()
-                        .chatNo(chatPersonalRoom.getChatNo())
+        return responseBodyDto.success(ChatRoomResponseDto.builder()
+                        .roomNo(chatRoom.getRoomNo())
                         .build(),
                 "채팅방 준비 완료");
     }
 
-    public ResponseEntity<?> getChatPersonalRooms(HttpServletRequest request) {
+    public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
         // member 정보
         Member member = tokenProvider.getMemberFromAuthentication();
 
         // 1:1 채팅방 찾기
-        List<ChatPersonalRoom> chatPersonalRoomList = chatPersonalRoomRepository.findByCreatorOrTarget(member);
-        List<ChatPersonalRoomResponseDto> chatPersonalRoomResponseDtoList = new ArrayList<>();
+        List<ChatRoom> chatRoomList = chatRoomRepository.findByCreatorOrTarget(member);
+        List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
 
-        for (ChatPersonalRoom chatPersonalRoom : chatPersonalRoomList) {
-            chatPersonalRoomResponseDtoList.add(
-                    ChatPersonalRoomResponseDto.builder()
-                            .chatNo(chatPersonalRoom.getChatNo())
-                            .title(chatPersonalRoom.getTitle())
-                            .creator(chatPersonalRoom.getCreator())
-                            .target(chatPersonalRoom.getTarget())
+        for (ChatRoom chatRoom : chatRoomList) {
+            chatRoomResponseDtoList.add(
+                    ChatRoomResponseDto.builder()
+                            .roomNo(chatRoom.getRoomNo())
+                            .type(chatRoom.getType())
+                            .title(chatRoom.getTitle())
+                            .creator(chatRoom.getCreator())
+                            .target(chatRoom.getTarget())
                             .build()
             );
         }
 
-        return responseBodyDto.success(chatPersonalRoomResponseDtoList, "1:1 채팅방 조회 완료");
+        return responseBodyDto.success(chatRoomResponseDtoList, "1:1 채팅방 조회 완료");
     }
 
 
@@ -83,9 +84,9 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ChatPersonalRoom checkChatPersonalRoomByChatMember(Member creator, Member target) {
-        return chatPersonalRoomRepository.findByCreatorAndTarget(creator, target).orElseGet(
-                () -> chatPersonalRoomRepository.save(ChatPersonalRoom.createChatPersonalRoom(creator, target))
+    public ChatRoom checkChatPersonalRoomByChatMember(Member creator, Member target) {
+        return chatRoomRepository.findByCreatorAndTarget(creator, target).orElseGet(
+                () -> chatRoomRepository.save(ChatRoom.createChatPersonalRoom(creator, target))
         );
     }
 }

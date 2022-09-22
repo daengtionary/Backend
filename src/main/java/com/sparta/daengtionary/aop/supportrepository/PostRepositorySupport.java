@@ -73,7 +73,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(wish)
                 .on(map.mapNo.eq(wish.map.mapNo))
                 .where(eqCategory(category, "map"),
-                        eqMapAddress(address),
+                        eqAddress(address, "map"),
                         eqTitle(title, "map"),
                         eqContent(content, "map"),
                         eqNick(nick, "map"))
@@ -114,7 +114,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .where(eqTitle(title, "community"),
                         eqContent(content, "community"),
                         eqNick(nick, "community"),
-                        eqCategory(category,"community"))
+                        eqCategory(category, "community"))
                 .groupBy(community.communityNo)
                 .orderBy(mapSort(pageable, direction, "community"))
                 .offset(pageable.getOffset())
@@ -124,8 +124,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String status, String category,
-                                                     String direction, int minPrice, int maxPrice, Pageable pageable) {
+    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
+                                                     String direction, Pageable pageable) {
         List<TradeResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
@@ -134,7 +134,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         trade.title,
                         trade.content,
                         trade.view,
-                        trade.status,
                         tradeReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
@@ -151,9 +150,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .where(eqTitle(title, "trade"),
                         eqContent(content, "trade"),
                         eqNick(nick, "trade"),
-                        betPrice(minPrice, maxPrice),
-                        eqCategory(category, "trade"),
-                        eqStatus(status))
+                        eqAddress(address, "trade"),
+                        eqPostStatus(postStatus))
                 .groupBy(trade.tradeNo)
                 .orderBy(mapSort(pageable, direction, "trade"))
                 .offset(pageable.getOffset())
@@ -166,13 +164,19 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     private BooleanExpression eqCategory(String category, String tableName) {
         if (category.isEmpty()) return null;
         if (tableName.equals("map")) return map.category.eq(category);
-        if(tableName.equals("community")) return community.category.eq(category);
-        if (tableName.equals("trade")) return trade.category.eq(category);
+        if (tableName.equals("community")) return community.category.eq(category);
         return null;
     }
 
-    private BooleanExpression eqMapAddress(String address) {
-        return address.isEmpty() ? null : map.address.contains(address);
+    private BooleanExpression eqPostStatus(String postStatus){
+        return postStatus.isEmpty() ? null : trade.postStatus.eq(postStatus);
+    }
+
+    private BooleanExpression eqAddress(String address, String tableName) {
+        if (address.isEmpty()) return null;
+        if (tableName.equals("map")) return map.address.contains(address);
+        if (tableName.equals("trade")) return trade.address.contains(address);
+        return null;
     }
 
     private BooleanExpression eqTitle(String title, String tableName) {
@@ -200,14 +204,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return null;
     }
 
-    private BooleanExpression eqStatus(String status) {
-        return status.isEmpty() ? null : trade.status.eq(status);
-    }
-
-
-    private BooleanExpression betPrice(int minPrice, int maxPrice) {
-        return minPrice == 0 && maxPrice == 0 ? null : trade.price.between(minPrice, maxPrice);
-    }
 
     private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
         if (direction.isEmpty()) throw new CustomException(ErrorCode.MAP_WRONG_INPUT);
@@ -221,7 +217,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, map.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, wish.countDistinct());
+                            return new OrderSpecifier<>(dir, map.view);
                     }
                 }
             }
@@ -234,7 +230,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, community.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, wish.countDistinct());
+                            return new OrderSpecifier<>(dir, community.view);
                     }
                 }
             }
@@ -248,7 +244,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         case "new":
                             return new OrderSpecifier<>(dir, trade.createdAt);
                         case "popular":
-                            return new OrderSpecifier<>(dir, wish.countDistinct());
+                            return new OrderSpecifier<>(dir, trade.view);
                     }
                 }
             }

@@ -32,9 +32,9 @@ public class TradeController {
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchTrade(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                                @RequestParam String status, @RequestParam String category, @RequestParam int minPrice,
-                                                @RequestParam int maxPrice, @RequestParam String direction, Pageable pageable) {
-        return tradeService.getSearchTrade(title, content, nick, status, category, direction, minPrice, maxPrice, pageable);
+                                            @RequestParam String address, @RequestParam String postStatus,
+                                            @RequestParam String direction, Pageable pageable) {
+        return tradeService.getSearchTrade(title, content, nick, address, postStatus, direction, pageable);
     }
 
 
@@ -56,13 +56,13 @@ public class TradeController {
     }
 
     @PostMapping("/review/create/{tradeNo}")
-    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content,@PathVariable Long tradeNo) {
+    public ResponseEntity<?> createReview(@RequestPart(value = "data") String content, @PathVariable Long tradeNo) {
         return tradeReviewService.createTradeReview(tradeNo, content);
     }
 
     @PatchMapping("/review/{tradeNo}/{reviewNo}")
     public ResponseEntity<?> updateTradeReview(@RequestPart(value = "data") String content, @PathVariable Long tradeNo,
-                                              @PathVariable Long reviewNo) {
+                                               @PathVariable Long reviewNo) {
         return tradeReviewService.updateTradeReview(tradeNo, reviewNo, content);
     }
 
