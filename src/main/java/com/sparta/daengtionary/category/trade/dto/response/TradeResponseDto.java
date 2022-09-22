@@ -14,12 +14,10 @@ public class TradeResponseDto {
     private Long tradeNo;
     private String nick;
     private String title;
-    private String status;
-    private String category;
+    private String postStatus;
     private int view;
     private String tradeImg;
     private Long reviewCount;
-
     private Long wishCount;
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
@@ -27,13 +25,12 @@ public class TradeResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public TradeResponseDto(Long tradeNo, String nick, String title, String status, String category, int view, String tradeImg,
+    public TradeResponseDto(Long tradeNo, String nick, String title, String postStatus, int view, String tradeImg,
                             Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.tradeNo = tradeNo;
         this.nick = nick;
         this.title = title;
-        this.status = status;
-        this.category = category;
+        this.postStatus = postStatus;
         this.reviewCount = reviewCount;
         this.wishCount = wishCount;
         this.view = view;
