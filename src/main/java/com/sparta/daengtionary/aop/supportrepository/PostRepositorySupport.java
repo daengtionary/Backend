@@ -20,8 +20,6 @@ import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.sparta.daengtionary.aop.exception.CustomException;
-import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.category.community.dto.response.CommunityResponseDto;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.dto.response.MapResponseDto;
@@ -32,6 +30,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -48,6 +47,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     public PageImpl<MapResponseDto> findAllByMap(String category, String title, String content,
                                                  String nick, String address, String direction, Pageable pageable) {
+        List<OrderSpecifier> ORDERS = getAllMapOrderSpecifiers(pageable);
+
         List<MapResponseDto> responseDtos = queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
@@ -78,7 +79,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "map"),
                         eqNick(nick, "map"))
                 .groupBy(map.mapNo)
-                .orderBy(mapSort(pageable, direction, "map"))
+                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -116,7 +117,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqNick(nick, "community"),
                         eqCategory(category, "community"))
                 .groupBy(community.communityNo)
-                .orderBy(mapSort(pageable, direction, "community"))
+//                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -153,7 +154,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqAddress(address, "trade"),
                         eqPostStatus(postStatus))
                 .groupBy(trade.tradeNo)
-                .orderBy(mapSort(pageable, direction, "trade"))
+//                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -205,52 +206,78 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
 
-    private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
-        if (direction.isEmpty()) throw new CustomException(ErrorCode.MAP_WRONG_INPUT);
 
-        if (tableName.equals("map")) {
-            if (!pageable.getSort().isEmpty()) {
+    private List<OrderSpecifier> getAllMapOrderSpecifiers(Pageable pageable){
+        List<OrderSpecifier> ORDERS = new ArrayList<>();
 
-                for (Sort.Order order : pageable.getSort()) {
-                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-                    switch (order.getProperty()) {
-                        case "new":
-                            return new OrderSpecifier<>(dir, map.createdAt);
-                        case "popular":
-                            return new OrderSpecifier<>(dir, map.view);
-                    }
+        if(!ORDERS.isEmpty()){
+            for(Sort.Order order : pageable.getSort()){
+                Order dir = order.getDirection().isDescending() ? Order.DESC : Order.ASC;
+                switch (order.getProperty()){
+                    case "new":
+                        OrderSpecifier<?> orderNo = QueryDslUtil.getSortedColumn(dir, map.mapNo,"mapNo");
+                        ORDERS.add(orderNo);
+                        break;
+                    case "popular":
+                        OrderSpecifier<?> orderView = QueryDslUtil.getSortedColumn(dir,map.view,"view");
+                        ORDERS.add(orderView);
+                        break;
+                    default:
+                        break;
                 }
             }
         }
-        if (tableName.equals("community")) {
-            if (!pageable.getSort().isEmpty()) {
-                for (Sort.Order order : pageable.getSort()) {
-                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-                    switch (order.getProperty()) {
-                        case "new":
-                            return new OrderSpecifier<>(dir, community.createdAt);
-                        case "popular":
-                            return new OrderSpecifier<>(dir, community.view);
-                    }
-                }
-            }
-        }
-        if (tableName.equals("trade")) {
-            if (!pageable.getSort().isEmpty()) {
-
-                for (Sort.Order order : pageable.getSort()) {
-                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-                    switch (order.getProperty()) {
-                        case "new":
-                            return new OrderSpecifier<>(dir, trade.createdAt);
-                        case "popular":
-                            return new OrderSpecifier<>(dir, trade.view);
-                    }
-                }
-            }
-        }
-
-        return null;
+        return ORDERS;
     }
+
+
+
+//    private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
+//        if (direction.isEmpty()) throw new CustomException(ErrorCode.MAP_WRONG_INPUT);
+//
+//        if (tableName.equals("map")) {
+//            if (!pageable.getSort().isEmpty()) {
+//
+//                for (Sort.Order order : pageable.getSort()) {
+//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+//                    switch (order.getProperty()) {
+//                        case "new":
+//                            return new OrderSpecifier<>(dir, map.createdAt);
+//                        case "popular":
+//                            return new OrderSpecifier<>(dir, map.view);
+//                    }
+//                }
+//            }
+//        }
+//        if (tableName.equals("community")) {
+//            if (!pageable.getSort().isEmpty()) {
+//                for (Sort.Order order : pageable.getSort()) {
+//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+//                    switch (order.getProperty()) {
+//                        case "new":
+//                            return new OrderSpecifier<>(dir, community.createdAt);
+//                        case "popular":
+//                            return new OrderSpecifier<>(dir, community.view);
+//                    }
+//                }
+//            }
+//        }
+//        if (tableName.equals("trade")) {
+//            if (!pageable.getSort().isEmpty()) {
+//
+//                for (Sort.Order order : pageable.getSort()) {
+//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
+//                    switch (order.getProperty()) {
+//                        case "new":
+//                            return new OrderSpecifier<>(dir, trade.createdAt);
+//                        case "popular":
+//                            return new OrderSpecifier<>(dir, trade.view);
+//                    }
+//                }
+//            }
+//        }
+//
+//        return null;
+//    }
 
 }
