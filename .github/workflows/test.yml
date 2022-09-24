@@ -12,6 +12,7 @@ permissions:
 
 env:
   S3_BUCKET_NAME: daeng
+  PROJECT_NAME: daengtionary
 
 jobs:
   build:
