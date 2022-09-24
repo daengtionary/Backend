@@ -7,10 +7,10 @@ TARGET_PORT=0
 
 echo "> Current port of running WAS is ${CURRENT_PORT}."
 
-if [ ${CURRENT_PORT} -eq 8091 ]; then
-  TARGET_PORT=8092
-elif [ ${CURRENT_PORT} -eq 8092 ]; then
+if [ ${CURRENT_PORT} -eq 8090 ]; then
   TARGET_PORT=8091
+elif [ ${CURRENT_PORT} -eq 8091 ]; then
+  TARGET_PORT=8090
 else
   echo "> No WAS is connected to nginx"
 fi
