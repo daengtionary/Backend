@@ -1,5 +1,13 @@
 version: 0.0
 os: linux
+
 files:
   - source:  /
-    destination: /home/ec2-users/app/travis/build/
+    destination: /home/ubuntu/hanghae
+    overwrite: yes
+
+permissions:
+  - object: /
+    pattern: "**"
+    owner: ubuntu
+    group: ubuntu
