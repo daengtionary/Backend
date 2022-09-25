@@ -1,5 +1,3 @@
-# run_new_was.sh
-
 #!/bin/bash
 
 CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
@@ -19,9 +17,17 @@ TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-
 
 if [ ! -z ${TARGET_PID} ]; then
   echo "> Kill WAS running at ${TARGET_PORT}."
-  sudo kill ${TARGET_PID}
+  sudo kill -9 ${TARGET_PID}
 fi
 
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/daengtionary/build/libs/* > /home/ubuntu/nohup.out 2>&1 &
+REPOSITORY=/home/ubuntu/daengtionary
+# shellcheck disable=SC2164
+cd $REPOSITORY
+
+# shellcheck disable=SC2010
+JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'app.jar' | tail -n 1)
+JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+
+nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} > /home/ubuntu/daengtionary/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
