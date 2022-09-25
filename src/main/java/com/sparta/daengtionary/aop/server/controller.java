@@ -13,6 +13,6 @@ public class controller {
 
     @GetMapping("/")
     public String Home() {
-        return "HomeTest " + LocalDate.now() +"port 두개 다 열려있을때는~??"+now ;
+        return "현재 날짜는 :" + LocalDate.now() +  " 현재 시간은 : "+ now ;
     }
 }
