@@ -212,7 +212,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
         if(!ORDERS.isEmpty()){
             for(Sort.Order order : pageable.getSort()){
-                Order dir = order.getDirection().isDescending() ? Order.DESC : Order.ASC;
+                Order dir = order.isDescending()? Order.DESC : Order.ASC;
                 switch (order.getProperty()){
                     case "new":
                         OrderSpecifier<?> orderNo = QueryDslUtil.getSortedColumn(dir, map.mapNo,"mapNo");
