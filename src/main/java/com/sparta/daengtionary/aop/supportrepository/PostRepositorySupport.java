@@ -45,11 +45,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
 
-    public PageImpl<MapResponseDto> findAllByMap(String category, String title, String content,
-                                                 String nick, String address, String direction, Pageable pageable) {
-        List<OrderSpecifier> ORDERS = getAllMapOrderSpecifiers(pageable);
+    public List<MapResponseDto> findAllByMap(String category, String title, String content,
+                                                 String nick, String address, int pageNum, int pageSize) {
 
-        List<MapResponseDto> responseDtos = queryFactory
+        return queryFactory
                 .select(Projections.fields(
                         MapResponseDto.class,
                         map.mapNo,
@@ -79,12 +78,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "map"),
                         eqNick(nick, "map"))
                 .groupBy(map.mapNo)
-                .orderBy(ORDERS.toArray(OrderSpecifier[]::new))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .orderBy(map.mapNo.desc())
+                .limit(pageSize)
+                .offset(pageNum * pageSize)
                 .fetch();
-
-        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
     public PageImpl<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,

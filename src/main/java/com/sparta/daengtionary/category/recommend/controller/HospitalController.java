@@ -30,14 +30,14 @@ public class HospitalController {
 
     @GetMapping()
     public ResponseEntity<?> getAllHospitalCategory(@RequestParam String address, @RequestParam String direction,
-                                                    Pageable pageable) {
-        return mapService.getAllMapByCategory("hospital", direction, address, pageable);
+                                                    @RequestParam int pageNum, @RequestParam int pageSize) {
+        return mapService.getAllMapByCategory("hospital", direction, address, pageNum, pageSize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchHospital(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                               @RequestParam String address, @RequestParam String direction, Pageable pageable) {
-        return mapService.getSearchMap("hospital", title, content, nick, address, direction, pageable);
+                                               @RequestParam String address, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return mapService.getSearchMap("hospital", title, content, nick, address, pageNum, pageSize);
     }
 
     @GetMapping("/{mapNo}")
