@@ -72,7 +72,7 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Upload to AWS S3
-        run: aws deploy push --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --ignore-hidden-files --s3-location s3://$S3_BUCKET_NAME/$PROJECT_NAME/$GITHUB_SHA.zip --source .
+        run: aws deploy push --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --ignore-hidden-files --s3-location s3://$S3_BUCKET_NAME/$GITHUB_SHA.zip --source .
 
       - name: Code Deploy
         run: aws deploy create-deployment --application-name ${{ env.CODE_DEPLOY_APPLICATION_NAME }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.CODE_DEPLOY_DEPLOYMENT_GROUP_NAME }} --s3-location bucket=$S3_BUCKET_NAME,key=$GITHUB_SHA.zip,bundleType=zip
