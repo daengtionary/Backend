@@ -33,7 +33,7 @@ jobs:
 
       # gradle caching
       - name: Gradle Caching
-      - uses: actions/cache@v3
+        uses: actions/cache@v3
         with:
           path: |
             ~/.gradle/caches
