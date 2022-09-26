@@ -26,14 +26,14 @@ public class CommunityController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getCommunitySort(@RequestParam int pageNum, @RequestParam int pageSize) {
-        return service.getCommunitySort(pageNum, pageSize);
+    public ResponseEntity<?> getCommunitySort(@RequestParam String sort, @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return service.getCommunitySort(sort, direction, pageNum, pageSize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchCommunity(@RequestParam String category, @RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                                @RequestParam int pageNum, @RequestParam int pageSize) {
-        return service.getSearchCommunity(category, title, content, nick, pageNum, pageSize);
+                                                @RequestParam String sort, @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return service.getSearchCommunity(category, title, content, nick, sort, direction, pageNum, pageSize);
     }
 
 

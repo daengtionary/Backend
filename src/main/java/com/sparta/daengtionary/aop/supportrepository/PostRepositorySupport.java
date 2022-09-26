@@ -15,7 +15,6 @@ import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 
 
-import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -24,13 +23,9 @@ import com.sparta.daengtionary.category.community.dto.response.CommunityResponse
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.dto.response.MapResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -46,7 +41,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
 
     public List<MapResponseDto> findAllByMap(String category, String title, String content,
-                                                 String nick, String address, int pageNum, int pageSize) {
+                                             String nick, String address, String sort, String direction, int pageNum, int pageSize) {
 
         return queryFactory
                 .select(Projections.fields(
@@ -78,14 +73,14 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "map"),
                         eqNick(nick, "map"))
                 .groupBy(map.mapNo)
-                .orderBy(map.mapNo.desc())
+                .orderBy(boardSort(sort, direction, "map"), map.mapNo.desc())
                 .limit(pageSize)
                 .offset((long) pageNum * pageSize)
                 .fetch();
     }
 
     public List<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
-                                                             int pageNum, int pageSize) {
+                                                         String sort, String direction, int pageNum, int pageSize) {
         return queryFactory
                 .select(Projections.fields(
                         CommunityResponseDto.class,
@@ -114,7 +109,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqNick(nick, "community"),
                         eqCategory(category, "community"))
                 .groupBy(community.communityNo)
-//                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
+                .orderBy(boardSort(sort, direction, "community"),community.communityNo.desc())
                 .limit(pageSize)
                 .offset((long) pageNum * pageSize)
                 .fetch();
@@ -122,7 +117,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
-                                                     int pageNum, int pageSize) {
+                                                 String sort, String direction, int pageNum, int pageSize) {
         return queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
@@ -150,7 +145,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqAddress(address, "trade"),
                         eqPostStatus(postStatus))
                 .groupBy(trade.tradeNo)
-//                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
+                .orderBy(boardSort(sort, direction, "trade"),trade.tradeNo.desc())
                 .limit(pageSize)
                 .offset((long) pageNum * pageSize)
                 .fetch();
@@ -164,7 +159,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return null;
     }
 
-    private BooleanExpression eqPostStatus(String postStatus){
+    private BooleanExpression eqPostStatus(String postStatus) {
         return postStatus.isEmpty() ? null : trade.postStatus.eq(postStatus);
     }
 
@@ -201,78 +196,31 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
 
-
-    private List<OrderSpecifier> getAllMapOrderSpecifiers(Pageable pageable){
-        List<OrderSpecifier> ORDERS = new ArrayList<>();
-
-        if(!ORDERS.isEmpty()){
-            for(Sort.Order order : pageable.getSort()){
-                Order dir = order.isDescending()? Order.DESC : Order.ASC;
-                switch (order.getProperty()){
-                    case "new":
-                        OrderSpecifier<?> orderNo = QueryDslUtil.getSortedColumn(dir, map.mapNo,"mapNo");
-                        ORDERS.add(orderNo);
-                        break;
-                    case "popular":
-                        OrderSpecifier<?> orderView = QueryDslUtil.getSortedColumn(dir,map.view,"view");
-                        ORDERS.add(orderView);
-                        break;
-                    default:
-                        break;
+    private OrderSpecifier<?> boardSort(String sort, String direction, String tableName) {
+        if (!sort.isEmpty() && !direction.isEmpty()) {
+            if (sort.equals("new")) {
+                if (tableName.equals("map")) {
+                    return direction.equals("desc") ? map.mapNo.desc().nullsLast() : map.mapNo.asc().nullsLast();
+                }
+                if (tableName.equals("community")) {
+                    return direction.equals("desc") ? community.communityNo.desc().nullsLast() : community.communityNo.asc().nullsLast();
+                }
+                if (tableName.equals("trade")) {
+                    return direction.equals("desc") ? trade.tradeNo.desc().nullsLast() : trade.tradeNo.asc().nullsLast();
+                }
+            } else if (sort.equals("popular")) {
+                if (tableName.equals("map")) {
+                    return direction.equals("desc") ? map.view.desc().nullsLast() : map.view.asc().nullsLast();
+                }
+                if (tableName.equals("community")) {
+                    return direction.equals("desc") ? community.view.desc().nullsLast() : community.view.asc().nullsLast();
+                }
+                if (tableName.equals("trade")) {
+                    return direction.equals("desc") ? trade.view.desc().nullsLast() : trade.view.asc().nullsLast();
                 }
             }
         }
-        return ORDERS;
+        return null;
     }
-
-
-
-//    private OrderSpecifier<?> mapSort(Pageable pageable, String direction, String tableName) {
-//        if (direction.isEmpty()) throw new CustomException(ErrorCode.MAP_WRONG_INPUT);
-//
-//        if (tableName.equals("map")) {
-//            if (!pageable.getSort().isEmpty()) {
-//
-//                for (Sort.Order order : pageable.getSort()) {
-//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-//                    switch (order.getProperty()) {
-//                        case "new":
-//                            return new OrderSpecifier<>(dir, map.createdAt);
-//                        case "popular":
-//                            return new OrderSpecifier<>(dir, map.view);
-//                    }
-//                }
-//            }
-//        }
-//        if (tableName.equals("community")) {
-//            if (!pageable.getSort().isEmpty()) {
-//                for (Sort.Order order : pageable.getSort()) {
-//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-//                    switch (order.getProperty()) {
-//                        case "new":
-//                            return new OrderSpecifier<>(dir, community.createdAt);
-//                        case "popular":
-//                            return new OrderSpecifier<>(dir, community.view);
-//                    }
-//                }
-//            }
-//        }
-//        if (tableName.equals("trade")) {
-//            if (!pageable.getSort().isEmpty()) {
-//
-//                for (Sort.Order order : pageable.getSort()) {
-//                    Order dir = direction.equals("asc") ? Order.ASC : Order.DESC;
-//                    switch (order.getProperty()) {
-//                        case "new":
-//                            return new OrderSpecifier<>(dir, trade.createdAt);
-//                        case "popular":
-//                            return new OrderSpecifier<>(dir, trade.view);
-//                    }
-//                }
-//            }
-//        }
-//
-//        return null;
-//    }
 
 }
