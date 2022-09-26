@@ -41,7 +41,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
 
     public List<MapResponseDto> findAllByMap(String category, String title, String content,
-                                             String nick, String address, String sort, String direction, int pageNum, int pageSize) {
+                                             String nick, String address, String sort, int pagenum, int pagesize) {
 
         return queryFactory
                 .select(Projections.fields(
@@ -73,14 +73,14 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqContent(content, "map"),
                         eqNick(nick, "map"))
                 .groupBy(map.mapNo)
-                .orderBy(boardSort(sort, direction, "map"), map.mapNo.desc())
-                .limit(pageSize)
-                .offset((long) pageNum * pageSize)
+                .orderBy(boardSort(sort, "map"), map.mapNo.desc())
+                .limit(pagesize)
+                .offset((long) pagenum * pagesize)
                 .fetch();
     }
 
     public List<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
-                                                         String sort, String direction, int pageNum, int pageSize) {
+                                                         String sort,  int pagenum, int pagesize) {
         return queryFactory
                 .select(Projections.fields(
                         CommunityResponseDto.class,
@@ -109,15 +109,15 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqNick(nick, "community"),
                         eqCategory(category, "community"))
                 .groupBy(community.communityNo)
-                .orderBy(boardSort(sort, direction, "community"),community.communityNo.desc())
-                .limit(pageSize)
-                .offset((long) pageNum * pageSize)
+                .orderBy(boardSort(sort, "community"), community.communityNo.desc())
+                .limit(pagesize)
+                .offset((long) pagenum * pagesize)
                 .fetch();
 
     }
 
     public List<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
-                                                 String sort, String direction, int pageNum, int pageSize) {
+                                                 String sort,  int pagenum, int pagesize) {
         return queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
@@ -145,9 +145,9 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqAddress(address, "trade"),
                         eqPostStatus(postStatus))
                 .groupBy(trade.tradeNo)
-                .orderBy(boardSort(sort, direction, "trade"),trade.tradeNo.desc())
-                .limit(pageSize)
-                .offset((long) pageNum * pageSize)
+                .orderBy(boardSort(sort, "trade"), trade.tradeNo.desc())
+                .limit(pagesize)
+                .offset((long) pagenum * pagesize)
                 .fetch();
 
     }
@@ -195,28 +195,27 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return null;
     }
 
-
-    private OrderSpecifier<?> boardSort(String sort, String direction, String tableName) {
-        if (!sort.isEmpty() && !direction.isEmpty()) {
+    private OrderSpecifier<?> boardSort(String sort, String tableName) {
+        if (!sort.isEmpty()) {
             if (sort.equals("new")) {
                 if (tableName.equals("map")) {
-                    return direction.equals("desc") ? map.mapNo.desc().nullsLast() : map.mapNo.asc().nullsLast();
+                    map.mapNo.desc().nullsLast();
                 }
                 if (tableName.equals("community")) {
-                    return direction.equals("desc") ? community.communityNo.desc().nullsLast() : community.communityNo.asc().nullsLast();
+                    community.communityNo.desc().nullsLast();
                 }
                 if (tableName.equals("trade")) {
-                    return direction.equals("desc") ? trade.tradeNo.desc().nullsLast() : trade.tradeNo.asc().nullsLast();
+                    trade.tradeNo.desc().nullsLast();
                 }
             } else if (sort.equals("popular")) {
                 if (tableName.equals("map")) {
-                    return direction.equals("desc") ? map.view.desc().nullsLast() : map.view.asc().nullsLast();
+                    map.view.desc().nullsLast();
                 }
                 if (tableName.equals("community")) {
-                    return direction.equals("desc") ? community.view.desc().nullsLast() : community.view.asc().nullsLast();
+                    community.view.desc().nullsLast();
                 }
                 if (tableName.equals("trade")) {
-                    return direction.equals("desc") ? trade.view.desc().nullsLast() : trade.view.asc().nullsLast();
+                    trade.view.desc().nullsLast();
                 }
             }
         }
