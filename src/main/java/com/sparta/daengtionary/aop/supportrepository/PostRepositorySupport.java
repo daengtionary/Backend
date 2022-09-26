@@ -84,9 +84,9 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-    public PageImpl<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
-                                                             String direction, Pageable pageable) {
-        List<CommunityResponseDto> responseDtos = queryFactory
+    public List<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
+                                                             int pageNum, int pageSize) {
+        return queryFactory
                 .select(Projections.fields(
                         CommunityResponseDto.class,
                         community.communityNo,
@@ -115,16 +115,15 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqCategory(category, "community"))
                 .groupBy(community.communityNo)
 //                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageSize)
+                .offset((long) pageNum * pageSize)
                 .fetch();
 
-        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
-    public PageImpl<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
-                                                     String direction, Pageable pageable) {
-        List<TradeResponseDto> responseDtos = queryFactory
+    public List<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
+                                                     int pageNum, int pageSize) {
+        return queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
                         trade.tradeNo,
@@ -152,11 +151,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         eqPostStatus(postStatus))
                 .groupBy(trade.tradeNo)
 //                .orderBy((OrderSpecifier<?>) getAllOrderSpecifiers(pageable))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
+                .limit(pageSize)
+                .offset((long) pageNum * pageSize)
                 .fetch();
 
-        return new PageImpl<>(responseDtos, pageable, responseDtos.size());
     }
 
     private BooleanExpression eqCategory(String category, String tableName) {

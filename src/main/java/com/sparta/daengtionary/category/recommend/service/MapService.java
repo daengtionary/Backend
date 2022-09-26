@@ -112,7 +112,7 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category, String direction, String address,int pageNum,int pageSize) {
+    public ResponseEntity<?> getAllMapByCategory(String category, String address, int pageNum, int pageSize) {
         String title, content, nick;
         title = "";
         content = "";
@@ -124,7 +124,7 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address,int pageNum,int pageSize) {
+    public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, int pageNum, int pageSize) {
         List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, pageNum, pageSize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
     }
