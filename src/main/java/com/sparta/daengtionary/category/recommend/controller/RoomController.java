@@ -30,15 +30,15 @@ public class RoomController {
 
     @GetMapping()
     public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
-                                                Pageable pageable) {
+                                                @RequestParam int pageNum, @RequestParam int pageSize) {
         String category = "room";
-        return mapService.getAllMapByCategory(category, direction, address, pageable);
+        return mapService.getAllMapByCategory(category, direction, address, pageNum, pageSize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                          @RequestParam String address, @RequestParam String direction, Pageable pageable) {
-        return mapService.getSearchMap("room", title, content, nick, address, direction, pageable);
+                                          @RequestParam String address, @RequestParam int pageNum, @RequestParam int pageSize) {
+        return mapService.getSearchMap("room", title, content, nick, address, pageNum, pageSize);
     }
 
     @GetMapping("/{roomNo}")

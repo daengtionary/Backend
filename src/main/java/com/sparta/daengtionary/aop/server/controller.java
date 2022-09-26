@@ -13,6 +13,6 @@ public class controller {
 
     @GetMapping("/")
     public String Home() {
-        return "현재 날짜는 :" + LocalDate.now() +  " 현재 시간은 : "+ now ;
+        return "빌드된 " + "현재 날짜는 : " + LocalDate.now() + " 현재 시간은 : " + now;
     }
 }
