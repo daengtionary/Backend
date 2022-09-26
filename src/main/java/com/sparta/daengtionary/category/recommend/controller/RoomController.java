@@ -29,16 +29,16 @@ public class RoomController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String sort, @RequestParam String direction,
-                                                @RequestParam int pageNum, @RequestParam int pageSize) {
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String sort,
+                                                @RequestParam int pagenum, @RequestParam int pagesize) {
         String category = "room";
-        return mapService.getAllMapByCategory(category, address, sort, direction, pageNum, pageSize);
+        return mapService.getAllMapByCategory(category, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick, @RequestParam String address,
-                                          @RequestParam String sort, @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
-        return mapService.getSearchMap("room", title, content, nick, address, sort, direction, pageNum, pageSize);
+                                          @RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getSearchMap("room", title, content, nick, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/{roomNo}")

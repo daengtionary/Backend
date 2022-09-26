@@ -16,8 +16,8 @@ public class MapController {
 
     @GetMapping("")
     public ResponseEntity<?> getSearchMap(@RequestParam String category, @RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                          @RequestParam String address, @RequestParam String sort, @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
-        return mapService.getSearchMap(category, title, content, nick, address, sort, direction, pageNum, pageSize);
+                                          @RequestParam String address, @RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getSearchMap(category, title, content, nick, address, sort, pagenum, pagesize);
     }
 
 }

@@ -26,15 +26,15 @@ public class TradeController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getTradeSort(@RequestParam String sort, @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
-        return tradeService.getTradeSort(sort, direction, pageNum, pageSize);
+    public ResponseEntity<?> getTradeSort(@RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return tradeService.getTradeSort(sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchTrade(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
                                             @RequestParam String address, @RequestParam String postStatus, @RequestParam String sort,
-                                            @RequestParam String direction, @RequestParam int pageNum, @RequestParam int pageSize) {
-        return tradeService.getSearchTrade(title, content, nick, address, postStatus, sort, direction, pageNum, pageSize);
+                                            @RequestParam int pagenum, @RequestParam int pagesize) {
+        return tradeService.getSearchTrade(title, content, nick, address, postStatus, sort, pagenum, pagesize);
     }
 
 
