@@ -29,9 +29,9 @@ public class HospitalController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getAllHospitalCategory(@RequestParam String address, @RequestParam String direction,
+    public ResponseEntity<?> getAllHospitalCategory(@RequestParam String address,
                                                     @RequestParam int pageNum, @RequestParam int pageSize) {
-        return mapService.getAllMapByCategory("hospital", direction, address, pageNum, pageSize);
+        return mapService.getAllMapByCategory("hospital", address, pageNum, pageSize);
     }
 
     @GetMapping("/search")

@@ -29,10 +29,10 @@ public class RoomController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address,
                                                 @RequestParam int pageNum, @RequestParam int pageSize) {
         String category = "room";
-        return mapService.getAllMapByCategory(category, direction, address, pageNum, pageSize);
+        return mapService.getAllMapByCategory(category, address, pageNum, pageSize);
     }
 
     @GetMapping("/search")

@@ -97,21 +97,21 @@ public class TradeService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTradeSort(String direction, Pageable pageable) {
+    public ResponseEntity<?> getTradeSort(int pageNum, int pageSize) {
         String title, content, nick, address, postStatus;
         title = "";
         content = "";
         nick = "";
         address = "";
         postStatus = "";
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address,postStatus,  direction,  pageable);
+        List<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address,postStatus,  pageNum,  pageSize);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String address, String postStatus, String direction, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address, postStatus, direction, pageable);
+    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String address, String postStatus, int pageNum, int pageSize) {
+        List<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address, postStatus, pageNum, pageSize);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
