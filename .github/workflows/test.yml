@@ -1,6 +1,6 @@
 #deploy.yml
 
-name: deploy
+name: test
 
 on:
   push:
