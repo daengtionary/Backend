@@ -88,21 +88,21 @@ public class CommunityService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getCommunitySort(String direction, Pageable pageable) {
+    public ResponseEntity<?> getCommunitySort( int pageNum, int pageSize) {
         String category, title, content, nick;
         category = "";
         title = "";
         content = "";
         nick = "";
 
-        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
+        List<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, pageNum, pageSize);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchCommunity(String category, String title, String content, String nick, String direction, Pageable pageable) {
-        PageImpl<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, direction, pageable);
+    public ResponseEntity<?> getSearchCommunity(String category, String title, String content, String nick, int pageNum, int pageSize) {
+        List<CommunityResponseDto> responseDtoList = postRepositorySupport.findAllByCommunity(category, title, content, nick, pageNum, pageSize);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
