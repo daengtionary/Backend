@@ -80,7 +80,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .groupBy(map.mapNo)
                 .orderBy(map.mapNo.desc())
                 .limit(pageSize)
-                .offset(pageNum * pageSize)
+                .offset((long) pageNum * pageSize)
                 .fetch();
     }
 
