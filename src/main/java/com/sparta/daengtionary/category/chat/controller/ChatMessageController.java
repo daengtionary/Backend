@@ -17,15 +17,15 @@ public class ChatMessageController {
     private final ChatMessageService chatMessageService;
 
     // 채팅방 메세지 가져오기
-    @GetMapping("/room/{chatNo}")
-    public ResponseEntity<?> getChatMessages(HttpServletRequest request,
-                                             @PathVariable Long chatNo) {
-        return chatMessageService.getChatMessages(request, chatNo);
+    @GetMapping("/chat/message/{roomNo}")
+    public ResponseEntity<?> getMessages(HttpServletRequest request,
+                                         @PathVariable Long roomNo) {
+        return chatMessageService.getMessages(request, roomNo);
     }
 
+    // 메세지 보내기
     @MessageMapping("/chat/message")
-    public void sendMessage(HttpServletRequest request,
-                            MessageRequestDto requestDto) {
-        chatMessageService.sendMessage(request, requestDto);
+    public void sendMessage(MessageRequestDto requestDto) {
+        chatMessageService.sendMessage(requestDto);
     }
 }

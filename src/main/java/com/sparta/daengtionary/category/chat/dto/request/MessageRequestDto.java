@@ -1,11 +1,13 @@
 package com.sparta.daengtionary.category.chat.dto.request;
 
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 public class MessageRequestDto {
-    // 메시지 타입 : 입장, 채팅
     private Long roomNo;
     private String type;
-    private String content;
+    private String sender;
+    private String message;
 }
