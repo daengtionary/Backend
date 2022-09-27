@@ -134,8 +134,8 @@ public class MapService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getTestAllMap(Long mapNo){
 //        JPAQuery<Map> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
-        List<Tuple> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
-//        Map mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+        List<MapDetailResponseDto> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+//        MapDetailResponseDto mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
         return responseBodyDto.success(mapDetailResponseDtos,"조회 성공");
     }
 

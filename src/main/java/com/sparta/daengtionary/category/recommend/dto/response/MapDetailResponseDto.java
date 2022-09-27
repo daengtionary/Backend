@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.category.recommend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.sparta.daengtionary.category.recommend.domain.MapImg;
 import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,13 +27,15 @@ public class MapDetailResponseDto {
     private List<String> mapInfo;
 
     private String info;
-    private String url;
+    private String mapImgUrl;
 
     private Long reviewNo;
 
     private String reviewContent;
 
     private int reviewStar;
+
+    private MapImg mapImg;
 
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime reviewCreatedAt;
@@ -48,10 +51,10 @@ public class MapDetailResponseDto {
 
     @Builder
     public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
-                                String content, Long reviewCount, Long wishCount, List<ReviewResponseDto> mapReviewList,
+                                MapImg mapImg, String content, Long reviewCount, Long wishCount, List<ReviewResponseDto> mapReviewList,
                                 float mapStar, int view, List<String> imgUrls, List<String> mapInfo,
                                 LocalDateTime createdAt, LocalDateTime modifiedAt, Long reviewNo, String reviewContent,
-                                String url,String info,int reviewStar, LocalDateTime reviewCreatedAt, LocalDateTime reviewModifiedAt) {
+                                String mapImgUrl,String info,int reviewStar, LocalDateTime reviewCreatedAt, LocalDateTime reviewModifiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
@@ -59,6 +62,7 @@ public class MapDetailResponseDto {
         this.category = category;
         this.content = content;
         this.mapStar = mapStar;
+        this.mapImg = mapImg;
         this.view = view;
         this.imgUrls = imgUrls;
         this.mapInfo = mapInfo;
@@ -72,7 +76,7 @@ public class MapDetailResponseDto {
         this.reviewStar = reviewStar;
         this.reviewCreatedAt = reviewCreatedAt;
         this.reviewModifiedAt = reviewModifiedAt;
-        this.url = url;
+        this.mapImgUrl = mapImgUrl;
         this.info = info;
     }
 
