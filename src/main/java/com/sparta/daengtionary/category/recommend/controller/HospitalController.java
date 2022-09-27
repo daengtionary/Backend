@@ -7,7 +7,6 @@ import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.category.recommend.service.MapReviewService;
 import com.sparta.daengtionary.category.recommend.service.MapService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -40,17 +39,12 @@ public class HospitalController {
         return mapService.getSearchMap("hospital", title, content, nick, address, sort, pagenum, pagesize);
     }
 
-    @GetMapping("/test/{mapNo}")
-    public ResponseEntity<?> getTestAllMap(@PathVariable Long mapNo) {
-        return mapService.getTestAllMap(mapNo);
-    }
 
     @GetMapping("/{mapNo}")
     public ResponseEntity<?> getHospital(@PathVariable Long mapNo) {
         mapService.mapViewUpdate(mapNo);
         return mapService.getAllMap(mapNo);
     }
-
 
     @PatchMapping("/{mapNo}")
     public ResponseEntity<?> updateHospital(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,
