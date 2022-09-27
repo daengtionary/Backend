@@ -6,11 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class MapDetailResponseDto {
+public class MapDetailTestResponseDto {
     private Long mapNo;
     private String nick;
     private String title;
@@ -19,20 +18,15 @@ public class MapDetailResponseDto {
     private String content;
     private float mapStar;
     private int view;
-    private List<String> imgUrls;
-    private List<String> mapInfo;
-    private List<ReviewResponseDto> mapReviewList;
-    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
     private LocalDateTime modifiedAt;
 
-
     @Builder
-    public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
-                                String content, List<ReviewResponseDto> mapReviewList,
-                                float mapStar, int view, List<String> imgUrls, List<String> mapInfo,
-                                LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MapDetailTestResponseDto(Long mapNo, String nick, String title, String address,
+                                    String category, String content, float mapStar, int view,
+                                    LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
@@ -41,11 +35,8 @@ public class MapDetailResponseDto {
         this.content = content;
         this.mapStar = mapStar;
         this.view = view;
-        this.imgUrls = imgUrls;
-        this.mapInfo = mapInfo;
-        this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
-    }
 
+    }
 }

@@ -7,7 +7,6 @@ import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.category.recommend.service.MapReviewService;
 import com.sparta.daengtionary.category.recommend.service.MapService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,15 +28,20 @@ public class HospitalController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getAllHospitalCategory(@RequestParam String address, @RequestParam String direction,
-                                                    Pageable pageable) {
-        return mapService.getAllMapByCategory("hospital", direction, address, pageable);
+    public ResponseEntity<?> getAllHospitalCategory(@RequestParam String address, @RequestParam String sort,
+                                                    @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getAllMapByCategory("hospital", address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchHospital(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                               @RequestParam String address, @RequestParam String direction, Pageable pageable) {
-        return mapService.getSearchMap("hospital", title, content, nick, address, direction, pageable);
+    public ResponseEntity<?> getSearchHospital(@RequestParam String title, @RequestParam String content, @RequestParam String nick, @RequestParam String sort,
+                                               @RequestParam String address, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getSearchMap("hospital", title, content, nick, address, sort, pagenum, pagesize);
+    }
+
+    @GetMapping("/test/{mapNo}")
+    public ResponseEntity<?> getTestMap(@PathVariable Long mapNo) {
+        return mapService.getTestMap(mapNo);
     }
 
     @GetMapping("/{mapNo}")
@@ -45,7 +49,6 @@ public class HospitalController {
         mapService.mapViewUpdate(mapNo);
         return mapService.getAllMap(mapNo);
     }
-
 
     @PatchMapping("/{mapNo}")
     public ResponseEntity<?> updateHospital(@PathVariable Long mapNo, @RequestPart(value = "data") MapPutRequestDto requestDto,

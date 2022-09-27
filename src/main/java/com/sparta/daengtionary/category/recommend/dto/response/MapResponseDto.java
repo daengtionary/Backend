@@ -27,6 +27,7 @@ public class MapResponseDto {
     private Long reviewCount;
 
     private Long wishCount;
+    private int view;
 
     @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -35,7 +36,7 @@ public class MapResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public MapResponseDto(Long mapNo, String category, String title, String address, float star,
+    public MapResponseDto(Long mapNo, String category, String title, String address, float star, int view,
                           String mapImgUrl, String mapInfo, Long reviewCount, Long wishCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.category = category;
@@ -44,6 +45,7 @@ public class MapResponseDto {
         this.star = star;
         this.mapImgUrl = mapImgUrl;
         this.mapInfo = mapInfo;
+        this.view = view;
         this.reviewCount = reviewCount;
         this.wishCount = wishCount;
         this.createdAt = createdAt;
