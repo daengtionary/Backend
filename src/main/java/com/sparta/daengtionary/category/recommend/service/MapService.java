@@ -105,7 +105,7 @@ public class MapService {
                         .mapInfo(mapRequestDto.getMapInfos())
                         .imgUrls(mapImgs)
                         .createdAt(map.getCreatedAt())
-                        .moditiedAt(map.getModifiedAt())
+                        .modifiedAt(map.getModifiedAt())
                         .build(),
                 "생성 완료"
         );
@@ -127,6 +127,12 @@ public class MapService {
     public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String sort,  int pagenum, int pagesize) {
         List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort,  pagenum, pagesize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getTestAllMap(Long mapNo){
+        List<MapDetailResponseDto> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+        return responseBodyDto.success(mapDetailResponseDtos,"조회 성공");
     }
 
     @Transactional(readOnly = true)
@@ -169,7 +175,7 @@ public class MapService {
                         .address(map.getAddress())
                         .category(map.getCategory())
                         .content(map.getContent())
-                        .star(map.getStar())
+                        .mapStar(map.getStar())
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(infoList)
@@ -177,7 +183,7 @@ public class MapService {
                         .wishCount((long) temp.size())
                         .mapReviewList(reviewResponseDtoList)
                         .createdAt(map.getCreatedAt())
-                        .moditiedAt(map.getModifiedAt())
+                        .modifiedAt(map.getModifiedAt())
                         .build(),
                 "조회 성공"
         );
@@ -234,12 +240,12 @@ public class MapService {
                         .address(map.getAddress())
                         .category(map.getCategory())
                         .content(map.getContent())
-                        .star(map.getStar())
+                        .mapStar(map.getStar())
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(requestDto.getMapInfos())
                         .createdAt(map.getCreatedAt())
-                        .moditiedAt(map.getModifiedAt())
+                        .modifiedAt(map.getModifiedAt())
                         .build(),
 
                 "수정 성공"
