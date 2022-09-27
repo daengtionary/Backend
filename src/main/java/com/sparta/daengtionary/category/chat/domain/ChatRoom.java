@@ -1,6 +1,5 @@
 package com.sparta.daengtionary.category.chat.domain;
 
-import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.aop.util.Timestamped;
 import lombok.Getter;
 
@@ -15,18 +14,7 @@ public class ChatRoom extends Timestamped {
     private Long roomNo;
 
     @Column(nullable = false)
-    private String title;
-
-    @Column(nullable = false)
     private String type;
-
-    @JoinColumn(name = "creatorNo")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member creator;
-
-    @JoinColumn(name = "targetNo")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member target;
 
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatRoomMember> chatRoomMembers;
@@ -36,13 +24,10 @@ public class ChatRoom extends Timestamped {
 
     }
 
-    public static ChatRoom createChatPersonalRoom(Member creator, Member target) {
+    public static ChatRoom createChatRoomPersonal() {
         ChatRoom chatRoom = new ChatRoom();
 
-        chatRoom.title = "personal";
         chatRoom.type = "personal";
-        chatRoom.creator = creator;
-        chatRoom.target = target;
 
         return chatRoom;
     }

@@ -2,7 +2,6 @@ package com.sparta.daengtionary.category.chat.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.sparta.daengtionary.category.chat.domain.ChatMessage;
-import com.sparta.daengtionary.category.member.domain.Member;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
@@ -13,11 +12,11 @@ public class MessageResponseDto {
 
     private String type;
 
-    private Member sender;
+    private String sender;
 
-    private String content;
+    private String message;
 
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime date;
 
 
@@ -27,7 +26,7 @@ public class MessageResponseDto {
         responseDto.messageNo = chatMessage.getMessageNo();
         responseDto.type = chatMessage.getType();
         responseDto.sender = chatMessage.getSender();
-        responseDto.content = chatMessage.getContent();
+        responseDto.message = chatMessage.getMessage();
         responseDto.date = chatMessage.getCreatedAt();
 
         return responseDto;

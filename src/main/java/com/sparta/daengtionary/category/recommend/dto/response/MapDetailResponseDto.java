@@ -22,9 +22,9 @@ public class MapDetailResponseDto {
     private List<String> imgUrls;
     private List<String> mapInfo;
     private List<ReviewResponseDto> mapReviewList;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
 

@@ -35,6 +35,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.sparta.daengtionary.aop.exception.ErrorCode.NOT_FOUND_USER_INFO;
+
 @Service
 @RequiredArgsConstructor
 public class MemberService {
@@ -231,6 +233,20 @@ public class MemberService {
         }
 
         return responseBodyDto.success("사용 가능한 닉네임 입니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public Member checkMemberByMemberNo(Long memberNo) {
+        return memberRepository.findById(memberNo).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER_INFO)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Member checkMemberByNick(String nick) {
+        return memberRepository.findByNick(nick).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+        );
     }
 
     @Transactional

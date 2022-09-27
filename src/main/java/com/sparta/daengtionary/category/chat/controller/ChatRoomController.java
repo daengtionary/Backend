@@ -16,12 +16,12 @@ public class ChatRoomController {
 
     // 1:1 채팅방 생성
     @PostMapping("/room/personal")
-    public ResponseEntity<?> createChatPersonalRoom(HttpServletRequest request,
+    public ResponseEntity<?> createChatRoomPersonal(HttpServletRequest request,
                                                     @RequestBody ChatRoomRequestDto requestDto) {
-        return chatRoomService.createChatPersonalRoom(request, requestDto);
+        return chatRoomService.createChatRoomPersonal(request, requestDto);
     }
 
-    // 채팅방 목록 가져오기
+    // 채팅방 가져오기
     @GetMapping("/rooms")
     public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
         return chatRoomService.getChatRooms(request);
