@@ -108,9 +108,6 @@ public class AwsS3UploadService {
     }
 
     private String getFileExtension(String fileName) {
-        if (fileName.length() == 0) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_IMAGE);
-        }
 
         ArrayList<String> fileValidate = new ArrayList<>();
         fileValidate.add(".jpg");
