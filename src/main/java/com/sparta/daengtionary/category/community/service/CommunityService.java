@@ -44,11 +44,12 @@ public class CommunityService {
 
     private final WishRepository wishRepository;
 
+    private List<String> comImgs;
+
     @Transactional
     public ResponseEntity<?> createCommunity(CommunityRequestDto requestDto, List<MultipartFile> multipartFileList) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        validateFile(multipartFileList);
-        List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
+
 
         Community community = Community.builder()
                 .member(member)
@@ -58,34 +59,24 @@ public class CommunityService {
                 .build();
 
         communityRepository.save(community);
+        if (multipartFileList != null) {
+            List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
 
-        List<CommunityImg> communityImgs = new ArrayList<>();
-        for (String img : communityImg) {
-            communityImgs.add(
-                    CommunityImg.builder()
-                            .community(community)
-                            .communityImg(img)
-                            .build()
-            );
+            List<CommunityImg> communityImgs = new ArrayList<>();
+            for (String img : communityImg) {
+                communityImgs.add(
+                        CommunityImg.builder()
+                                .community(community)
+                                .communityImg(img)
+                                .build()
+                );
+            }
+
+            communityImgRepository.saveAll(communityImgs);
+
         }
+        return responseBodyDto.success("커뮤니티 생성 완료");
 
-        communityImgRepository.saveAll(communityImgs);
-
-
-        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
-                        .communityNo(community.getCommunityNo())
-                        .nick(member.getNick())
-                        .breed(member.getDogs().get(0).getBreed())
-                        .title(community.getTitle())
-                        .category(community.getCategory())
-                        .content(community.getContent())
-                        .view(community.getView())
-                        .imgList(communityImg)
-                        .createdAt(community.getCreatedAt())
-                        .modifiedAt(community.getModifiedAt())
-                        .build(),
-                "커뮤니티 생성 완료"
-        );
     }
 
     @Transactional(readOnly = true)
@@ -137,7 +128,7 @@ public class CommunityService {
                 CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
                         .nick(community.getMember().getNick())
-                        .breed(community.getMember().getDogs().get(0).getBreed())
+                        .breed(community.getMember())
                         .title(community.getTitle())
                         .content(community.getContent())
                         .view(community.getView())
@@ -180,15 +171,16 @@ public class CommunityService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Community community = validateCommunity(communityNo);
         community.validateMember(member);
-        validateFile(multipartFiles);
 
         List<CommunityImg> deleteImg = communityImgRepository.findAllByCommunity(community);
         for (CommunityImg i : deleteImg) {
             s3UploadService.deleteFile(i.getCommunityImg());
         }
         communityImgRepository.deleteAll(deleteImg);
+        if (multipartFiles != null) {
+            comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+        }
 
-        List<String> comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         List<CommunityImg> saveImg = new ArrayList<>();
         for (String i : comImgs) {
@@ -243,9 +235,5 @@ public class CommunityService {
         );
     }
 
-    private void validateFile(List<MultipartFile> multipartFiles) {
-        if (multipartFiles == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
+
 }
