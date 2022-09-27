@@ -75,6 +75,7 @@ public class CommunityService {
         return responseBodyDto.success(CommunityDetatilResponseDto.builder()
                         .communityNo(community.getCommunityNo())
                         .nick(member.getNick())
+                        .breed(member.getDogs().get(0).getBreed())
                         .title(community.getTitle())
                         .category(community.getCategory())
                         .content(community.getContent())
