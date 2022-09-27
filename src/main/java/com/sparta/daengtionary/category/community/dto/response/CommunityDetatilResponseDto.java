@@ -18,6 +18,7 @@ public class CommunityDetatilResponseDto {
     private String title;
     private String category;
     private String breed;
+    private String memberImage;
     private String content;
     private int view;
     private Long reviewCount;
@@ -42,6 +43,7 @@ public class CommunityDetatilResponseDto {
         this.view = view;
         if(breed.getDogs().size() != 0){
             this.breed = breed.getDogs().get(0).getBreed();
+            this.memberImage = breed.getDogs().get(0).getImage();
         }
         this.imgList = imgList;
         this.reviewList = reviewList;
