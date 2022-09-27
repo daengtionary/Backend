@@ -1,5 +1,7 @@
 package com.sparta.daengtionary.category.recommend.service;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
@@ -131,7 +133,9 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getTestAllMap(Long mapNo){
-        List<MapDetailResponseDto> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+//        JPAQuery<Map> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+        List<Tuple> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
+//        Map mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
         return responseBodyDto.success(mapDetailResponseDtos,"조회 성공");
     }
 
