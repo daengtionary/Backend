@@ -1,7 +1,5 @@
 package com.sparta.daengtionary.category.recommend.service;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
@@ -23,11 +21,8 @@ import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
-import com.sparta.daengtionary.aop.supportrepository.PostDetailRepositorySupport;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,16 +45,12 @@ public class MapService {
 
     private final WishRepository wishRepository;
 
-    private final PostDetailRepositorySupport postDetailRepositorySupport;
-
     private final String imgPath = "/map/image";
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
         validateMemberRole(member);
-        //제목과 업종, 주소가 같다면 처리 불가
-//        isDuplicateCheck(mapRequestDto); 실제 서비스 시작시에 실행
         validateFile(multipartFiles);
         List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
@@ -132,14 +123,6 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTestAllMap(Long mapNo){
-//        JPAQuery<Map> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
-        List<MapDetailResponseDto> mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
-//        MapDetailResponseDto mapDetailResponseDtos = postDetailRepositorySupport.findByMapDetail(mapNo);
-        return responseBodyDto.success(mapDetailResponseDtos,"조회 성공");
-    }
-
-    @Transactional(readOnly = true)
     public ResponseEntity<?> getAllMap(Long mapNo) {
         Map map = validateMap(mapNo);
 
@@ -169,7 +152,6 @@ public class MapService {
                             .build()
             );
         }
-        List<Wish> temp = wishRepository.findAllByMap(map);
 
         return responseBodyDto.success(
                 MapDetailResponseDto.builder()
@@ -183,8 +165,6 @@ public class MapService {
                         .view(map.getView())
                         .imgUrls(mapImgs)
                         .mapInfo(infoList)
-                        .reviewCount((long) reviews.size())
-                        .wishCount((long) temp.size())
                         .mapReviewList(reviewResponseDtoList)
                         .createdAt(map.getCreatedAt())
                         .modifiedAt(map.getModifiedAt())
