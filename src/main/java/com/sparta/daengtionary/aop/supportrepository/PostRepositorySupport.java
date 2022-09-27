@@ -80,7 +80,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<CommunityResponseDto> findAllByCommunity(String category, String title, String content, String nick,
-                                                         String sort,  int pagenum, int pagesize) {
+                                                         String sort, int pagenum, int pagesize) {
         return queryFactory
                 .select(Projections.fields(
                         CommunityResponseDto.class,
@@ -117,7 +117,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
     }
 
     public List<TradeResponseDto> findAllByTrade(String title, String content, String nick, String address, String postStatus,
-                                                 String sort,  int pagenum, int pagesize) {
+                                                 String sort, int pagenum, int pagesize) {
         return queryFactory
                 .select(Projections.fields(
                         TradeResponseDto.class,
@@ -199,23 +199,23 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         if (!sort.isEmpty()) {
             if (sort.equals("new")) {
                 if (tableName.equals("map")) {
-                    map.mapNo.desc().nullsLast();
+                    return map.mapNo.desc().nullsLast();
                 }
                 if (tableName.equals("community")) {
-                    community.communityNo.desc().nullsLast();
+                    return community.communityNo.desc().nullsLast();
                 }
                 if (tableName.equals("trade")) {
-                    trade.tradeNo.desc().nullsLast();
+                    return trade.tradeNo.desc().nullsLast();
                 }
             } else if (sort.equals("popular")) {
                 if (tableName.equals("map")) {
-                    map.view.desc().nullsLast();
+                    return map.view.desc().nullsLast();
                 }
                 if (tableName.equals("community")) {
-                    community.view.desc().nullsLast();
+                    return community.view.desc().nullsLast();
                 }
                 if (tableName.equals("trade")) {
-                    trade.view.desc().nullsLast();
+                    return trade.view.desc().nullsLast();
                 }
             }
         }

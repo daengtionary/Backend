@@ -39,7 +39,22 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.fields(
                         MapDetailResponseDto.class,
                         map.mapNo,
-                        map.star
+                        map.member.nick,
+                        map.title,
+                        map.address,
+                        map.category,
+                        map.content,
+                        map.star.as("mapStar"),
+                        map.view,
+                        map.createdAt,
+                        map.modifiedAt,
+                        mapImg.mapImgUrl.as("url"),
+                        mapInfo1.mapInfo.as("info"),
+                        mapReview.mapReviewNo.as("reviewNo"),
+                        mapReview.content.as("reviewContent"),
+                        mapReview.star.as("reviewStar"),
+                        mapReview.createdAt.as("reviewCreatedAt"),
+                        mapReview.modifiedAt.as("reviewModifiedAt")
 
                 ))
                 .from(map)
@@ -56,20 +71,7 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .leftJoin(wish)
                 .on(map.mapNo.eq(wish.map.mapNo))
                 .where(map.mapNo.eq(mapNo))
-                .orderBy(map.createdAt.desc())
-//                .offset(pageable.getOffset())
-//                .limit(pageable.getPageSize())
                 .fetch();
 
-//        return new PageImpl<>(responseDtos,pageable,responseDtos.size());
     }
-//
-//
-//    public PageImpl<CommunityDetatilResponseDto> findByCommunityDetail(){
-//
-//    }
-//
-//    public PageImpl<TradeDetailResponseDto> findByTradeDetail(){
-//
-//    }
 }

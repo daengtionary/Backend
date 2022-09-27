@@ -40,6 +40,11 @@ public class HospitalController {
         return mapService.getSearchMap("hospital", title, content, nick, address, sort, pagenum, pagesize);
     }
 
+    @GetMapping("/test/{mapNo}")
+    public ResponseEntity<?> getTestAllMap(@PathVariable Long mapNo) {
+        return mapService.getTestAllMap(mapNo);
+    }
+
     @GetMapping("/{mapNo}")
     public ResponseEntity<?> getHospital(@PathVariable Long mapNo) {
         mapService.mapViewUpdate(mapNo);
