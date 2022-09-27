@@ -3,7 +3,9 @@ package com.sparta.daengtionary.category.recommend.service;
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.supportrepository.PostDetailRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.recommend.dto.response.*;
 import com.sparta.daengtionary.category.wish.domain.Wish;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapImg;
@@ -11,10 +13,7 @@ import com.sparta.daengtionary.category.recommend.domain.MapInfo;
 import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.request.MapRequestDto;
-import com.sparta.daengtionary.category.recommend.dto.response.MapDetailResponseDto;
-import com.sparta.daengtionary.category.recommend.dto.response.MapResponseDto;
 import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
@@ -43,7 +42,7 @@ public class MapService {
     private final AwsS3UploadService s3UploadService;
     private final MapReviewRepository mapReviewRepository;
 
-    private final WishRepository wishRepository;
+    private final PostDetailRepositorySupport postDetailRepositorySupport;
 
     private final String imgPath = "/map/image";
 
@@ -120,6 +119,12 @@ public class MapService {
     public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String sort,  int pagenum, int pagesize) {
         List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort,  pagenum, pagesize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getTestMap(Long mapNo){
+        List<Object> dto = postDetailRepositorySupport.findByMapDetail(mapNo);
+        return responseBodyDto.success(dto,"조회 성공");
     }
 
     @Transactional(readOnly = true)

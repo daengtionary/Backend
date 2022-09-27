@@ -139,11 +139,11 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .on(trade.tradeNo.eq(tradeReview.trade.tradeNo))
                 .leftJoin(wish)
                 .on(trade.tradeNo.eq(wish.trade.tradeNo))
-                .where(eqTitle(title, "trade"),
-                        eqContent(content, "trade"),
-                        eqNick(nick, "trade"),
+                .where(eqPostStatus(postStatus),
+                        eqTitle(title, "trade"),
                         eqAddress(address, "trade"),
-                        eqPostStatus(postStatus))
+                        eqContent(content, "trade"),
+                        eqNick(nick, "trade"))
                 .groupBy(trade.tradeNo)
                 .orderBy(boardSort(sort, "trade"), trade.tradeNo.desc())
                 .limit(pagesize)
