@@ -41,9 +41,9 @@ public class RoomController {
     }
 
     @GetMapping("/{roomNo}")
-    public ResponseEntity<?> getRoom(@PathVariable Long roomNo) {
+    public ResponseEntity<?> getRoom(@PathVariable Long roomNo, @RequestParam int pagenum, @RequestParam int pagesize) {
         mapService.mapViewUpdate(roomNo);
-        return mapService.getAllMap(roomNo);
+        return mapService.getAllMap(roomNo, pagenum, pagesize);
     }
 
     @PatchMapping("/{roomNo}")

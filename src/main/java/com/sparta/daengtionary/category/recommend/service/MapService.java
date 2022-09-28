@@ -11,7 +11,6 @@ import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapImg;
 import com.sparta.daengtionary.category.recommend.domain.MapInfo;
-import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.request.MapRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.response.*;
@@ -20,7 +19,6 @@ import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,61 +107,18 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTestMap(Long mapNo, int pagenum, int pagesize) {
+    public ResponseEntity<?> getAllMap(Long mapNo, int pagenum, int pagesize) {
         MapDetailSubResponseDto map = postDetailRepositorySupport.findByMapDetail(mapNo);
-        List<MapImgResponseDto> mapImgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
+        List<ImgResponseDto> imgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
         List<ReviewResponseDto> reviewResponseDtoList = postDetailRepositorySupport.findByMapReview(mapNo, pagenum, pagesize);
         return responseBodyDto.success(MapSubResponseDto.builder()
                         .mapDetailSubResponseDto(map)
-                        .mapImgResponseDtoList(mapImgResponseDtoList)
+                        .imgResponseDtoList(imgResponseDtoList)
                         .reviewResponseDtoList(reviewResponseDtoList)
                         .build()
                 , "조회 성공");
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMap(Long mapNo) {
-        Map map = validateMap(mapNo);
-
-        List<MapImg> mapImgTemp = mapImgRepository.findAllByMap(map);
-        List<String> mapImgs = new ArrayList<>();
-
-        for (MapImg i : mapImgTemp) {
-            mapImgs.add(i.getMapImgUrl());
-        }
-
-        List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
-        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
-        for (MapReview i : reviews) {
-            reviewResponseDtoList.add(
-                    ReviewResponseDto.builder()
-                            .reviewNo(i.getMapReviewNo())
-                            .nick(i.getMember().getNick())
-                            .content(i.getContent())
-                            .image(i.getMember().getDogs().get(0).getImage())
-                            .star(i.getStar())
-                            .build()
-            );
-        }
-
-        return responseBodyDto.success(
-                MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(map.getMember().getNick())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .mapStar(map.getStar())
-                        .view(map.getView())
-                        .imgUrls(mapImgs)
-                        .mapReviewList(reviewResponseDtoList)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-                "조회 성공"
-        );
-    }
 
     @Transactional
     public ResponseEntity<?> mapUpdate(MapPutRequestDto requestDto, Long mapNo, List<MultipartFile> multipartFiles) {

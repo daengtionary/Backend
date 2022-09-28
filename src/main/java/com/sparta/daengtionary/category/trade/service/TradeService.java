@@ -5,6 +5,7 @@ import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
+import com.sparta.daengtionary.aop.supportrepository.PostDetailRepositorySupport;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
@@ -40,6 +41,8 @@ public class TradeService {
     private final TokenProvider tokenProvider;
     private final TradeReviewRepository tradeReviewRepository;
     private final PostRepositorySupport postRepositorySupport;
+
+    private final PostDetailRepositorySupport postDetailRepositorySupport;
 
     private final WishRepository wishRepository;
     private final String imgPath = "/map/image";
