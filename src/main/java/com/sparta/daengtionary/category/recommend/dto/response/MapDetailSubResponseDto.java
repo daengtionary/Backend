@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
-public class MapDetailTestResponseDto {
+public class MapDetailSubResponseDto {
     private Long mapNo;
     private String nick;
     private String title;
@@ -24,9 +24,9 @@ public class MapDetailTestResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public MapDetailTestResponseDto(Long mapNo, String nick, String title, String address,
-                                    String category, String content, float mapStar, int view,
-                                    LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MapDetailSubResponseDto(Long mapNo, String nick, String title, String address,
+                                   String category, String content, float mapStar, int view,
+                                   LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
