@@ -25,11 +25,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+      - name: Set up JDK 11.x
         uses: actions/setup-java@v3
         with:
-          java-version: "11"
-          distribution: "temurin"
+          java-version: 11.x
 
       ## 1-1 application.properties 파일 생성
       - name: make application.properties
