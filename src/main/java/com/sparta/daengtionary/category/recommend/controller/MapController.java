@@ -20,4 +20,5 @@ public class MapController {
         return mapService.getSearchMap(category, title, content, nick, address, sort, pagenum, pagesize);
     }
 
+
 }

@@ -20,6 +20,7 @@ import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -109,11 +110,11 @@ public class MapService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getTestMap(Long mapNo, int pagenum, int pagesize) {
-        MapDetailTestResponseDto map = postDetailRepositorySupport.findByMapDetail(mapNo);
+        MapDetailSubResponseDto map = postDetailRepositorySupport.findByMapDetail(mapNo);
         List<MapImgResponseDto> mapImgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
         List<ReviewResponseDto> reviewResponseDtoList = postDetailRepositorySupport.findByMapReview(mapNo, pagenum, pagesize);
-        return responseBodyDto.success(MapTestResponseDto.builder()
-                        .mapDetailTestResponseDto(map)
+        return responseBodyDto.success(MapSubResponseDto.builder()
+                        .mapDetailSubResponseDto(map)
                         .mapImgResponseDtoList(mapImgResponseDtoList)
                         .reviewResponseDtoList(reviewResponseDtoList)
                         .build()

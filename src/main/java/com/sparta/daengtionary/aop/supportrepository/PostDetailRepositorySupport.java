@@ -3,7 +3,7 @@ package com.sparta.daengtionary.aop.supportrepository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.category.recommend.domain.Map;
-import com.sparta.daengtionary.category.recommend.dto.response.MapDetailTestResponseDto;
+import com.sparta.daengtionary.category.recommend.dto.response.MapDetailSubResponseDto;
 import com.sparta.daengtionary.category.recommend.dto.response.MapImgResponseDto;
 import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
@@ -30,10 +30,10 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
     }
 
 
-    public MapDetailTestResponseDto findByMapDetail(Long mapNo) {
+    public MapDetailSubResponseDto findByMapDetail(Long mapNo) {
         return queryFactory
                 .select(Projections.fields(
-                        MapDetailTestResponseDto.class,
+                        MapDetailSubResponseDto.class,
                         map.mapNo,
                         map.member.nick,
                         map.title,
