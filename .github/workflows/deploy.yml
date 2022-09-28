@@ -3,10 +3,9 @@
 name: deploy
 
 on:
-  pull_request:
-    branches:
-      - 'main'
-      - 'release'
+  push:
+    branches: [ main ]
+
 
 permissions:
   contents: read
