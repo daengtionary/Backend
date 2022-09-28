@@ -25,7 +25,7 @@ public class MypageResponseDto {
 
         @Builder
         public MemberInfo(Long memberNo, String email, String nick, List<Dog> dogs,
-                                 LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                          LocalDateTime createdAt, LocalDateTime modifiedAt) {
             this.memberNo = memberNo;
             this.email = email;
             this.nick = nick;
@@ -34,7 +34,7 @@ public class MypageResponseDto {
             this.modifiedAt = modifiedAt;
         }
     }
-    
+
     @Getter
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class DogInfo {
@@ -42,8 +42,8 @@ public class MypageResponseDto {
         private String breed;
         private Gender gender;
         private Float weight;
-        
-        
+
+
         @Builder
         public DogInfo(String name, String breed, Gender gender, Float weight) {
             this.name = name;

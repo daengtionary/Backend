@@ -2,9 +2,9 @@ package com.sparta.daengtionary.category.community.domain;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
-import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.community.dto.request.CommunityRequestDto;
 import com.sparta.daengtionary.aop.util.Timestamped;
+import com.sparta.daengtionary.category.community.dto.request.CommunityRequestDto;
+import com.sparta.daengtionary.category.member.domain.Member;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,7 +37,7 @@ public class Community extends Timestamped {
 
 
     @Builder
-    public Community(Long communityNo, Member member,String category, String title, String content) {
+    public Community(Long communityNo, Member member, String category, String title, String content) {
         this.communityNo = communityNo;
         this.member = member;
         this.category = category;

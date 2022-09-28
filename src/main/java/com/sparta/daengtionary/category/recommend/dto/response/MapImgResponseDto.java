@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MapImgResponseDto {
     private String mapImgUrl;
+
     @Builder
-    public MapImgResponseDto(String mapImgUrl){
+    public MapImgResponseDto(String mapImgUrl) {
         this.mapImgUrl = mapImgUrl;
     }
 }

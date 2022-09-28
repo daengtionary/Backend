@@ -23,7 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.daengtionary.aop.exception.ErrorCode.*;
+import static com.sparta.daengtionary.aop.exception.ErrorCode.CANNOT_CHAT_WITH_ME;
+import static com.sparta.daengtionary.aop.exception.ErrorCode.NOT_FOUND_USER_INFO;
 
 @Service
 @RequiredArgsConstructor

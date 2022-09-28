@@ -13,17 +13,17 @@ public class WishController {
     private final WishService wishService;
 
     @PostMapping("/map/{mapNo}/wish")
-    public ResponseEntity<?> createWishByMap(@PathVariable Long mapNo){
+    public ResponseEntity<?> createWishByMap(@PathVariable Long mapNo) {
         return wishService.toggleWishByMap(mapNo);
     }
 
     @PostMapping("/community/{comNo}/wish")
-    public ResponseEntity<?> createWishByCommunity(@PathVariable Long comNo){
+    public ResponseEntity<?> createWishByCommunity(@PathVariable Long comNo) {
         return wishService.toggleWishByCommunity(comNo);
     }
 
     @PostMapping("/trade/{tradeNo}/wish")
-    public ResponseEntity<?> createWishByTrade(@PathVariable Long tradeNo){
+    public ResponseEntity<?> createWishByTrade(@PathVariable Long tradeNo) {
         return wishService.toggleWishByTrade(tradeNo);
     }
 
