@@ -2,7 +2,6 @@ package com.sparta.daengtionary.category.chat.domain;
 
 import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.chat.dto.request.MessageRequestDto;
-import com.sparta.daengtionary.category.member.domain.Member;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -20,21 +19,31 @@ public class ChatMessage extends Timestamped {
     @Column(nullable = false)
     private String type;
 
-    @JoinColumn(name = "senderNo")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member sender;
+    @Column(nullable = false)
+    private String sender;
 
     @Column(nullable = false)
-    private String content;
+    private String message;
 
 
-    public static ChatMessage createMessage(MessageRequestDto requestDto, Member member) {
+    public static ChatMessage createMessageEnter(MessageRequestDto requestDto) {
         ChatMessage chatMessage = new ChatMessage();
 
         chatMessage.roomNo = requestDto.getRoomNo();
         chatMessage.type = requestDto.getType();
-        chatMessage.content = requestDto.getContent();
-        chatMessage.sender = member;
+        chatMessage.message = requestDto.getSender() + "님이 입장하였습니다 :)";
+        chatMessage.sender = requestDto.getSender();
+
+        return chatMessage;
+    }
+
+    public static ChatMessage createMessageTalk(MessageRequestDto requestDto) {
+        ChatMessage chatMessage = new ChatMessage();
+
+        chatMessage.roomNo = requestDto.getRoomNo();
+        chatMessage.type = requestDto.getType();
+        chatMessage.message = requestDto.getMessage();
+        chatMessage.sender = requestDto.getSender();
 
         return chatMessage;
     }

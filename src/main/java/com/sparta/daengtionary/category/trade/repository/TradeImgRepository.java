@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TradeImgRepository extends JpaRepository<TradeImg,Long> {
+public interface TradeImgRepository extends JpaRepository<TradeImg, Long> {
     List<TradeImg> findAllByTrade(Trade trade);
 }

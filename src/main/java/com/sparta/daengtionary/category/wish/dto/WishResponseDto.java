@@ -15,7 +15,7 @@ public class WishResponseDto {
     private Long tradeNo;
 
     @Builder
-    public WishResponseDto(Long mapNo,Long comNo,Long tradeNo){
+    public WishResponseDto(Long mapNo, Long comNo, Long tradeNo) {
         this.mapNo = mapNo;
         this.comNo = comNo;
         this.tradeNo = tradeNo;

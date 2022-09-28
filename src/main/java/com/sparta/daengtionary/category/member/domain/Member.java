@@ -1,9 +1,9 @@
 package com.sparta.daengtionary.category.member.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sparta.daengtionary.category.mypage.domain.Dog;
-import com.sparta.daengtionary.category.member.util.Authority;
 import com.sparta.daengtionary.aop.util.Timestamped;
+import com.sparta.daengtionary.category.member.util.Authority;
+import com.sparta.daengtionary.category.mypage.domain.Dog;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

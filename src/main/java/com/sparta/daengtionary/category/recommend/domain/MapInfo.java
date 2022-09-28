@@ -15,7 +15,7 @@ public class MapInfo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long MapInfoNo;
 
-    @JoinColumn(name = "mapNo",nullable = false)
+    @JoinColumn(name = "mapNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;
 
@@ -23,7 +23,7 @@ public class MapInfo {
     private String mapInfo;
 
     @Builder
-    public MapInfo(Map map,String mapInfo){
+    public MapInfo(Map map, String mapInfo) {
         this.map = map;
         this.mapInfo = mapInfo;
     }

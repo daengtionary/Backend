@@ -20,12 +20,15 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*").withSockJS();
-                // Heartbeat Message : 프록시가 커넥션이 끊겼다고 판단하지 않도록 한다
+        // Heartbeat Message : 프록시가 커넥션이 끊겼다고 판단하지 않도록 한다
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
+        // sub 이 접두어로 붙어있는 클라이언트들에게 메세지를 전달
         registry.enableSimpleBroker("/queue", "/topic");
+
+        // send 요청을 처리
         registry.setApplicationDestinationPrefixes("/app");
     }
 }

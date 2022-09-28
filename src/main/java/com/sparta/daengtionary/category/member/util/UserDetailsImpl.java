@@ -59,7 +59,7 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    public Member getMember(){
+    public Member getMember() {
         return member;
     }
 }

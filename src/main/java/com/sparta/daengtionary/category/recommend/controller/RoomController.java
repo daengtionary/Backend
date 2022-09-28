@@ -6,7 +6,6 @@ import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.category.recommend.service.MapReviewService;
 import com.sparta.daengtionary.category.recommend.service.MapService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

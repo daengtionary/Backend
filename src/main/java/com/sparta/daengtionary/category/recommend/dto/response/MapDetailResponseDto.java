@@ -20,18 +20,17 @@ public class MapDetailResponseDto {
     private float mapStar;
     private int view;
     private List<String> imgUrls;
-    private List<String> mapInfo;
     private List<ReviewResponseDto> mapReviewList;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime modifiedAt;
 
 
     @Builder
     public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
                                 String content, List<ReviewResponseDto> mapReviewList,
-                                float mapStar, int view, List<String> imgUrls, List<String> mapInfo,
+                                float mapStar, int view, List<String> imgUrls,
                                 LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
@@ -42,7 +41,6 @@ public class MapDetailResponseDto {
         this.mapStar = mapStar;
         this.view = view;
         this.imgUrls = imgUrls;
-        this.mapInfo = mapInfo;
         this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
