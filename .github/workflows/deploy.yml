@@ -3,8 +3,8 @@
 name: deploy
 
 on:
-  push:
-    branches: [ main ]
+  pull_request:
+    branches: [ main, release ]
 
 
 permissions:
@@ -29,15 +29,6 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
-
-      ## 1-1 application.properties 파일 생성
-      - name: make application.properties
-        run: |
-          mkdir -p ./src/main/resources
-          cd ./src/main/resources
-          touch ./application.properties
-          echo "${{ secrets.PROPERTIES }}" >> ./application.properties
-        shell: bash
 
       - uses: actions/cache@v3
         with:

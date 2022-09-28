@@ -43,6 +43,11 @@ public class TradeController {
         return tradeService.getTrade(tradeNo);
     }
 
+//    @GetMapping("/{tradeNo}")
+//    public ResponseEntity<?> getTestTrade(@PathVariable Long tradeNo) {
+//        return tradeService.getTrade(tradeNo);
+//    }
+
     @PatchMapping("/{tradeNo}")
     public ResponseEntity<?> updateTrade(@PathVariable Long tradeNo, @RequestPart(value = "data") TradeRequestDto requestDto,
                                          @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {

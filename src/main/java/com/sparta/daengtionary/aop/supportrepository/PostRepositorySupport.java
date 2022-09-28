@@ -84,6 +84,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.fields(
                         CommunityResponseDto.class,
                         community.communityNo,
+                        community.category,
                         community.member.nick,
                         community.title,
                         community.view,
@@ -103,10 +104,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(wish.community.communityNo))
                 .leftJoin(dog)
                 .on(community.member.memberNo.eq(dog.member.memberNo))
-                .where(eqTitle(title, "community"),
-                        eqContent(content, "community"),
+                .where(eqCategory(category, "community"),
+                        eqTitle(title, "community"),
                         eqNick(nick, "community"),
-                        eqCategory(category, "community"))
+                        eqContent(content, "community"))
                 .groupBy(community.communityNo)
                 .orderBy(boardSort(sort, "community"), community.communityNo.desc())
                 .limit(pagesize)
@@ -125,6 +126,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         trade.title,
                         trade.content,
                         trade.view,
+                        trade.postStatus,
                         tradeReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
