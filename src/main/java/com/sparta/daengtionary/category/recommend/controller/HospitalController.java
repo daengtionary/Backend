@@ -39,15 +39,10 @@ public class HospitalController {
         return mapService.getSearchMap("hospital", title, content, nick, address, sort, pagenum, pagesize);
     }
 
-    @GetMapping("/test/{mapNo}")
-    public ResponseEntity<?> getTestMap(@PathVariable Long mapNo, @RequestParam int pagenum, @RequestParam int pagesize) {
-        return mapService.getTestMap(mapNo, pagenum, pagesize);
-    }
-
     @GetMapping("/{mapNo}")
-    public ResponseEntity<?> getHospital(@PathVariable Long mapNo) {
+    public ResponseEntity<?> getHospital(@PathVariable Long mapNo, @RequestParam int pagenum, @RequestParam int pagesize) {
         mapService.mapViewUpdate(mapNo);
-        return mapService.getAllMap(mapNo);
+        return mapService.getAllMap(mapNo, pagenum, pagesize);
     }
 
     @PatchMapping("/{mapNo}")

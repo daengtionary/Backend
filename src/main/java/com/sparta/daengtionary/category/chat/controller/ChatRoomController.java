@@ -14,14 +14,28 @@ import javax.servlet.http.HttpServletRequest;
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
-    // 1:1 채팅방 생성
+    // personal chatRoom 생성
     @PostMapping("/room/personal")
-    public ResponseEntity<?> createChatRoomPersonal(HttpServletRequest request,
+    public ResponseEntity<?> createPersonalChatRoom(HttpServletRequest request,
                                                     @RequestBody ChatRoomRequestDto requestDto) {
-        return chatRoomService.createChatRoomPersonal(request, requestDto);
+        return chatRoomService.createPersonalChatRoom(request, requestDto);
     }
 
-    // 채팅방 가져오기
+    // group chatRoom 생성
+    @PostMapping("/room/group")
+    public ResponseEntity<?> createGroupChatRoom(HttpServletRequest request,
+                                                 @RequestBody ChatRoomRequestDto requestDto) {
+        return chatRoomService.createGroupChatRoom(request, requestDto);
+    }
+
+    // group chatRoomMember 신청
+    @PostMapping("/room/into")
+    public ResponseEntity<?> createGroupChatRoomMember(HttpServletRequest request,
+                                                       @RequestBody ChatRoomRequestDto requestDto) {
+        return chatRoomService.createGroupChatRoomMember(request, requestDto);
+    }
+
+    // chatRoom 가져오기
     @GetMapping("/rooms")
     public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
         return chatRoomService.getChatRooms(request);

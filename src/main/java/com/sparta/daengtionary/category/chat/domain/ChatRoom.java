@@ -17,6 +17,9 @@ public class ChatRoom extends Timestamped {
     @Column(nullable = false)
     private String type;
 
+    @Column(nullable = false)
+    private String title;
+
     @OneToMany(mappedBy = "chatRoom")
     private List<ChatRoomMember> chatRoomMembers;
 
@@ -25,10 +28,11 @@ public class ChatRoom extends Timestamped {
 
     }
 
-    public static ChatRoom createChatRoomPersonal() {
+    public static ChatRoom createChatRoom(String type, String title) {
         ChatRoom chatRoom = new ChatRoom();
 
-        chatRoom.type = "personal";
+            chatRoom.type = type;
+            chatRoom.title = title;
 
         return chatRoom;
     }

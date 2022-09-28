@@ -1,7 +1,6 @@
 package com.sparta.daengtionary.category.chat.service;
 
 import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.category.chat.domain.ChatMessage;
 import com.sparta.daengtionary.category.chat.domain.ChatRoom;
 import com.sparta.daengtionary.category.chat.domain.ChatRoomMember;
@@ -20,8 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.daengtionary.aop.exception.ErrorCode.*;
-
 @Service
 @RequiredArgsConstructor
 public class ChatMessageService {
@@ -33,7 +30,7 @@ public class ChatMessageService {
 
     // 메세지 가져오기
     public ResponseEntity<?> getMessages(HttpServletRequest request, Long roomNo) {
-        // 채팅방 메세지 전체조회
+        // chatRoom message 전체조회
         List<ChatMessage> messageList = chatMessageRepository.findAllByRoomNo(roomNo);
 
         // response List 생성
@@ -58,7 +55,7 @@ public class ChatMessageService {
 
             // enterStatus가 false일 경우만 저장
             if (!chatRoomMember.getEnterStatus()) {
-                // 새로운 메시지 생성 & 저장
+                // message 생성 & 저장
                 ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.createMessageEnter(requestDto));
 
                 // enterStatus true로 변경
@@ -71,7 +68,7 @@ public class ChatMessageService {
                 sendingOperations.convertAndSend("/queue/chat/room/" + requestDto.getRoomNo(), responseDto);
             }
         } else if (requestDto.getType().equals("TALK")){
-            // 새로운 메시지 생성 & 저장
+            // message 생성 & 저장
             ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.createMessageTalk(requestDto));
 
             // responseDto에 담기
