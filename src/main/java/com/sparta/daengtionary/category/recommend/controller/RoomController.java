@@ -6,7 +6,6 @@ import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.category.recommend.service.MapReviewService;
 import com.sparta.daengtionary.category.recommend.service.MapService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,16 +28,16 @@ public class RoomController {
 
 
     @GetMapping()
-    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String direction,
-                                                Pageable pageable) {
+    public ResponseEntity<?> getAllRoomCategory(@RequestParam String address, @RequestParam String sort,
+                                                @RequestParam int pagenum, @RequestParam int pagesize) {
         String category = "room";
-        return mapService.getAllMapByCategory(category, direction, address, pageable);
+        return mapService.getAllMapByCategory(category, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                          @RequestParam String address, @RequestParam String direction, Pageable pageable) {
-        return mapService.getSearchMap("room", title, content, nick, address, direction, pageable);
+    public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick, @RequestParam String address,
+                                          @RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getSearchMap("room", title, content, nick, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/{roomNo}")

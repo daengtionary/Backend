@@ -1,15 +1,15 @@
 package com.sparta.daengtionary.category.mypage.service;
 
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
-import com.sparta.daengtionary.category.mypage.domain.Dog;
-import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.mypage.dto.request.DogRequestDto;
-import com.sparta.daengtionary.category.member.dto.request.MemberRequestDto;
-import com.sparta.daengtionary.category.mypage.dto.response.MypageResponseDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
+import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.member.dto.request.MemberRequestDto;
+import com.sparta.daengtionary.category.mypage.domain.Dog;
+import com.sparta.daengtionary.category.mypage.dto.request.DogRequestDto;
+import com.sparta.daengtionary.category.mypage.dto.response.MypageResponseDto;
 import com.sparta.daengtionary.category.mypage.repository.DogRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +60,7 @@ public class MypageService {
 
         if (!multipartFile.isEmpty()) {
             validateImageFile(multipartFile);
-            image = s3UploadService.uploadImage(multipartFile,imgPath);
+            image = s3UploadService.uploadImage(multipartFile, imgPath);
         }
 
         Dog dog = Dog.builder()
@@ -86,7 +86,7 @@ public class MypageService {
         s3UploadService.deleteFile(dog.getImage());
         validateImageFile(multipartFile);
 
-        String image = s3UploadService.uploadImage(multipartFile,imgPath);
+        String image = s3UploadService.uploadImage(multipartFile, imgPath);
 
         dog.updateByProfile(requestDto, image);
 
@@ -100,7 +100,7 @@ public class MypageService {
         s3UploadService.deleteFile(dog.getImage());
 
         validateImageFile(multipartFile);
-        String image = s3UploadService.uploadImage(multipartFile,imgPath);
+        String image = s3UploadService.uploadImage(multipartFile, imgPath);
 
         dog.updateByImage(image);
 

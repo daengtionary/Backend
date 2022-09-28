@@ -4,10 +4,10 @@ import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.domain.RefreshToken;
-import com.sparta.daengtionary.category.member.util.UserDetailsImpl;
 import com.sparta.daengtionary.category.member.dto.request.TokenDto;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
 import com.sparta.daengtionary.category.member.repository.RefreshTokenRepository;
+import com.sparta.daengtionary.category.member.util.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -176,8 +176,6 @@ public class TokenProvider {
         RefreshToken refreshToken = checkRefreshToken(member);
         refreshTokenRepository.delete(refreshToken);
     }
-
-
 
 
 }

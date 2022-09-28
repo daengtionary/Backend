@@ -9,21 +9,21 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 
 @RestController
-@RequestMapping("/chat/rooms")
+@RequestMapping("/chat")
 @RequiredArgsConstructor
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
     // 1:1 채팅방 생성
-    @PostMapping()
-    public ResponseEntity<?> createChatPersonalRoom(HttpServletRequest request,
+    @PostMapping("/room/personal")
+    public ResponseEntity<?> createChatRoomPersonal(HttpServletRequest request,
                                                     @RequestBody ChatRoomRequestDto requestDto) {
-        return chatRoomService.createChatPersonalRoom(request, requestDto);
+        return chatRoomService.createChatRoomPersonal(request, requestDto);
     }
 
-    // 1:1 채팅방 목록 가져오기
-    @GetMapping()
-    public ResponseEntity<?> getChatPersonalRooms(HttpServletRequest request) {
-        return chatRoomService.getChatPersonalRooms(request);
+    // 채팅방 가져오기
+    @GetMapping("/rooms")
+    public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
+        return chatRoomService.getChatRooms(request);
     }
 }

@@ -4,7 +4,6 @@ import com.sparta.daengtionary.category.community.dto.request.CommunityRequestDt
 import com.sparta.daengtionary.category.community.service.CommunityReviewService;
 import com.sparta.daengtionary.category.community.service.CommunityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,14 +25,14 @@ public class CommunityController {
     }
 
     @GetMapping()
-    public ResponseEntity<?> getCommunitySort(@RequestParam String direction, Pageable pageable) {
-        return service.getCommunitySort(direction, pageable);
+    public ResponseEntity<?> getCommunitySort(@RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return service.getCommunitySort(sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchCommunity(@RequestParam String category, @RequestParam String title, @RequestParam String content, @RequestParam String nick,
-                                                @RequestParam String direction, Pageable pageable) {
-        return service.getSearchCommunity(category, title, content, nick, direction, pageable);
+                                                @RequestParam String sort, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return service.getSearchCommunity(category, title, content, nick, sort, pagenum, pagesize);
     }
 
 
@@ -61,7 +60,7 @@ public class CommunityController {
 
     @PatchMapping("/review/{comNo}/{reviewNo}")
     public ResponseEntity<?> updateCommunityReview(@RequestPart(value = "data") String content, @PathVariable Long comNo,
-                                              @PathVariable Long reviewNo) {
+                                                   @PathVariable Long reviewNo) {
         return communityReviewService.updateCommunityReview(comNo, reviewNo, content);
     }
 

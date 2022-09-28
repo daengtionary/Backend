@@ -1,28 +1,26 @@
 package com.sparta.daengtionary.category.trade.service;
 
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
+import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.category.member.repository.MemberRepository;
+import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeImg;
 import com.sparta.daengtionary.category.trade.domain.TradeReview;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
-import com.sparta.daengtionary.category.member.repository.MemberRepository;
-import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeImgRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeRepository;
-import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.trade.repository.TradeReviewRepository;
+import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,9 +53,12 @@ public class TradeService {
         Trade trade = Trade.builder()
                 .member(member)
                 .title(requestDto.getTitle())
+                .address(requestDto.getAddress())
+                .stuffStatus(requestDto.getStuffStatus())
+                .exchange(requestDto.getExchange())
                 .content(requestDto.getContent())
                 .price(requestDto.getPrice())
-                .category(requestDto.getCategory())
+                .postStatus(requestDto.getPostStatus())
                 .build();
 
         tradeRepository.save(trade);
@@ -80,10 +81,11 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
-                        .category(trade.getCategory())
                         .price(trade.getPrice())
-                        .status(trade.getStatus())
-                        .category(trade.getCategory())
+                        .address(trade.getAddress())
+                        .exchange(trade.getExchange())
+                        .stuffStatus(trade.getStuffStatus())
+                        .postStatus(trade.getPostStatus())
                         .view(trade.getView())
                         .tradeImgUrl(tradeImgList)
                         .createdAt(trade.getCreatedAt())
@@ -93,24 +95,22 @@ public class TradeService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTradeSort(String direction, Pageable pageable) {
-        String title, content, nick, status, category;
+    public ResponseEntity<?> getTradeSort(String sort, int pagenum, int pagesize) {
+        String title, content, nick, address, postStatus;
         title = "";
         content = "";
         nick = "";
-        status = "";
-        category = "";
-        int min, max;
-        min = 0;
-        max = 2000000000;
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+        address = "";
+        postStatus = "";
+        List<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address, postStatus, sort, pagenum, pagesize);
 
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String status, String category, String direction, int min, int max, Pageable pageable) {
-        PageImpl<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, status, category, direction, min, max, pageable);
+    public ResponseEntity<?> getSearchTrade(String title, String content, String nick, String address, String postStatus,
+                                            String sort, int pagenum, int pagesize) {
+        List<TradeResponseDto> responseDtoList = postRepositorySupport.findAllByTrade(title, content, nick, address, postStatus, sort, pagenum, pagesize);
         return responseBodyDto.success(responseDtoList, "조회 성공");
     }
 
@@ -133,7 +133,7 @@ public class TradeService {
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
+                            .image(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }
@@ -147,7 +147,10 @@ public class TradeService {
                         .content(trade.getContent())
                         .price(trade.getPrice())
                         .view(trade.getView())
-                        .status(trade.getStatus())
+                        .address(trade.getAddress())
+                        .exchange(trade.getExchange())
+                        .stuffStatus(trade.getStuffStatus())
+                        .postStatus(trade.getPostStatus())
                         .tradeImgUrl(traImgs)
                         .reviewCount((long) reviews.size())
                         .wishCount((long) temp.size())
@@ -171,7 +174,6 @@ public class TradeService {
                             .tradeNo(trade.getTradeNo())
                             .nick(member.getNick())
                             .title(trade.getTitle())
-                            .status(trade.getStatus())
                             .view(trade.getView())
                             .tradeImg(trade.getTradeImgs().get(0).getTradeImg())
                             .createdAt(trade.getCreatedAt())
@@ -217,7 +219,6 @@ public class TradeService {
                         .nick(member.getNick())
                         .title(trade.getTitle())
                         .content(trade.getContent())
-                        .status(trade.getStatus())
                         .tradeImgUrl(tradeImgs)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())

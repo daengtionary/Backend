@@ -50,8 +50,9 @@ public class AwsS3UploadService {
                 .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
                 .build();
     }
-///map/image
-    public List<String> uploadListImg(List<MultipartFile> multipartFiles,String path) {
+
+    ///map/image
+    public List<String> uploadListImg(List<MultipartFile> multipartFiles, String path) {
         List<String> imgUrlList = new ArrayList<>();
         vaildatePath(path);
 
@@ -71,8 +72,9 @@ public class AwsS3UploadService {
         }
         return imgUrlList;
     }
-//
-    public String uploadImage(MultipartFile multipartFile,String path) {
+
+    //
+    public String uploadImage(MultipartFile multipartFile, String path) {
         String image = "";
         vaildatePath(path);
 
@@ -91,8 +93,8 @@ public class AwsS3UploadService {
         return image;
     }
 
-    public void vaildatePath(String path){
-        if(path == null){
+    public void vaildatePath(String path) {
+        if (path == null) {
             throw new CustomException(ErrorCode.WRONG_IMAGE_PATH);
         }
     }
@@ -108,9 +110,6 @@ public class AwsS3UploadService {
     }
 
     private String getFileExtension(String fileName) {
-        if (fileName.length() == 0) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_IMAGE);
-        }
 
         ArrayList<String> fileValidate = new ArrayList<>();
         fileValidate.add(".jpg");

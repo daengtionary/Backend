@@ -38,13 +38,13 @@ public class JwtTokenProvider {
     }
 
     // JWT 토큰 생성
-    public String createToken(String userPk , String nickname , Long memberid) {
+    public String createToken(String userPk, String nickname, Long memberid) {
         Claims claims = Jwts.claims().setSubject(userPk); // JWT payload 에 저장되는 정보단위
 
-        Map<String , Object> claimsMap = new HashMap<String , Object>();
-        claimsMap.put("username" ,userPk);
-        claimsMap.put("nickname" , nickname);
-        claimsMap.put("memberid" , memberid);
+        Map<String, Object> claimsMap = new HashMap<String, Object>();
+        claimsMap.put("username", userPk);
+        claimsMap.put("nickname", nickname);
+        claimsMap.put("memberid", memberid);
         Date now = new Date();
         return Jwts.builder()
                 .setClaims(claimsMap)
@@ -63,10 +63,12 @@ public class JwtTokenProvider {
     public String getUserPk(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("username", String.class);
     }
+
     public String getNickName(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("nickname", String.class);
     }
-    public Long getMemberid(String token){
+
+    public Long getMemberid(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get("memberid", Long.class);
     }
 
@@ -89,7 +91,7 @@ public class JwtTokenProvider {
     public final String HEADER_PREFIX = "Bearer ";
 
 
-    public  String extract(String header) {
+    public String extract(String header) {
         if (header == null || header.equals("") || header.length() < HEADER_PREFIX.length()) {
             throw new NoSuchElementException("올바른 JWT 정보가 아닙니다.");
         }

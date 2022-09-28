@@ -1,14 +1,14 @@
 package com.sparta.daengtionary.category.community.service;
 
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
-import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.community.domain.Community;
 import com.sparta.daengtionary.category.community.domain.CommunityReview;
 import com.sparta.daengtionary.category.community.repository.CommunityReviewRepository;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
+import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class CommunityReviewService {
         return responseBodyDto.success(ReviewResponseDto.builder()
                 .reviewNo(communityReview.getCommunityReviewNo())
                 .nick(communityReview.getMember().getNick())
-                .memberImgUrl(communityReview.getMember().getDogs().get(0).getImage())
+                .image(communityReview.getMember().getDogs().get(0).getImage())
                 .content(communityReview.getContent())
                 .build(), "리뷰 생성 완료");
     }
@@ -55,7 +55,7 @@ public class CommunityReviewService {
         return responseBodyDto.success(ReviewResponseDto.builder()
                 .reviewNo(communityReview.getCommunityReviewNo())
                 .nick(communityReview.getMember().getNick())
-                .memberImgUrl(communityReview.getMember().getDogs().get(0).getImage())
+                .image(communityReview.getMember().getDogs().get(0).getImage())
                 .content(communityReview.getContent())
                 .build(), "수정 성공");
     }

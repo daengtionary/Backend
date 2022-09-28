@@ -3,9 +3,9 @@ package com.sparta.daengtionary.category.recommend.domain;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
-import com.sparta.daengtionary.aop.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

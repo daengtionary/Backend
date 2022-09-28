@@ -17,39 +17,33 @@ public class MapDetailResponseDto {
     private String address;
     private String category;
     private String content;
-    private float star;
+    private float mapStar;
     private int view;
-    private Long reviewCount;
-    private Long wishCount;
     private List<String> imgUrls;
-    private List<String> mapInfo;
     private List<ReviewResponseDto> mapReviewList;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
-    private LocalDateTime moditiedAt;
+    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
+    private LocalDateTime modifiedAt;
 
 
     @Builder
     public MapDetailResponseDto(Long mapNo, String nick, String title, String address, String category,
-                                String content, Long reviewCount, Long wishCount, List<ReviewResponseDto> mapReviewList,
-                                float star, int view, List<String> imgUrls, List<String> mapInfo,
-                                LocalDateTime createdAt, LocalDateTime moditiedAt) {
+                                String content, List<ReviewResponseDto> mapReviewList,
+                                float mapStar, int view, List<String> imgUrls,
+                                LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.nick = nick;
         this.title = title;
         this.address = address;
         this.category = category;
         this.content = content;
-        this.star = star;
+        this.mapStar = mapStar;
         this.view = view;
         this.imgUrls = imgUrls;
-        this.mapInfo = mapInfo;
-        this.reviewCount = reviewCount;
-        this.wishCount = wishCount;
         this.mapReviewList = mapReviewList;
         this.createdAt = createdAt;
-        this.moditiedAt = moditiedAt;
+        this.modifiedAt = modifiedAt;
     }
 
 }

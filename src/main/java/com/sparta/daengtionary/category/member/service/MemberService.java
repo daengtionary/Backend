@@ -3,22 +3,25 @@ package com.sparta.daengtionary.category.member.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.member.util.UserDetailsImpl;
 import com.sparta.daengtionary.category.member.dto.request.KakaoUserInfoDto;
 import com.sparta.daengtionary.category.member.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.category.member.dto.request.TokenDto;
 import com.sparta.daengtionary.category.member.dto.response.KakaoUserResponseDto;
 import com.sparta.daengtionary.category.member.dto.response.MemberResponseDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
 import com.sparta.daengtionary.category.member.util.Authority;
+import com.sparta.daengtionary.category.member.util.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -34,6 +37,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 import java.util.UUID;
+
+import static com.sparta.daengtionary.aop.exception.ErrorCode.NOT_FOUND_USER_INFO;
 
 @Service
 @RequiredArgsConstructor
@@ -231,6 +236,20 @@ public class MemberService {
         }
 
         return responseBodyDto.success("사용 가능한 닉네임 입니다.");
+    }
+
+    @Transactional(readOnly = true)
+    public Member checkMemberByMemberNo(Long memberNo) {
+        return memberRepository.findById(memberNo).orElseThrow(
+                () -> new CustomException(NOT_FOUND_USER_INFO)
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public Member checkMemberByNick(String nick) {
+        return memberRepository.findByNick(nick).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+        );
     }
 
     @Transactional

@@ -6,7 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MapReviewRepository extends JpaRepository<MapReview,Long> {
+public interface MapReviewRepository extends JpaRepository<MapReview, Long> {
     List<MapReview> findAllByMapOrderByCreatedAtDesc(Map map);
+
     List<MapReview> findAllByMap(Map map);
 }

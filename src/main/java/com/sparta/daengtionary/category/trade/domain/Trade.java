@@ -2,9 +2,9 @@ package com.sparta.daengtionary.category.trade.domain;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
-import com.sparta.daengtionary.aop.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,43 +25,52 @@ public class Trade extends Timestamped {
     @Column(nullable = false)
     private String title;
     @Column(nullable = false)
-    private String content;
-
+    private String address;
     @Column(nullable = false)
-    private String category;
+    private String stuffStatus;
+    @Column(nullable = false)
+    private String exchange;
     @Column(nullable = false)
     private int price;
     @Column(nullable = false)
-    private String status;
+    private String content;
+
+    @Column(nullable = false)
+    private String postStatus;
+
     @Column
     private int view;
+
     @OneToMany(mappedBy = "trade")
     private List<TradeImg> tradeImgs;
 
-
     @Builder
-    public Trade(Long tradeNo, Member member, String title, String content, int price,
-                 String category) {
+    public Trade(Long tradeNo, Member member, String title, String address, String stuffStatus,
+                 String exchange, String content, int price, String postStatus) {
         this.tradeNo = tradeNo;
         this.member = member;
         this.title = title;
+        this.address = address;
+        this.stuffStatus = stuffStatus;
+        this.exchange = exchange;
         this.content = content;
-        this.category = category;
         this.price = price;
-        this.status = "판매중";
+        this.postStatus = postStatus;
         this.view = 0;
     }
 
     public void updateTrade(TradeRequestDto requestDto) {
         this.title = requestDto.getTitle();
         this.content = requestDto.getContent();
-        this.category = requestDto.getCategory();
+        this.address = requestDto.getAddress();
         this.price = requestDto.getPrice();
-        this.status = requestDto.getStatus();
+        this.exchange = requestDto.getExchange();
+        this.postStatus = requestDto.getPostStatus();
+        this.stuffStatus = requestDto.getStuffStatus();
     }
 
-    public void updateStatus(String status) {
-        this.status = status;
+    public void updateStatus() {
+        this.postStatus = "판매 완료";
     }
 
     public void viewUpdate() {

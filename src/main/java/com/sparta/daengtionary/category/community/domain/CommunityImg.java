@@ -16,7 +16,7 @@ public class CommunityImg {
     @JoinColumn(name = "communityNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Community community;
-    @Column
+    @Column(nullable = true)
     private String communityImg;
 
 

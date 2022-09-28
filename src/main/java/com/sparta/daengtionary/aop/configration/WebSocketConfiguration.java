@@ -8,7 +8,7 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 
 @Configuration
 @EnableWebSocketMessageBroker
-public class ChatConfigration implements WebSocketMessageBrokerConfigurer {
+public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer {
 
     // Config가 있어야 websocket이 연결이 된다.
     // 따라서 아래 addEndpoint가 url이 있고 origin *가 있는 것.
@@ -19,14 +19,16 @@ public class ChatConfigration implements WebSocketMessageBrokerConfigurer {
     // 다른 HTTP 기반의 기술을 시도하는 방법이다.
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*")
-                .withSockJS();
-                // Heartbeat Message : 프록시가 커넥션이 끊겼다고 판단하지 않도록 한다
+        registry.addEndpoint("/ws/chat").setAllowedOriginPatterns("*").withSockJS();
+        // Heartbeat Message : 프록시가 커넥션이 끊겼다고 판단하지 않도록 한다
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
+        // sub 이 접두어로 붙어있는 클라이언트들에게 메세지를 전달
         registry.enableSimpleBroker("/queue", "/topic");
+
+        // send 요청을 처리
         registry.setApplicationDestinationPrefixes("/app");
     }
 }
