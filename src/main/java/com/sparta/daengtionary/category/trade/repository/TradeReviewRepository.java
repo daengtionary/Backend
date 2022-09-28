@@ -6,8 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface TradeReviewRepository extends JpaRepository<TradeReview,Long> {
+public interface TradeReviewRepository extends JpaRepository<TradeReview, Long> {
     List<TradeReview> findAllByTradeOrderByCreatedAtDesc(Trade trade);
+
     List<TradeReview> findAllByTrade(Trade trade);
 
 }

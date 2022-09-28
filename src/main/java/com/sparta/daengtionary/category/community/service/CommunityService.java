@@ -1,27 +1,25 @@
 package com.sparta.daengtionary.category.community.service;
 
+import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
-import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
+import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.community.domain.Community;
 import com.sparta.daengtionary.category.community.domain.CommunityImg;
-import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.community.domain.CommunityReview;
-import com.sparta.daengtionary.category.wish.repository.WishRepository;
-import com.sparta.daengtionary.category.community.repository.CommunityReviewRepository;
 import com.sparta.daengtionary.category.community.dto.request.CommunityRequestDto;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.community.dto.response.CommunityDetatilResponseDto;
 import com.sparta.daengtionary.category.community.dto.response.CommunityResponseDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.community.repository.CommunityImgRepository;
 import com.sparta.daengtionary.category.community.repository.CommunityRepository;
-import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
-import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.category.community.repository.CommunityReviewRepository;
+import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
+import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,7 +115,7 @@ public class CommunityService {
                             .reviewNo(i.getCommunityReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
+                            .image(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }

@@ -1,14 +1,14 @@
 package com.sparta.daengtionary.category.recommend.service;
 
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -85,7 +85,7 @@ public class MapReviewService {
         }
         float size = reviewList.size();
         starAvg = (float) starAvg / size;
-        return (float) (Math.round(starAvg * 1000) /1000.0);
+        return (float) (Math.round(starAvg * 1000) / 1000.0);
     }
 
     private MapReview validateMapReview(Long mapReviewNo, Member member) {

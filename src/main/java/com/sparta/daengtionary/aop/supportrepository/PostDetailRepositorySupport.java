@@ -5,18 +5,16 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.dto.response.MapDetailTestResponseDto;
 import com.sparta.daengtionary.category.recommend.dto.response.MapImgResponseDto;
-import com.sparta.daengtionary.category.recommend.dto.response.MapInfoResponseDto;
 import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.member.domain.QMember.member;
+import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
+import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
-import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo1;
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
 
 
@@ -32,8 +30,8 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
     }
 
 
-    public List<Object> findByMapDetail(Long mapNo) {
-        MapDetailTestResponseDto dto = queryFactory
+    public MapDetailTestResponseDto findByMapDetail(Long mapNo) {
+        return queryFactory
                 .select(Projections.fields(
                         MapDetailTestResponseDto.class,
                         map.mapNo,
@@ -51,8 +49,10 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .join(map.member, member)
                 .where(map.mapNo.eq(mapNo))
                 .fetchOne();
+    }
 
-        List<MapImgResponseDto> mapImgUrl = queryFactory
+    public List<MapImgResponseDto> findByMapImg(Long mapNo) {
+        return queryFactory
                 .select(Projections.fields(
                         MapImgResponseDto.class,
                         mapImg.mapImgUrl.as("mapImgUrl")
@@ -61,37 +61,24 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .join(mapImg.map, map)
                 .where(mapImg.map.mapNo.eq(mapNo))
                 .fetch();
+    }
 
-        List<MapInfoResponseDto> mapInfos = queryFactory
-                .select(Projections.fields(
-                        MapInfoResponseDto.class,
-                        mapInfo1.mapInfo.as("mapInfo")
-                )).distinct()
-                .from(mapInfo1)
-                .join(mapInfo1.map, map)
-                .where(mapInfo1.map.mapNo.eq(mapNo))
-                .fetch();
-
-        List<ReviewResponseDto> reviews = queryFactory
+    public List<ReviewResponseDto> findByMapReview(Long mapNo, int pagenum, int pagesize) {
+        return queryFactory
                 .select(Projections.fields(
                         ReviewResponseDto.class,
                         mapReview.mapReviewNo.as("reviewNo"),
                         mapReview.member.nick,
                         mapReview.content,
+                        dog.image.as("image"),
                         mapReview.star
-                )).distinct()
+                ))
                 .from(mapReview)
-                .join(mapReview.map,map)
+                .leftJoin(dog)
+                .on(dog.member.memberNo.eq(mapReview.member.memberNo))
                 .where(mapReview.map.mapNo.eq(mapNo))
+                .limit(pagesize)
+                .offset((long) pagenum * pagesize)
                 .fetch();
-
-
-        List<Object> list = new ArrayList<>();
-        list.add(dto);
-        list.add(mapImgUrl);
-        list.add(mapInfos);
-        list.add(reviews);
-
-        return list;
     }
 }

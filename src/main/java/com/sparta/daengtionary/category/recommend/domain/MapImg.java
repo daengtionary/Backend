@@ -1,7 +1,9 @@
 package com.sparta.daengtionary.category.recommend.domain;
 
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -14,7 +16,7 @@ public class MapImg {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long mapImgNo;
 
-    @JoinColumn(name = "mapNo",nullable = false)
+    @JoinColumn(name = "mapNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Map map;
 
@@ -22,7 +24,7 @@ public class MapImg {
     private String mapImgUrl;
 
     @Builder
-    public MapImg(Map map, String mapImgUrl){
+    public MapImg(Map map, String mapImgUrl) {
         this.map = map;
         this.mapImgUrl = mapImgUrl;
     }

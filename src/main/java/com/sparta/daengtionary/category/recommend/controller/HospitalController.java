@@ -40,8 +40,8 @@ public class HospitalController {
     }
 
     @GetMapping("/test/{mapNo}")
-    public ResponseEntity<?> getTestMap(@PathVariable Long mapNo) {
-        return mapService.getTestMap(mapNo);
+    public ResponseEntity<?> getTestMap(@PathVariable Long mapNo, @RequestParam int pagenum, @RequestParam int pagesize) {
+        return mapService.getTestMap(mapNo, pagenum, pagesize);
     }
 
     @GetMapping("/{mapNo}")

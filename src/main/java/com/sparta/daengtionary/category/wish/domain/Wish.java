@@ -2,11 +2,11 @@ package com.sparta.daengtionary.category.wish.domain;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.community.domain.Community;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.trade.domain.Trade;
-import com.sparta.daengtionary.aop.util.Timestamped;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -41,12 +41,12 @@ public class Wish extends Timestamped {
         this.map = map;
     }
 
-    public Wish(Community community,Member member){
+    public Wish(Community community, Member member) {
         this.community = community;
         this.member = member;
     }
 
-    public Wish(Trade trade , Member member){
+    public Wish(Trade trade, Member member) {
         this.trade = trade;
         this.member = member;
     }

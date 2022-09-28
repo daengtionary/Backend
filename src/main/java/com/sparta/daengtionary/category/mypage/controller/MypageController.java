@@ -1,8 +1,8 @@
 package com.sparta.daengtionary.category.mypage.controller;
 
-import com.sparta.daengtionary.category.mypage.dto.request.DogRequestDto;
-import com.sparta.daengtionary.category.member.dto.request.MemberRequestDto;
 import com.sparta.daengtionary.category.community.service.CommunityService;
+import com.sparta.daengtionary.category.member.dto.request.MemberRequestDto;
+import com.sparta.daengtionary.category.mypage.dto.request.DogRequestDto;
 import com.sparta.daengtionary.category.mypage.service.MypageService;
 import com.sparta.daengtionary.category.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;

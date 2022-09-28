@@ -4,7 +4,6 @@ import com.sparta.daengtionary.category.community.dto.request.CommunityRequestDt
 import com.sparta.daengtionary.category.community.service.CommunityReviewService;
 import com.sparta.daengtionary.category.community.service.CommunityService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

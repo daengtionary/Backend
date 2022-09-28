@@ -2,8 +2,8 @@ package com.sparta.daengtionary.category.member.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.sparta.daengtionary.category.mypage.dto.response.MypageResponseDto;
 import com.sparta.daengtionary.category.member.util.Authority;
+import com.sparta.daengtionary.category.mypage.dto.response.MypageResponseDto;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -26,12 +26,12 @@ public class MemberResponseDto {
     private LocalDateTime createdAt;
 
     @JsonFormat(pattern = "yy-MM-dd hh:mm:ss")
-    private  LocalDateTime modifiedAt;
+    private LocalDateTime modifiedAt;
 
 
     @Builder
     public MemberResponseDto(Long memberNo, Authority role, String email, String nick,
-                             MypageResponseDto mypageResponseDto,LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                             MypageResponseDto mypageResponseDto, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.memberNo = memberNo;
         this.mypageResponseDto = mypageResponseDto;
         this.role = role;

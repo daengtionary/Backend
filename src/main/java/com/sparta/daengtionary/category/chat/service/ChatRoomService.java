@@ -1,13 +1,13 @@
 package com.sparta.daengtionary.category.chat.service;
 
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.chat.domain.ChatRoom;
-import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.chat.dto.request.ChatRoomRequestDto;
 import com.sparta.daengtionary.category.chat.dto.response.ChatRoomResponseDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.chat.repository.ChatRoomRepository;
+import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sparta.daengtionary.aop.exception.ErrorCode.*;
+import static com.sparta.daengtionary.aop.exception.ErrorCode.CANNOT_CHAT_WITH_ME;
+import static com.sparta.daengtionary.aop.exception.ErrorCode.NOT_FOUND_USER_INFO;
 
 @Service
 @RequiredArgsConstructor

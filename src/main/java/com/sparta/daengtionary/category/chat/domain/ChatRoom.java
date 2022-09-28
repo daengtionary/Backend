@@ -1,7 +1,7 @@
 package com.sparta.daengtionary.category.chat.domain;
 
-import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.aop.util.Timestamped;
+import com.sparta.daengtionary.category.member.domain.Member;
 import lombok.Getter;
 
 import javax.persistence.*;

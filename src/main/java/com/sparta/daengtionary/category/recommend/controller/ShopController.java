@@ -6,7 +6,6 @@ import com.sparta.daengtionary.category.recommend.dto.request.ReviewRequestDto;
 import com.sparta.daengtionary.category.recommend.service.MapReviewService;
 import com.sparta.daengtionary.category.recommend.service.MapService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,13 +31,13 @@ public class ShopController {
     public ResponseEntity<?> getAllShopCategory(@RequestParam String address, @RequestParam String sort,
                                                 @RequestParam int pagenum, @RequestParam int pagesize) {
         String category = "shop";
-        return mapService.getAllMapByCategory(category, address, sort,  pagenum, pagesize);
+        return mapService.getAllMapByCategory(category, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> getSearchMap(@RequestParam String title, @RequestParam String content, @RequestParam String nick, @RequestParam String sort,
                                           @RequestParam String address, @RequestParam int pagenum, @RequestParam int pagesize) {
-        return mapService.getSearchMap("shop", title, content, nick, address, sort,  pagenum, pagesize);
+        return mapService.getSearchMap("shop", title, content, nick, address, sort, pagenum, pagesize);
     }
 
     @GetMapping("/{shopNo}")

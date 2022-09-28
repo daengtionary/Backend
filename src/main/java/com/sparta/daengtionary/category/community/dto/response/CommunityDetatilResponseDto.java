@@ -32,7 +32,7 @@ public class CommunityDetatilResponseDto {
 
     @Builder
     public CommunityDetatilResponseDto(Long communityNo, String title, String content, int view, String category, Member breed, Long reviewCount, Long wishCount,
-                                       String nick , List<String> imgList, List<ReviewResponseDto> reviewList , LocalDateTime createdAt, LocalDateTime modifiedAt) {
+                                       String nick, List<String> imgList, List<ReviewResponseDto> reviewList, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
         this.title = title;
@@ -41,7 +41,7 @@ public class CommunityDetatilResponseDto {
         this.reviewCount = reviewCount;
         this.wishCount = wishCount;
         this.view = view;
-        if(breed.getDogs().size() != 0){
+        if (breed.getDogs().size() != 0) {
             this.breed = breed.getDogs().get(0).getBreed();
             this.memberImage = breed.getDogs().get(0).getImage();
         }

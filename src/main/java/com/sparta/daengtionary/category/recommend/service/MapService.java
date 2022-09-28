@@ -1,26 +1,24 @@
 package com.sparta.daengtionary.category.recommend.service;
 
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.aop.supportrepository.PostDetailRepositorySupport;
+import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.recommend.dto.response.*;
-import com.sparta.daengtionary.category.wish.domain.Wish;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapImg;
 import com.sparta.daengtionary.category.recommend.domain.MapInfo;
 import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.request.MapRequestDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
-import com.sparta.daengtionary.category.wish.repository.WishRepository;
+import com.sparta.daengtionary.category.recommend.dto.response.*;
 import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
-import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -63,17 +61,6 @@ public class MapService {
 
         mapRepository.save(map);
 
-        List<MapInfo> mapInfos = new ArrayList<>();
-
-        for (String mapinfo : mapRequestDto.getMapInfos()) {
-            mapInfos.add(
-                    MapInfo.builder()
-                            .map(map)
-                            .mapInfo(mapinfo)
-                            .build()
-            );
-        }
-        mapInfoRepository.saveAll(mapInfos);
 
         List<MapImg> mapImgList = new ArrayList<>();
         for (String img : mapImgs) {
@@ -94,7 +81,6 @@ public class MapService {
                         .content(map.getContent())
                         .title(map.getTitle())
                         .address(map.getAddress())
-                        .mapInfo(mapRequestDto.getMapInfos())
                         .imgUrls(mapImgs)
                         .createdAt(map.getCreatedAt())
                         .modifiedAt(map.getModifiedAt())
@@ -104,27 +90,34 @@ public class MapService {
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMapByCategory(String category, String address, String sort,  int pagenum, int pagesize) {
+    public ResponseEntity<?> getAllMapByCategory(String category, String address, String sort, int pagenum, int pagesize) {
         String title, content, nick;
         title = "";
         content = "";
         nick = "";
 
-        List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort,  pagenum, pagesize);
+        List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort, pagenum, pagesize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
 
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String sort,  int pagenum, int pagesize) {
-        List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort,  pagenum, pagesize);
+    public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String sort, int pagenum, int pagesize) {
+        List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort, pagenum, pagesize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
     }
 
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTestMap(Long mapNo){
-        List<Object> dto = postDetailRepositorySupport.findByMapDetail(mapNo);
-        return responseBodyDto.success(dto,"조회 성공");
+    public ResponseEntity<?> getTestMap(Long mapNo, int pagenum, int pagesize) {
+        MapDetailTestResponseDto map = postDetailRepositorySupport.findByMapDetail(mapNo);
+        List<MapImgResponseDto> mapImgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
+        List<ReviewResponseDto> reviewResponseDtoList = postDetailRepositorySupport.findByMapReview(mapNo, pagenum, pagesize);
+        return responseBodyDto.success(MapTestResponseDto.builder()
+                        .mapDetailTestResponseDto(map)
+                        .mapImgResponseDtoList(mapImgResponseDtoList)
+                        .reviewResponseDtoList(reviewResponseDtoList)
+                        .build()
+                , "조회 성공");
     }
 
     @Transactional(readOnly = true)
@@ -138,12 +131,6 @@ public class MapService {
             mapImgs.add(i.getMapImgUrl());
         }
 
-        List<MapInfo> mapInfoTemp = mapInfoRepository.findAllByMap(map);
-        List<String> infoList = new ArrayList<>();
-
-        for (MapInfo i : mapInfoTemp) {
-            infoList.add(i.getMapInfo());
-        }
         List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
         List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
         for (MapReview i : reviews) {
@@ -152,7 +139,7 @@ public class MapService {
                             .reviewNo(i.getMapReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
+                            .image(i.getMember().getDogs().get(0).getImage())
                             .star(i.getStar())
                             .build()
             );
@@ -169,7 +156,6 @@ public class MapService {
                         .mapStar(map.getStar())
                         .view(map.getView())
                         .imgUrls(mapImgs)
-                        .mapInfo(infoList)
                         .mapReviewList(reviewResponseDtoList)
                         .createdAt(map.getCreatedAt())
                         .modifiedAt(map.getModifiedAt())
@@ -184,21 +170,6 @@ public class MapService {
         Map map = validateMap(mapNo);
         map.validateMember(member);
         validateFile(multipartFiles);
-
-
-        List<MapInfo> mapInfos = new ArrayList<>();
-
-        for (String mapinfo : requestDto.getMapInfos()) {
-            mapInfos.add(
-                    MapInfo.builder()
-                            .map(map)
-                            .mapInfo(mapinfo)
-                            .build()
-            );
-        }
-        List<MapInfo> infoDelete = mapInfoRepository.findAllByMap(map);
-        mapInfoRepository.deleteAll(infoDelete);
-        mapInfoRepository.saveAll(mapInfos);
 
 
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
@@ -232,7 +203,6 @@ public class MapService {
                         .mapStar(map.getStar())
                         .view(map.getView())
                         .imgUrls(mapImgs)
-                        .mapInfo(requestDto.getMapInfos())
                         .createdAt(map.getCreatedAt())
                         .modifiedAt(map.getModifiedAt())
                         .build(),

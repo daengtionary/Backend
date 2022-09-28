@@ -4,7 +4,6 @@ import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.category.trade.service.TradeReviewService;
 import com.sparta.daengtionary.category.trade.service.TradeService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

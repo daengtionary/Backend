@@ -1,13 +1,13 @@
 package com.sparta.daengtionary.category.trade.service;
 
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeReview;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.category.trade.repository.TradeReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +23,7 @@ public class TradeReviewService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public ResponseEntity<?> createTradeReview(Long tradeNo, String  content) {
+    public ResponseEntity<?> createTradeReview(Long tradeNo, String content) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = tradeService.validateTrade(tradeNo);
 
@@ -43,18 +43,18 @@ public class TradeReviewService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateTradeReview(Long tradeNo,Long tradeReviewNo, String content ){
+    public ResponseEntity<?> updateTradeReview(Long tradeNo, Long tradeReviewNo, String content) {
         Member member = tokenProvider.getMemberFromAuthentication();
         tradeService.validateTrade(tradeNo);
-        TradeReview tradeReview = validateTradeReview(tradeReviewNo,member);
+        TradeReview tradeReview = validateTradeReview(tradeReviewNo, member);
 
         tradeReview.tradeReviewUpdate(content);
 
         return responseBodyDto.success(ReviewResponseDto.builder()
-                        .reviewNo(tradeReview.getTradeReviewNo())
-                        .nick(tradeReview.getMember().getNick())
-                        .content(tradeReview.getContent())
-                .build(),"수정 성공");
+                .reviewNo(tradeReview.getTradeReviewNo())
+                .nick(tradeReview.getMember().getNick())
+                .content(tradeReview.getContent())
+                .build(), "수정 성공");
     }
 
     @Transactional
@@ -66,7 +66,6 @@ public class TradeReviewService {
 
         return responseBodyDto.success("삭제 성공");
     }
-
 
 
     private TradeReview validateTradeReview(Long tradeReviewNo, Member member) {

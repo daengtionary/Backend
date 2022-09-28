@@ -1,28 +1,26 @@
 package com.sparta.daengtionary.category.trade.service;
 
 import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
+import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.jwt.TokenProvider;
+import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.category.member.repository.MemberRepository;
+import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeImg;
 import com.sparta.daengtionary.category.trade.domain.TradeReview;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
-import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
-import com.sparta.daengtionary.aop.jwt.TokenProvider;
-import com.sparta.daengtionary.category.member.repository.MemberRepository;
-import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeImgRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeRepository;
-import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.trade.repository.TradeReviewRepository;
+import com.sparta.daengtionary.category.wish.domain.Wish;
+import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,7 +133,7 @@ public class TradeService {
                             .reviewNo(i.getTradeReviewNo())
                             .nick(i.getMember().getNick())
                             .content(i.getContent())
-                            .memberImgUrl(i.getMember().getDogs().get(0).getImage())
+                            .image(i.getMember().getDogs().get(0).getImage())
                             .build()
             );
         }

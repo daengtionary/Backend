@@ -2,9 +2,9 @@ package com.sparta.daengtionary.category.trade.domain;
 
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
+import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
-import com.sparta.daengtionary.aop.util.Timestamped;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,13 +46,13 @@ public class Trade extends Timestamped {
 
     @Builder
     public Trade(Long tradeNo, Member member, String title, String address, String stuffStatus,
-                 String exchange, String content, int price,String postStatus) {
+                 String exchange, String content, int price, String postStatus) {
         this.tradeNo = tradeNo;
         this.member = member;
         this.title = title;
         this.address = address;
-        this.stuffStatus =stuffStatus;
-        this.exchange =exchange;
+        this.stuffStatus = stuffStatus;
+        this.exchange = exchange;
         this.content = content;
         this.price = price;
         this.postStatus = postStatus;
