@@ -50,7 +50,8 @@ public enum ErrorCode {
 
     //챗팅
     CANNOT_CHAT_WITH_ME(HttpStatus.BAD_REQUEST.value(), "CANNOT_CHAT_WITH_ME", "나 자신은 채팅의 대상이 될 수 없습니다."),
-    NOT_FOUND_CHAT(HttpStatus.NOT_FOUND.value(), "C001", "해당 채팅방을 찾을 수 없습니다."),
+    NOT_FOUND_CHAT_ROOM(HttpStatus.NOT_FOUND.value(), "NOT_FOUND_CHAT_ROOM", "해당 채팅방은 존재하지 않습니다."),
+    NOT_FOUND_CHAT_ROOM_MEMBER(HttpStatus.NOT_FOUND.value(), "NOT_FOUND_CHAT_ROOM_MEMBER", "해당 참여자를 찾을 수 없습니다."),
     CHAT_USER_BANNED(HttpStatus.BAD_REQUEST.value(), "C002", "차단한 회원과는 채팅을 시도할 수 없습니다."),
     NOT_FOUND_BANNED(HttpStatus.NOT_FOUND.value(), "C003", "차단 목록을 찾을 수 없습니다."),
     ALREADY_BANNED(HttpStatus.BAD_REQUEST.value(), "C004", "이미 차단한 회원입니다."),
