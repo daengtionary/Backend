@@ -108,7 +108,25 @@ public class AwsS3UploadService {
 
 
     private String createFileName(String fileName) {
-        return UUID.randomUUID().toString();
+        return UUID.randomUUID().toString().concat(getFileExtension(fileName));
+    }
+
+    private String getFileExtension(String fileName) {
+
+        ArrayList<String> fileValidate = new ArrayList<>();
+        fileValidate.add(".jpg");
+        fileValidate.add(".jpeg");
+        fileValidate.add(".png");
+        fileValidate.add(".JPG");
+        fileValidate.add(".JPEG");
+        fileValidate.add(".PNG");
+        String idxFileName = fileName.substring(fileName.lastIndexOf("."));
+        if (!fileValidate.contains(idxFileName)) {
+            throw new CustomException(ErrorCode.WRONG_IMAGE_FORMAT);
+        }
+        return fileName.substring(fileName.lastIndexOf("."));
+
+
     }
 
 

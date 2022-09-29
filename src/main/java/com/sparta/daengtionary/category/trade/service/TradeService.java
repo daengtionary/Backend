@@ -7,7 +7,6 @@ import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.member.repository.MemberRepository;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeImg;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
@@ -32,7 +31,6 @@ public class TradeService {
     private final TradeRepository tradeRepository;
     private final TradeImgRepository tradeImgRepository;
     private final AwsS3UploadService s3UploadService;
-    private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
