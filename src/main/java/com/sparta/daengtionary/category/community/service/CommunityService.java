@@ -54,22 +54,26 @@ public class CommunityService {
                 .build();
 
         communityRepository.save(community);
-        if (multipartFileList.get(0).getSize() > 0) {
-            List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
 
-            List<CommunityImg> communityImgs = new ArrayList<>();
-            for (String img : communityImg) {
-                communityImgs.add(
-                        CommunityImg.builder()
-                                .community(community)
-                                .communityImg(img)
-                                .build()
-                );
+        if (multipartFileList != null) {
+            if (multipartFileList.get(0).getSize() > 0) {
+                List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
+
+                List<CommunityImg> communityImgs = new ArrayList<>();
+                for (String img : communityImg) {
+                    communityImgs.add(
+                            CommunityImg.builder()
+                                    .community(community)
+                                    .communityImg(img)
+                                    .build()
+                    );
+                }
+
+                communityImgRepository.saveAll(communityImgs);
+
             }
-
-            communityImgRepository.saveAll(communityImgs);
-
         }
+
         return responseBodyDto.success("커뮤니티 생성 완료");
 
     }
@@ -141,24 +145,22 @@ public class CommunityService {
             s3UploadService.deleteFile(i.getCommunityImg());
         }
         communityImgRepository.deleteAll(deleteImg);
-        if (multipartFiles.get(0).getSize() > 0) {
-            comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
+                comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-            List<CommunityImg> saveImg = new ArrayList<>();
-            for (String i : comImgs) {
-                saveImg.add(
-                        CommunityImg.builder()
-                                .community(community)
-                                .communityImg(i)
-                                .build()
-                );
+                List<CommunityImg> saveImg = new ArrayList<>();
+                for (String i : comImgs) {
+                    saveImg.add(
+                            CommunityImg.builder()
+                                    .community(community)
+                                    .communityImg(i)
+                                    .build()
+                    );
+                }
+                communityImgRepository.saveAll(saveImg);
             }
-            communityImgRepository.saveAll(saveImg);
         }
-
-
-
-
         community.updateCommunity(requestDto);
 
         return responseBodyDto.success("수정 성공");
