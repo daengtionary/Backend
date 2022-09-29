@@ -60,7 +60,6 @@ public enum ErrorCode {
 
 
     //이미지
-    WRONG_INPUT_IMAGE(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "이미지는 반드시 있어야 됩니다."),
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "이미지 업로드에 실패했습니다"),
     WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "지원하지 않는 파일 형식입니다."),
     WRONG_IMAGE_PATH(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "경로가 지정되지 않았습니다"),
