@@ -24,7 +24,6 @@ import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
 import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
 import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
-import static com.sparta.daengtionary.category.trade.domain.QTradeReview.tradeReview;
 import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
 
 @Repository
@@ -127,7 +126,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         trade.content,
                         trade.view,
                         trade.postStatus,
-                        tradeReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
                         trade.createdAt,
@@ -136,8 +134,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .from(trade)
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
-                .leftJoin(tradeReview)
-                .on(trade.tradeNo.eq(tradeReview.trade.tradeNo))
                 .leftJoin(wish)
                 .on(trade.tradeNo.eq(wish.trade.tradeNo))
                 .where(eqPostStatus(postStatus),

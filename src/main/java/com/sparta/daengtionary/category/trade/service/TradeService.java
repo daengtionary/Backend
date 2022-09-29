@@ -5,20 +5,16 @@ import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
-import com.sparta.daengtionary.aop.supportrepository.PostDetailRepositorySupport;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.repository.MemberRepository;
-import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeImg;
-import com.sparta.daengtionary.category.trade.domain.TradeReview;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
 import com.sparta.daengtionary.category.trade.repository.TradeImgRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeRepository;
-import com.sparta.daengtionary.category.trade.repository.TradeReviewRepository;
 import com.sparta.daengtionary.category.wish.domain.Wish;
 import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,11 +35,7 @@ public class TradeService {
     private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
-    private final TradeReviewRepository tradeReviewRepository;
     private final PostRepositorySupport postRepositorySupport;
-
-    private final PostDetailRepositorySupport postDetailRepositorySupport;
-
     private final WishRepository wishRepository;
     private final String imgPath = "/map/image";
 
@@ -127,19 +119,6 @@ public class TradeService {
             traImgs.add(i.getTradeImg());
         }
 
-        List<TradeReview> reviews = tradeReviewRepository.findAllByTrade(trade);
-        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
-
-        for (TradeReview i : reviews) {
-            reviewResponseDtoList.add(
-                    ReviewResponseDto.builder()
-                            .reviewNo(i.getTradeReviewNo())
-                            .nick(i.getMember().getNick())
-                            .content(i.getContent())
-                            .image(i.getMember().getDogs().get(0).getImage())
-                            .build()
-            );
-        }
         List<Wish> temp = wishRepository.findAllByTrade(trade);
 
         return responseBodyDto.success(
@@ -155,9 +134,7 @@ public class TradeService {
                         .stuffStatus(trade.getStuffStatus())
                         .postStatus(trade.getPostStatus())
                         .tradeImgUrl(traImgs)
-                        .reviewCount((long) reviews.size())
                         .wishCount((long) temp.size())
-                        .reviewList(reviewResponseDtoList)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())
                         .build(), "조회 성공"
