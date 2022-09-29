@@ -23,8 +23,8 @@ public class HospitalController {
 
     @PostMapping("/create")
     public ResponseEntity<?> createHospital(@RequestPart(value = "data") MapRequestDto mapRequestDto,
-                                            @RequestPart(value = "imgUrl", required = false) List<MultipartFile> mapImgs) {
-        return mapService.createMap(mapRequestDto, mapImgs);
+                                            @RequestPart(value = "imgUrl", required = false) List<MultipartFile> multipartFiles) {
+        return mapService.createMap(mapRequestDto, multipartFiles);
     }
 
     @GetMapping()

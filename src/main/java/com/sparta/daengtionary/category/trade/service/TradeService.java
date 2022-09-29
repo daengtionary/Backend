@@ -55,21 +55,23 @@ public class TradeService {
                 .build();
 
         tradeRepository.save(trade);
+        if(multipartFiles != null){
+            if(multipartFiles.get(0).getSize() > 0){
+                List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<TradeImg> tradeImgs = new ArrayList<>();
+                for (String img : tradeImgList) {
+                    tradeImgs.add(
+                            TradeImg.builder()
+                                    .trade(trade)
+                                    .tradeImg(img)
+                                    .build()
+                    );
+                }
 
-        if(multipartFiles.get(0).getSize() > 0){
-            List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
-            List<TradeImg> tradeImgs = new ArrayList<>();
-            for (String img : tradeImgList) {
-                tradeImgs.add(
-                        TradeImg.builder()
-                                .trade(trade)
-                                .tradeImg(img)
-                                .build()
-                );
+                tradeImgRepository.saveAll(tradeImgs);
             }
-
-            tradeImgRepository.saveAll(tradeImgs);
         }
+
 
 
         return responseBodyDto.success("생성 완료");
@@ -162,22 +164,24 @@ public class TradeService {
             s3UploadService.deleteFile(i.getTradeImg());
         }
         tradeImgRepository.deleteAll(deleteImg);
+        if(multipartFiles != null){
+            if(multipartFiles.get(0).getSize() > 0){
+                List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-        if(multipartFiles.get(0).getSize() > 0){
-            List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<TradeImg> saveImg = new ArrayList<>();
+                for (String i : tradeImgs) {
+                    saveImg.add(
+                            TradeImg.builder()
+                                    .trade(trade)
+                                    .tradeImg(i)
+                                    .build()
+                    );
+                }
 
-            List<TradeImg> saveImg = new ArrayList<>();
-            for (String i : tradeImgs) {
-                saveImg.add(
-                        TradeImg.builder()
-                                .trade(trade)
-                                .tradeImg(i)
-                                .build()
-                );
+                tradeImgRepository.saveAll(saveImg);
             }
-
-            tradeImgRepository.saveAll(saveImg);
         }
+
 
         trade.updateTrade(requestDto);
 

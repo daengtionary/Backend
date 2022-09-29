@@ -125,6 +125,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         trade.title,
                         trade.content,
                         trade.view,
+                        trade.price,
                         trade.postStatus,
                         wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
