@@ -42,8 +42,8 @@ public class TradeService {
     @Transactional
     public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        validateFile(multipartFiles);
-        List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
+
+
 
         Trade trade = Trade.builder()
                 .member(member)
@@ -58,35 +58,23 @@ public class TradeService {
 
         tradeRepository.save(trade);
 
-        List<TradeImg> tradeImgs = new ArrayList<>();
-        for (String img : tradeImgList) {
-            tradeImgs.add(
-                    TradeImg.builder()
-                            .trade(trade)
-                            .tradeImg(img)
-                            .build()
-            );
+        if(multipartFiles.get(0).getSize() > 0){
+            List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
+            List<TradeImg> tradeImgs = new ArrayList<>();
+            for (String img : tradeImgList) {
+                tradeImgs.add(
+                        TradeImg.builder()
+                                .trade(trade)
+                                .tradeImg(img)
+                                .build()
+                );
+            }
+
+            tradeImgRepository.saveAll(tradeImgs);
         }
 
-        tradeImgRepository.saveAll(tradeImgs);
 
-        return responseBodyDto.success(
-                TradeDetailResponseDto.builder()
-                        .tradeNo(trade.getTradeNo())
-                        .nick(member.getNick())
-                        .title(trade.getTitle())
-                        .content(trade.getContent())
-                        .price(trade.getPrice())
-                        .address(trade.getAddress())
-                        .exchange(trade.getExchange())
-                        .stuffStatus(trade.getStuffStatus())
-                        .postStatus(trade.getPostStatus())
-                        .view(trade.getView())
-                        .tradeImgUrl(tradeImgList)
-                        .createdAt(trade.getCreatedAt())
-                        .modifiedAt(trade.getModifiedAt())
-                        .build(), "생성완료"
-        );
+        return responseBodyDto.success("생성 완료");
     }
 
     @Transactional(readOnly = true)
@@ -170,7 +158,6 @@ public class TradeService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = validateTrade(tradeNo);
         trade.validateMember(member);
-        validateFile(multipartFiles);
 
         List<TradeImg> deleteImg = tradeImgRepository.findAllByTrade(trade);
         for (TradeImg i : deleteImg) {
@@ -178,31 +165,25 @@ public class TradeService {
         }
         tradeImgRepository.deleteAll(deleteImg);
 
-        List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+        if(multipartFiles.get(0).getSize() > 0){
+            List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-        List<TradeImg> saveImg = new ArrayList<>();
-        for (String i : tradeImgs) {
-            saveImg.add(
-                    TradeImg.builder()
-                            .trade(trade)
-                            .tradeImg(i)
-                            .build()
-            );
+            List<TradeImg> saveImg = new ArrayList<>();
+            for (String i : tradeImgs) {
+                saveImg.add(
+                        TradeImg.builder()
+                                .trade(trade)
+                                .tradeImg(i)
+                                .build()
+                );
+            }
+
+            tradeImgRepository.saveAll(saveImg);
         }
 
-        tradeImgRepository.saveAll(saveImg);
         trade.updateTrade(requestDto);
 
-        return responseBodyDto.success(
-                TradeDetailResponseDto.builder()
-                        .tradeNo(trade.getTradeNo())
-                        .nick(member.getNick())
-                        .title(trade.getTitle())
-                        .content(trade.getContent())
-                        .tradeImgUrl(tradeImgs)
-                        .createdAt(trade.getCreatedAt())
-                        .modifiedAt(trade.getModifiedAt())
-                        .build(), "수정 성공"
+        return responseBodyDto.success("수정 성공"
         );
     }
 
@@ -235,15 +216,4 @@ public class TradeService {
         );
     }
 
-    private void validateFile(List<MultipartFile> multipartFiles) {
-        if (multipartFiles == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
-
-    private Member validateMember(Long memberNo) {
-        return memberRepository.findById(memberNo).orElseThrow(
-                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
-        );
-    }
 }
