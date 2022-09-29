@@ -49,10 +49,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         map.title,
                         map.address,
                         map.view,
+                        map.content,
                         mapReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         mapImg.mapImgUrl,
-                        mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
                 ))
