@@ -16,10 +16,8 @@ import com.sparta.daengtionary.category.community.dto.response.CommunityResponse
 import com.sparta.daengtionary.category.community.dto.response.CommunityReviewResponseDto;
 import com.sparta.daengtionary.category.community.repository.CommunityImgRepository;
 import com.sparta.daengtionary.category.community.repository.CommunityRepository;
-import com.sparta.daengtionary.category.community.repository.CommunityReviewRepository;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.dto.response.ImgResponseDto;
-import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -38,11 +36,7 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
-    private final CommunityReviewRepository communityReviewRepository;
     private final String imgPath = "/map/image";
-
-    private final WishRepository wishRepository;
-
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
     private List<String> comImgs;
@@ -60,7 +54,7 @@ public class CommunityService {
                 .build();
 
         communityRepository.save(community);
-        if (multipartFileList != null) {
+        if (multipartFileList.get(0).getSize() > 0) {
             List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
 
             List<CommunityImg> communityImgs = new ArrayList<>();
@@ -147,32 +141,27 @@ public class CommunityService {
             s3UploadService.deleteFile(i.getCommunityImg());
         }
         communityImgRepository.deleteAll(deleteImg);
-        if (multipartFiles != null) {
+        if (multipartFiles.get(0).getSize() > 0) {
             comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+
+            List<CommunityImg> saveImg = new ArrayList<>();
+            for (String i : comImgs) {
+                saveImg.add(
+                        CommunityImg.builder()
+                                .community(community)
+                                .communityImg(i)
+                                .build()
+                );
+            }
+            communityImgRepository.saveAll(saveImg);
         }
 
 
-        List<CommunityImg> saveImg = new ArrayList<>();
-        for (String i : comImgs) {
-            saveImg.add(
-                    CommunityImg.builder()
-                            .community(community)
-                            .communityImg(i)
-                            .build()
-            );
-        }
-        communityImgRepository.saveAll(saveImg);
+
 
         community.updateCommunity(requestDto);
 
-        return responseBodyDto.success(CommunityDetatilResponseDto.builder()
-                .communityNo(community.getCommunityNo())
-                .nick(member.getNick())
-                .title(community.getTitle())
-                .content(community.getContent())
-                .createdAt(community.getCreatedAt())
-                .modifiedAt(community.getModifiedAt())
-                .build(), "수정 성공");
+        return responseBodyDto.success("수정 성공");
     }
 
     @Transactional

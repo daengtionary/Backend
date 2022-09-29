@@ -44,8 +44,7 @@ public class MapService {
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        validateFile(multipartFiles);
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+
 
         Map map = Map.builder()
                 .member(member)
@@ -56,33 +55,20 @@ public class MapService {
                 .build();
 
         mapRepository.save(map);
-
-
-        List<MapImg> mapImgList = new ArrayList<>();
-        for (String img : mapImgs) {
-            mapImgList.add(
-                    MapImg.builder()
-                            .map(map)
-                            .mapImgUrl(img)
-                            .build()
-            );
+        if (multipartFiles.get(0).getSize() > 0) {
+            List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+            List<MapImg> mapImgList = new ArrayList<>();
+            for (String img : mapImgs) {
+                mapImgList.add(
+                        MapImg.builder()
+                                .map(map)
+                                .mapImgUrl(img)
+                                .build()
+                );
+            }
+            mapImgRepository.saveAll(mapImgList);
         }
-        mapImgRepository.saveAll(mapImgList);
-
-        return responseBodyDto.success(
-                MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(member.getNick())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .imgUrls(mapImgs)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-                "생성 완료"
-        );
+        return responseBodyDto.success("생성 완료");
     }
 
     @Transactional(readOnly = true)
@@ -122,7 +108,6 @@ public class MapService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = validateMap(mapNo);
         map.validateMember(member);
-        validateFile(multipartFiles);
 
 
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
@@ -131,37 +116,25 @@ public class MapService {
         }
         mapImgRepository.deleteAll(temp);
 
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+        if (multipartFiles.get(0).getSize() > 0) {
+            List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-        List<MapImg> mapImgList = new ArrayList<>();
-        for (String img : mapImgs) {
-            mapImgList.add(
-                    MapImg.builder()
-                            .map(map)
-                            .mapImgUrl(img)
-                            .build()
-            );
+            List<MapImg> mapImgList = new ArrayList<>();
+            for (String img : mapImgs) {
+                mapImgList.add(
+                        MapImg.builder()
+                                .map(map)
+                                .mapImgUrl(img)
+                                .build()
+                );
+            }
+            mapImgRepository.saveAll(mapImgList);
         }
-        mapImgRepository.saveAll(mapImgList);
+
 
         map.updateMap(requestDto);
 
-        return responseBodyDto.success(MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(map.getMember().getNick())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .mapStar(map.getStar())
-                        .view(map.getView())
-                        .imgUrls(mapImgs)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-
-                "수정 성공"
-        );
+        return responseBodyDto.success("수정 성공");
     }
 
     @Transactional
@@ -187,11 +160,6 @@ public class MapService {
         map.viewUpdate();
     }
 
-    private void validateFile(List<MultipartFile> multipartFiles) {
-        if (multipartFiles == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
 
     @Transactional(readOnly = true)
     public Map validateMap(Long mapNo) {
