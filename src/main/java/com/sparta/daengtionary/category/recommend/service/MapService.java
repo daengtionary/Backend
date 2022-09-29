@@ -55,18 +55,21 @@ public class MapService {
                 .build();
 
         mapRepository.save(map);
-        if (multipartFiles.get(0).getSize() > 0) {
-            List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
-            List<MapImg> mapImgList = new ArrayList<>();
-            for (String img : mapImgs) {
-                mapImgList.add(
-                        MapImg.builder()
-                                .map(map)
-                                .mapImgUrl(img)
-                                .build()
-                );
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<MapImg> mapImgList = new ArrayList<>();
+                for (String img : mapImgs) {
+                    mapImgList.add(
+                            MapImg.builder()
+                                    .map(map)
+                                    .mapImgUrl(img)
+                                    .build()
+                    );
+                }
+                mapImgRepository.saveAll(mapImgList);
             }
-            mapImgRepository.saveAll(mapImgList);
+
         }
         return responseBodyDto.success("생성 완료");
     }
@@ -115,20 +118,21 @@ public class MapService {
             s3UploadService.deleteFile(i.getMapImgUrl());
         }
         mapImgRepository.deleteAll(temp);
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-        if (multipartFiles.get(0).getSize() > 0) {
-            List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
-
-            List<MapImg> mapImgList = new ArrayList<>();
-            for (String img : mapImgs) {
-                mapImgList.add(
-                        MapImg.builder()
-                                .map(map)
-                                .mapImgUrl(img)
-                                .build()
-                );
+                List<MapImg> mapImgList = new ArrayList<>();
+                for (String img : mapImgs) {
+                    mapImgList.add(
+                            MapImg.builder()
+                                    .map(map)
+                                    .mapImgUrl(img)
+                                    .build()
+                    );
+                }
+                mapImgRepository.saveAll(mapImgList);
             }
-            mapImgRepository.saveAll(mapImgList);
         }
 
 
