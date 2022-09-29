@@ -17,7 +17,6 @@ import com.sparta.daengtionary.category.recommend.dto.response.*;
 import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
-import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,6 @@ public class MapService {
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
     private final AwsS3UploadService s3UploadService;
-    private final MapReviewRepository mapReviewRepository;
 
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
@@ -195,16 +193,6 @@ public class MapService {
         }
     }
 
-
-    @Transactional(readOnly = true)
-    public void isDuplicateCheck(MapRequestDto requestDto) {
-        if (mapRepository.existsByTitle(requestDto.getTitle()) &&
-                mapRepository.existsByAddress(requestDto.getAddress()) &&
-                mapRepository.existsByCategory(requestDto.getCategory())) {
-            throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
-        }
-    }
-
     @Transactional(readOnly = true)
     public Map validateMap(Long mapNo) {
         return mapRepository.findById(mapNo).orElseThrow(
@@ -212,11 +200,5 @@ public class MapService {
         );
     }
 
-    private void validateMemberRole(Member member) {
-        String temp = String.valueOf(member.getRole());
-        if (!temp.equals("BUSINESS")) {
-            throw new CustomException(ErrorCode.MAP_WRONG_ROLE);
-        }
-    }
 
 }
