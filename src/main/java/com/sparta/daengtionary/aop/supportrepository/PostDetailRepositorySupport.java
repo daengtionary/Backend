@@ -15,12 +15,12 @@ import java.util.List;
 
 import static com.sparta.daengtionary.category.community.domain.QCommunity.community;
 import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
+import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
 import static com.sparta.daengtionary.category.member.domain.QMember.member;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
-import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
 
 @Repository
 public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
@@ -110,19 +110,19 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .fetchOne();
     }
 
-    public List<ImgResponseDto> findByCommunityImg(Long communityNo){
+    public List<ImgResponseDto> findByCommunityImg(Long communityNo) {
         return queryFactory
                 .select(Projections.fields(
                         ImgResponseDto.class,
                         communityImg1.communityImg.as("mapImgUrl")
                 ))
                 .from(communityImg1)
-                .join(communityImg1.community,community)
+                .join(communityImg1.community, community)
                 .where(communityImg1.community.communityNo.eq(communityNo))
                 .fetch();
     }
 
-    public List<CommunityReviewResponseDto> findByCommunityReview(Long communityNo, int pagenum, int pagesize){
+    public List<CommunityReviewResponseDto> findByCommunityReview(Long communityNo, int pagenum, int pagesize) {
         return queryFactory
                 .select(Projections.fields(
                         CommunityReviewResponseDto.class,
@@ -132,8 +132,8 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                         dog.image
                 ))
                 .from(communityReview)
-                .join(communityReview.member,member)
-                .join(communityReview.community,community)
+                .join(communityReview.member, member)
+                .join(communityReview.community, community)
                 .leftJoin(dog)
                 .on(dog.member.memberNo.eq(communityReview.member.memberNo))
                 .where(communityReview.community.communityNo.eq(communityNo))
@@ -141,4 +141,14 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .offset((long) pagenum * pagesize)
                 .fetch();
     }
+
+//    public List<Map> findMap(){
+//        return queryFactory
+//                .select(map)
+//                .from(map)
+//                .where(map.mapNo.in(
+//                        JPAExpressions.select(map.mapNo).from(map).groupBy(map.title,map.address).having()
+//                ))
+//                .fetch();
+//    }
 }

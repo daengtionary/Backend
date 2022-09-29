@@ -18,11 +18,11 @@ public class MapResponseDto {
 
     private String address;
 
+    private String content;
+
     private float star;
 
     private String mapImgUrl;
-
-    private String mapInfo;
 
     private Long reviewCount;
 
@@ -36,15 +36,15 @@ public class MapResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public MapResponseDto(Long mapNo, String category, String title, String address, float star, int view,
-                          String mapImgUrl, String mapInfo, Long reviewCount, Long wishCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public MapResponseDto(Long mapNo, String category, String title, String address, float star, int view,String content,
+                          String mapImgUrl, Long reviewCount, Long wishCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.mapNo = mapNo;
         this.category = category;
         this.title = title;
         this.address = address;
         this.star = star;
         this.mapImgUrl = mapImgUrl;
-        this.mapInfo = mapInfo;
+        this.content = content;
         this.view = view;
         this.reviewCount = reviewCount;
         this.wishCount = wishCount;

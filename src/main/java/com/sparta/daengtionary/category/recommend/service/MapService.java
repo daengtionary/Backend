@@ -19,6 +19,7 @@ import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -90,6 +91,12 @@ public class MapService {
     public ResponseEntity<?> getSearchMap(String category, String title, String content, String nick, String address, String sort, int pagenum, int pagesize) {
         List<MapResponseDto> mapResponseDtoPage = postRepositorySupport.findAllByMap(category, title, content, nick, address, sort, pagenum, pagesize);
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
+    }
+
+    @Scheduled(cron = "0 0 12 * * ?")
+    @Transactional(readOnly = true)
+    public void schedulTest(){
+        System.out.println("매일 12시에 실행");
     }
 
     @Transactional(readOnly = true)
