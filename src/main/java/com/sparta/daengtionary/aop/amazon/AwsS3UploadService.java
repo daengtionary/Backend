@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Component
@@ -35,58 +34,56 @@ public class AwsS3UploadService {
     private String bucket;
 
 
+    ///map/image
+//    public List<String> uploadListImg(List<MultipartFile> multipartFile) {
+//        List<String> imgUrlList = new ArrayList<>();
+//        multipartFile.forEach(file -> {
+//            if (Objects.requireNonNull(file.getContentType()).contains("image")) {
+//                String fileName = createFileName(file.getOriginalFilename());
+//                String fileFormatName = file.getContentType().substring(file.getContentType().lastIndexOf("/") + 1);
+//
+//                MultipartFile resizedFile = resizeImage(fileName, fileFormatName, file, 750);
+//
+//                ObjectMetadata objectMetadata = new ObjectMetadata();
+//                objectMetadata.setContentLength(resizedFile.getSize());
+//                objectMetadata.setContentType(file.getContentType());
+//
+//                try (InputStream inputStream = resizedFile.getInputStream()) {
+//                    amazonS3.putObject(new PutObjectRequest(bucket , fileName, inputStream, objectMetadata)
+//                            .withCannedAcl(CannedAccessControlList.PublicRead));
+//                    imgUrlList.add(amazonS3.getUrl(bucket,fileName).toString());
+//                } catch (IOException e) {
+//                    throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
+//                }
+//                imgUrlList.add(fileName);
+//            }
+//        });
+//        return imgUrlList;
+//
+//    }
 
     ///map/image
-    public List<String> uploadListImg(List<MultipartFile> multipartFile) {
+    public List<String> uploadListImg(List<MultipartFile> multipartFiles) {
+        if (multipartFiles.isEmpty()) return null;
+
         List<String> imgUrlList = new ArrayList<>();
-        multipartFile.forEach(file -> {
-            if (Objects.requireNonNull(file.getContentType()).contains("image")) {
-                String fileName = createFileName(file.getOriginalFilename());
-                String fileFormatName = file.getContentType().substring(file.getContentType().lastIndexOf("/") + 1);
 
-                MultipartFile resizedFile = resizeImage(fileName, fileFormatName, file, 750);
+        for (MultipartFile file : multipartFiles) {
+            String fileName = createFileName(file.getOriginalFilename());
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setContentLength(file.getSize());
+            objectMetadata.setContentType(file.getContentType());
 
-                ObjectMetadata objectMetadata = new ObjectMetadata();
-                objectMetadata.setContentLength(resizedFile.getSize());
-                objectMetadata.setContentType(file.getContentType());
-
-                try (InputStream inputStream = resizedFile.getInputStream()) {
-                    amazonS3.putObject(new PutObjectRequest(bucket , fileName, inputStream, objectMetadata)
-                            .withCannedAcl(CannedAccessControlList.PublicRead));
-                    imgUrlList.add(amazonS3.getUrl(bucket,fileName).toString());
-                } catch (IOException e) {
-                    throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
-                }
-                imgUrlList.add(fileName);
+            try (InputStream inputStream = file.getInputStream()) {
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                        .withCannedAcl(CannedAccessControlList.PublicRead));
+                imgUrlList.add(amazonS3.getUrl(bucket, fileName).toString());
+            } catch (IOException e) {
+                throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
             }
-        });
+        }
         return imgUrlList;
-
     }
-
-//    ///map/image
-//    public List<String> uploadListImg(List<MultipartFile> multipartFiles, String path) {
-//        if(multipartFiles.isEmpty()) return null;
-//
-//        List<String> imgUrlList = new ArrayList<>();
-//        vaildatePath(path);
-//
-//        for (MultipartFile file : multipartFiles) {
-//            String fileName = createFileName(file.getOriginalFilename());
-//            ObjectMetadata objectMetadata = new ObjectMetadata();
-//            objectMetadata.setContentLength(file.getSize());
-//            objectMetadata.setContentType(file.getContentType());
-//
-//            try (InputStream inputStream = file.getInputStream()) {
-//                amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
-//                        .withCannedAcl(CannedAccessControlList.PublicRead));
-//                imgUrlList.add(amazonS3.getUrl(bucket + path, fileName).toString());
-//            } catch (IOException e) {
-//                throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
-//            }
-//        }
-//        return imgUrlList;
-//    }
 
     //
     public String uploadImage(MultipartFile multipartFile) {
@@ -100,7 +97,7 @@ public class AwsS3UploadService {
         try (InputStream inputStream = multipartFile.getInputStream()) {
             amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            image = amazonS3.getUrl(bucket , fileName).toString();
+            image = amazonS3.getUrl(bucket, fileName).toString();
         } catch (IOException e) {
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
         }
