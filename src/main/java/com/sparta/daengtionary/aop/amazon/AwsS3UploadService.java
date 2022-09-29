@@ -53,6 +53,8 @@ public class AwsS3UploadService {
 
     ///map/image
     public List<String> uploadListImg(List<MultipartFile> multipartFiles, String path) {
+        if(multipartFiles.isEmpty()) return null;
+
         List<String> imgUrlList = new ArrayList<>();
         vaildatePath(path);
 
