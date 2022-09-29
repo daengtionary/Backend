@@ -46,7 +46,6 @@ public class MapService {
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        validateMemberRole(member);
         validateFile(multipartFiles);
         List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 

@@ -64,7 +64,7 @@ public enum ErrorCode {
     IMAGE_UPLOAD_ERROR(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "이미지 업로드에 실패했습니다"),
     WRONG_IMAGE_FORMAT(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "지원하지 않는 파일 형식입니다."),
     WRONG_IMAGE_PATH(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "경로가 지정되지 않았습니다"),
-
+    INTERNAL_SERVER_ERROR(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","파일 리사이즈에 실패했습니다."),
 
     // 반려견
     NOT_FOUND_DOG_INFO(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "반려견 정보가 없습니다.");
