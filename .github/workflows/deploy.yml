@@ -4,8 +4,9 @@ name: deploy
 
 on:
   pull_request:
-    branches: [ main, release ]
-
+    branches:
+      - 'main'
+      - 'release'
 
 permissions:
   contents: read
@@ -30,14 +31,14 @@ jobs:
           java-version: "11"
           distribution: "temurin"
 
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-  
+      ## 1-1 application.properties 파일 생성
+      - name: make application.properties
+        run: |
+          mkdir -p ./src/main/resources
+          cd ./src/main/resources
+          touch ./application.properties
+          echo "${{ secrets.PROPERTIES }}" >> ./application.properties
+        shell: bash
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
