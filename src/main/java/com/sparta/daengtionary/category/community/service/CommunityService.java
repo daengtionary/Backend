@@ -36,7 +36,7 @@ public class CommunityService {
     private final CommunityRepository communityRepository;
     private final TokenProvider tokenProvider;
     private final CommunityImgRepository communityImgRepository;
-    private final String imgPath = "/map/image";
+
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
     private List<String> comImgs;
@@ -57,7 +57,7 @@ public class CommunityService {
 
         if (multipartFileList != null) {
             if (multipartFileList.get(0).getSize() > 0) {
-                List<String> communityImg = s3UploadService.uploadListImg(multipartFileList, imgPath);
+                List<String> communityImg = s3UploadService.uploadListImg(multipartFileList);
 
                 List<CommunityImg> communityImgs = new ArrayList<>();
                 for (String img : communityImg) {
@@ -147,7 +147,7 @@ public class CommunityService {
         communityImgRepository.deleteAll(deleteImg);
         if (multipartFiles != null) {
             if (multipartFiles.get(0).getSize() > 0) {
-                comImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                comImgs = s3UploadService.uploadListImg(multipartFiles);
 
                 List<CommunityImg> saveImg = new ArrayList<>();
                 for (String i : comImgs) {

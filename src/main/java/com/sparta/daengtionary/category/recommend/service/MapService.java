@@ -40,7 +40,6 @@ public class MapService {
 
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
-    private final String imgPath = "/map/image";
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
@@ -58,7 +57,7 @@ public class MapService {
         mapRepository.save(map);
         if (multipartFiles != null) {
             if (multipartFiles.get(0).getSize() > 0) {
-                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles);
                 List<MapImg> mapImgList = new ArrayList<>();
                 for (String img : mapImgs) {
                     mapImgList.add(
@@ -127,7 +126,7 @@ public class MapService {
         mapImgRepository.deleteAll(temp);
         if (multipartFiles != null) {
             if (multipartFiles.get(0).getSize() > 0) {
-                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles);
 
                 List<MapImg> mapImgList = new ArrayList<>();
                 for (String img : mapImgs) {
