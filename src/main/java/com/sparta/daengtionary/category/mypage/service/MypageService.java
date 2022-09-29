@@ -27,8 +27,6 @@ public class MypageService {
     private final DogRepository dogRepository;
     private final AwsS3UploadService s3UploadService;
 
-    private final String imgPath = "/dog/image";
-
     @Transactional(readOnly = true)
     public ResponseEntity<?> getMemberInfo() {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -60,7 +58,7 @@ public class MypageService {
 
         if (!multipartFile.isEmpty()) {
             validateImageFile(multipartFile);
-            image = s3UploadService.uploadImage(multipartFile, imgPath);
+            image = s3UploadService.uploadImage(multipartFile);
         }
 
         Dog dog = Dog.builder()
@@ -86,7 +84,7 @@ public class MypageService {
         s3UploadService.deleteFile(dog.getImage());
         validateImageFile(multipartFile);
 
-        String image = s3UploadService.uploadImage(multipartFile, imgPath);
+        String image = s3UploadService.uploadImage(multipartFile);
 
         dog.updateByProfile(requestDto, image);
 
@@ -100,7 +98,7 @@ public class MypageService {
         s3UploadService.deleteFile(dog.getImage());
 
         validateImageFile(multipartFile);
-        String image = s3UploadService.uploadImage(multipartFile, imgPath);
+        String image = s3UploadService.uploadImage(multipartFile);
 
         dog.updateByImage(image);
 

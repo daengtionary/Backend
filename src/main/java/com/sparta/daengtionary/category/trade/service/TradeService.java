@@ -35,8 +35,6 @@ public class TradeService {
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
     private final WishRepository wishRepository;
-    private final String imgPath = "/map/image";
-
     @Transactional
     public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -57,7 +55,7 @@ public class TradeService {
         tradeRepository.save(trade);
         if(multipartFiles != null){
             if(multipartFiles.get(0).getSize() > 0){
-                List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles);
                 List<TradeImg> tradeImgs = new ArrayList<>();
                 for (String img : tradeImgList) {
                     tradeImgs.add(
@@ -166,7 +164,7 @@ public class TradeService {
         tradeImgRepository.deleteAll(deleteImg);
         if(multipartFiles != null){
             if(multipartFiles.get(0).getSize() > 0){
-                List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+                List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles);
 
                 List<TradeImg> saveImg = new ArrayList<>();
                 for (String i : tradeImgs) {
