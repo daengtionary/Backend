@@ -26,6 +26,17 @@ public class ChatMessage extends Timestamped {
     private String message;
 
 
+    public static ChatMessage createMessageWelcome(Long roomNo) {
+        ChatMessage chatMessage = new ChatMessage();
+
+        chatMessage.roomNo = roomNo;
+        chatMessage.type = "SYSTEM";
+        chatMessage.message = "대화가 시작되었습니다 :)";
+        chatMessage.sender = "SYSTEM";
+
+        return chatMessage;
+    }
+
     public static ChatMessage createMessageEnter(MessageRequestDto requestDto) {
         ChatMessage chatMessage = new ChatMessage();
 
