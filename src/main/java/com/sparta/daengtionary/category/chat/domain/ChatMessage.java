@@ -26,7 +26,7 @@ public class ChatMessage extends Timestamped {
     private String message;
 
 
-    public ChatMessage createMessageWelcome(Long roomNo) {
+    public static ChatMessage createMessageWelcome(Long roomNo) {
         ChatMessage chatMessage = new ChatMessage();
 
         chatMessage.roomNo = roomNo;
