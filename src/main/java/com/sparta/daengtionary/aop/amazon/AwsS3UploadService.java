@@ -9,16 +9,10 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
-import marvin.image.MarvinImage;
-import org.marvinproject.image.transform.scale.Scale;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -102,38 +96,37 @@ public class AwsS3UploadService {
 
     }
 
-    MultipartFile resizeImage(String fileName, String fileFormatName, MultipartFile originalImage, int targetWidth) {
-        try {
-            BufferedImage image = ImageIO.read(originalImage.getInputStream());
-
-            int originWidth = image.getWidth();
-            int originHeight = image.getHeight();
-
-            if (originWidth < targetWidth) {
-                return originalImage;
-            }
-
-            MarvinImage marvinImage = new MarvinImage(image);
-
-            Scale scale = new Scale();
-            scale.load();
-            scale.setAttribute("newWidth", targetWidth);
-            scale.setAttribute("newHeight", targetWidth * originHeight / originWidth);
-            scale.process(marvinImage.clone(), marvinImage, null, null, false);
-
-            BufferedImage imageNoAlpha = marvinImage.getBufferedImageNoAlpha();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(imageNoAlpha, fileFormatName, baos);
-            baos.flush();
-            ;
-
-            return new MockMultipartFile(fileName, baos.toByteArray());
-
-
-        } catch (IOException e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-
+//    MultipartFile resizeImage(String fileName, String fileFormatName, MultipartFile originalImage, int targetWidth) {
+//        try {
+//            BufferedImage image = ImageIO.read(originalImage.getInputStream());
+//
+//            int originWidth = image.getWidth();
+//            int originHeight = image.getHeight();
+//
+//            if (originWidth < targetWidth) {
+//                return originalImage;
+//            }
+//
+//            MarvinImage marvinImage = new MarvinImage(image);
+//
+//            Scale scale = new Scale();
+//            scale.load();
+//            scale.setAttribute("newWidth", targetWidth);
+//            scale.setAttribute("newHeight", targetWidth * originHeight / originWidth);
+//            scale.process(marvinImage.clone(), marvinImage, null, null, false);
+//
+//            BufferedImage imageNoAlpha = marvinImage.getBufferedImageNoAlpha();
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(imageNoAlpha, fileFormatName, baos);
+//            baos.flush();
+//            ;
+//
+//            return new MockMultipartFile(fileName, baos.toByteArray());
+//
+//
+//        } catch (IOException e) {
+//            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+//        }
 }
+
+
