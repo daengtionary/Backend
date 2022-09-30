@@ -10,6 +10,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
 
 env:
   S3_BUCKET_NAME: daeng
@@ -31,7 +32,18 @@ jobs:
           java-version: "11"
           distribution: "temurin"
 
-      ## 1-1 application.properties 파일 생성
+      - name: action-slack
+        uses: 8398a7/action-slack@v3
+        with:
+            status: ${{ job.status }}
+            author_name: "daengtionary"
+            fields: repo,commit,message,author,pullRequest,action
+            mention: here
+            if_mention: failure,cancelled
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+
       - name: make application.properties
         run: |
           mkdir -p ./src/main/resources
