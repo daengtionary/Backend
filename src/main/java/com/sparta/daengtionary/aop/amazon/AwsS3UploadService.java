@@ -33,35 +33,6 @@ public class AwsS3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-
-    ///map/image
-//    public List<String> uploadListImg(List<MultipartFile> multipartFile) {
-//        List<String> imgUrlList = new ArrayList<>();
-//        multipartFile.forEach(file -> {
-//            if (Objects.requireNonNull(file.getContentType()).contains("image")) {
-//                String fileName = createFileName(file.getOriginalFilename());
-//                String fileFormatName = file.getContentType().substring(file.getContentType().lastIndexOf("/") + 1);
-//
-//                MultipartFile resizedFile = resizeImage(fileName, fileFormatName, file, 750);
-//
-//                ObjectMetadata objectMetadata = new ObjectMetadata();
-//                objectMetadata.setContentLength(resizedFile.getSize());
-//                objectMetadata.setContentType(file.getContentType());
-//
-//                try (InputStream inputStream = resizedFile.getInputStream()) {
-//                    amazonS3.putObject(new PutObjectRequest(bucket , fileName, inputStream, objectMetadata)
-//                            .withCannedAcl(CannedAccessControlList.PublicRead));
-//                    imgUrlList.add(amazonS3.getUrl(bucket,fileName).toString());
-//                } catch (IOException e) {
-//                    throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
-//                }
-//                imgUrlList.add(fileName);
-//            }
-//        });
-//        return imgUrlList;
-//
-//    }
-
     ///map/image
     public List<String> uploadListImg(List<MultipartFile> multipartFiles) {
         if (multipartFiles.isEmpty()) return null;
