@@ -35,7 +35,6 @@ public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
     private final ResponseBodyDto responseBodyDto;
 
-    private final ChatMessage chatMessage;
 
     @Transactional
     public ResponseEntity<?> createPersonalChatRoom(HttpServletRequest request,
@@ -55,7 +54,7 @@ public class ChatRoomService {
         ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
 
         // welcome message 저장
-        chatMessageRepository.save(chatMessage.createMessageWelcome(chatRoom.getRoomNo()));
+        chatMessageRepository.save(ChatMessage.createMessageWelcome(chatRoom.getRoomNo()));
 
         return responseBodyDto.success(ChatRoomResponseDto.builder()
                         .roomNo(chatRoom.getRoomNo())
