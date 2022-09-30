@@ -114,21 +114,32 @@ public class ChatRoomService {
                 );
             }
 
-            // 마지막 대화내용 가져오기
-            ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
-                    () -> new CustomException(NOT_FOUND_CHAT_ROOM)
-            );
+            // 마지막 채팅 메세지 가져오기
+            if (chatMessageRepository.existsByRoomNo(chatRoom.getRoomNo())) {
+                ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
+                        () -> new CustomException(NOT_FOUND_CHAT_ROOM)
+                );
 
-            // responseDto 추가
-            chatRoomResponseDtoList.add(
-                    ChatRoomResponseDto.builder()
-                            .roomNo(chatRoom.getRoomNo())
-                            .type(chatRoom.getType())
-                            .chatRoomMembers(memberResponseDtoList)
-                            .lastDate(chatMessage.getCreatedAt())
-                            .lastMessage(chatMessage.getMessage())
-                            .build()
-            );
+                // responseDto 추가
+                chatRoomResponseDtoList.add(
+                        ChatRoomResponseDto.builder()
+                                .roomNo(chatRoom.getRoomNo())
+                                .type(chatRoom.getType())
+                                .chatRoomMembers(memberResponseDtoList)
+                                .lastDate(chatMessage.getCreatedAt())
+                                .lastMessage(chatMessage.getMessage())
+                                .build()
+                );
+            } else {
+                // responseDto 추가
+                chatRoomResponseDtoList.add(
+                        ChatRoomResponseDto.builder()
+                                .roomNo(chatRoom.getRoomNo())
+                                .type(chatRoom.getType())
+                                .chatRoomMembers(memberResponseDtoList)
+                                .build()
+                );
+            }
         }
 
         return responseBodyDto.success(chatRoomResponseDtoList, "채팅방 조회 완료");
