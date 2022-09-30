@@ -52,6 +52,9 @@ public class ChatRoomService {
         // chatRoom 있으면 가져오고 없으면 생성 후 member 저장
         ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
 
+        // welcome message 저장
+        chatMessageRepository.save(ChatMessage.createMessageWelcome(chatRoom.getRoomNo()));
+
         return responseBodyDto.success(ChatRoomResponseDto.builder()
                         .roomNo(chatRoom.getRoomNo())
                         .build(),
@@ -115,31 +118,20 @@ public class ChatRoomService {
             }
 
             // 마지막 채팅 메세지 가져오기
-            if (chatMessageRepository.existsByRoomNo(chatRoom.getRoomNo())) {
-                ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
-                        () -> new CustomException(NOT_FOUND_CHAT_ROOM)
-                );
+            ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
+                    () -> new CustomException(NOT_FOUND_CHAT_ROOM)
+            );
 
-                // responseDto 추가
-                chatRoomResponseDtoList.add(
-                        ChatRoomResponseDto.builder()
-                                .roomNo(chatRoom.getRoomNo())
-                                .type(chatRoom.getType())
-                                .chatRoomMembers(memberResponseDtoList)
-                                .lastDate(chatMessage.getCreatedAt())
-                                .lastMessage(chatMessage.getMessage())
-                                .build()
-                );
-            } else {
-                // responseDto 추가
-                chatRoomResponseDtoList.add(
-                        ChatRoomResponseDto.builder()
-                                .roomNo(chatRoom.getRoomNo())
-                                .type(chatRoom.getType())
-                                .chatRoomMembers(memberResponseDtoList)
-                                .build()
-                );
-            }
+            // responseDto 추가
+            chatRoomResponseDtoList.add(
+                    ChatRoomResponseDto.builder()
+                            .roomNo(chatRoom.getRoomNo())
+                            .type(chatRoom.getType())
+                            .chatRoomMembers(memberResponseDtoList)
+                            .lastDate(chatMessage.getCreatedAt())
+                            .lastMessage(chatMessage.getMessage())
+                            .build()
+            );
         }
 
         return responseBodyDto.success(chatRoomResponseDtoList, "채팅방 조회 완료");
