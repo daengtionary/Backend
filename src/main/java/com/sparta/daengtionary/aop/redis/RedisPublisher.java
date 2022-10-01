@@ -1,11 +1,13 @@
 package com.sparta.daengtionary.aop.redis;
 
 
+import com.sparta.daengtionary.category.chat.domain.ChatMessage;
 import com.sparta.daengtionary.category.chat.dto.request.MessageRequestDto;
 import com.sparta.daengtionary.category.chat.dto.response.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,10 +22,7 @@ public class RedisPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(MessageRequestDto requestDto, MessageResponseDto responseDto) {
-        //채널에 메시지 전달  -> sub 클래스의 onMessage 메서드 자동 실행
-        System.out.println(" 발행 완료  ");
-        redisTemplate.convertAndSend(String.valueOf(requestDto.getRoomNo()), responseDto);
-        System.out.println(" 발행 완료11  ");
+    public void publish(MessageResponseDto responseDto) {
+        redisTemplate.convertAndSend(String.valueOf(responseDto.getRoomNo()), responseDto);
     }
 }
