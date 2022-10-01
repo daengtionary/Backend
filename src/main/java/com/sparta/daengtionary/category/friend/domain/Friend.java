@@ -72,12 +72,15 @@ public class Friend extends Timestamped {
     }
 
     public void NotOverCount() {
-        if (!(this.count >= this.maxCount)) {
+        if(this.count < this.maxCount){
             setCount();
-        } else if (this.count <= this.maxCount) {
+        }
+    }
+
+    public void finishCount(){
+        if (this.count >= this.maxCount) {
             setStatus();
         }
-
     }
 
     public void setCount() {

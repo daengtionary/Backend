@@ -33,7 +33,7 @@ public class FriendController {
         return friendService.friendUpdate(friendNo, requestDto);
     }
 
-    @PatchMapping("/count/{friendNo}")
+    @PostMapping("/count/{friendNo}")
     public ResponseEntity<?> friendCountUpdate(@PathVariable Long friendNo){
         return friendService.friendNotOverCount(friendNo);
     }
