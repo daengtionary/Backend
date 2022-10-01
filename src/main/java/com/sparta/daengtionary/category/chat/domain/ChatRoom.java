@@ -1,7 +1,7 @@
 package com.sparta.daengtionary.category.chat.domain;
 
 import com.sparta.daengtionary.aop.util.Timestamped;
-import com.sparta.daengtionary.category.member.domain.Member;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -10,6 +10,8 @@ import java.util.List;
 @Entity
 @Getter
 public class ChatRoom extends Timestamped {
+    private static final long serialVersionUID = 6494678977089006639L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomNo;
@@ -28,12 +30,10 @@ public class ChatRoom extends Timestamped {
 
     }
 
-    public static ChatRoom createChatRoom(String type, String title) {
-        ChatRoom chatRoom = new ChatRoom();
-
-            chatRoom.type = type;
-            chatRoom.title = title;
-
-        return chatRoom;
+    @Builder
+    public ChatRoom(Long roomNo, String type, String title) {
+        this.roomNo = roomNo;
+        this.type = type;
+        this.title = title;
     }
 }

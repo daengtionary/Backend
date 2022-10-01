@@ -54,7 +54,14 @@ public class ChatRoomService {
         ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
 
         // welcome message 저장
-        chatMessageRepository.save(ChatMessage.createMessageWelcome(chatRoom.getRoomNo()));
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomNo(chatRoom.getRoomNo())
+                .type("SYSTEM")
+                .sender("SYSTEM")
+                .message("대화가 시작되었습니다 :)")
+                .build();
+
+        chatMessageRepository.save(chatMessage);
 
         return responseBodyDto.success(ChatRoomResponseDto.builder()
                         .roomNo(chatRoom.getRoomNo())
@@ -69,10 +76,21 @@ public class ChatRoomService {
         Member member = tokenProvider.getMemberFromAuthentication();
 
         // chatRoom 생성
-        ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createChatRoom("group", requestDto.getTitle()));
+        ChatRoom chatRoom = ChatRoom.builder()
+                .type("group")
+                .title(requestDto.getTitle())
+                .build();
+
+        chatRoomRepository.save(chatRoom);
 
         // chatRoom member 정보 저장
-        chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, member));
+        ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .enterStatus(false)
+                .build();
+
+        chatRoomMemberRepository.save(chatRoomMember);
 
         return responseBodyDto.success(ChatRoomResponseDto.builder()
                         .roomNo(chatRoom.getRoomNo())
@@ -144,11 +162,30 @@ public class ChatRoomService {
         return chatRoomRepository.findByChatRoom(creator, target).orElseGet(
                 () -> {
                     // chatRoom 생성
-                    ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createChatRoom("personal", "1:1"));
+                    ChatRoom chatRoom = ChatRoom.builder()
+                            .type("personal")
+                            .title("1:1")
+                            .build();
 
-                    // 생성 및 대상 member 정보 저장
-                    chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, creator));
-                    chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, target));
+                    chatRoomRepository.save(chatRoom);
+
+                    // creator member 저장
+                    ChatRoomMember creatorRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(creator)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(creatorRoomMember);
+
+                    // target member 저장
+                    ChatRoomMember targetRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(target)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(targetRoomMember);
 
                     return chatRoom;
                 }
@@ -158,7 +195,17 @@ public class ChatRoomService {
     @Transactional
     public ChatRoomMember checkChatRoomMemberByMemberAndChatRoom(Member member, ChatRoom chatRoom) {
         return chatRoomMemberRepository.findByMemberAndChatRoom(member, chatRoom).orElseGet(
-                () -> chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, member))
+                () -> {
+                    ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(member)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(chatRoomMember);
+
+                    return chatRoomMember;
+                }
         );
     }
 
