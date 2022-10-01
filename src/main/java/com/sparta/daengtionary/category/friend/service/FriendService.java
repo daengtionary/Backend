@@ -96,9 +96,14 @@ public class FriendService {
     public ResponseEntity<?> friendNotOverCount(Long friendNo) {
         Friend friend = findByFriend(friendNo);
 
-        friend.NotOverCount();
 
-        return responseBodyDto.success("참가 성공");
+        if (friend.getStatus().equals("진행중")) {
+            friend.NotOverCount();
+            friend.finishCount();
+            return responseBodyDto.success("참가 성공");
+        }
+
+        return responseBodyDto.success("참가 실패");
     }
 
 
