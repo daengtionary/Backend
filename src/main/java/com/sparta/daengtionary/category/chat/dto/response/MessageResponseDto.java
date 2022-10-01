@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 public class MessageResponseDto {
     private Long messageNo;
 
+    private Long roomNo;
+
     private String type;
 
     private String sender;
@@ -26,24 +28,12 @@ public class MessageResponseDto {
     }
     
     @Builder
-    public MessageResponseDto(Long messageNo, String type, String sender, String message, LocalDateTime date) {
+    public MessageResponseDto(Long messageNo, Long roomNo, String type, String sender, String message, LocalDateTime date) {
         this.messageNo = messageNo;
+        this.roomNo = roomNo;
         this.type = type;
         this.sender = sender;
         this.message = message;
         this.date = date;
-    }
-
-
-    public MessageResponseDto createMessage(ChatMessage chatMessage) {
-        MessageResponseDto responseDto = new MessageResponseDto();
-
-        responseDto.messageNo = chatMessage.getMessageNo();
-        responseDto.type = chatMessage.getType();
-        responseDto.sender = chatMessage.getSender();
-        responseDto.message = chatMessage.getMessage();
-        responseDto.date = chatMessage.getCreatedAt();
-
-        return responseDto;
     }
 }

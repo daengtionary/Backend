@@ -12,7 +12,6 @@ import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +64,7 @@ public class ChatMessageService {
             if (!chatRoomMember.getEnterStatus()) {
                 // message 생성 & 저장
                 ChatMessage chatMessage = ChatMessage.builder()
+                        .roomNo(requestDto.getRoomNo())
                         .type(requestDto.getType())
                         .sender(requestDto.getSender())
                         .message(requestDto.getSender() + "님이 입장하였습니다 :)")
@@ -78,6 +78,7 @@ public class ChatMessageService {
                 // responseDto에 담기
                 MessageResponseDto responseDto = MessageResponseDto.builder()
                         .messageNo(chatMessage.getMessageNo())
+                        .roomNo(chatMessage.getRoomNo())
                         .type(chatMessage.getType())
                         .sender(chatMessage.getSender())
                         .message(chatMessage.getMessage())
@@ -85,12 +86,12 @@ public class ChatMessageService {
                         .build();
 
                 // 메세지 보내기
-                redisPublisher.publish(requestDto, responseDto);
-                // sendingOperations.convertAndSend("/sub/chat/room/" + requestDto.getRoomNo(), responseDto);
+                redisPublisher.publish(responseDto);
             }
         } else if (requestDto.getType().equals("TALK")) {
             // message 생성 & 저장
             ChatMessage chatMessage = ChatMessage.builder()
+                    .roomNo(requestDto.getRoomNo())
                     .type(requestDto.getType())
                     .sender(requestDto.getSender())
                     .message(requestDto.getMessage())
@@ -101,6 +102,7 @@ public class ChatMessageService {
             // responseDto에 담기
             MessageResponseDto responseDto = MessageResponseDto.builder()
                     .messageNo(chatMessage.getMessageNo())
+                    .messageNo(chatMessage.getMessageNo())
                     .type(chatMessage.getType())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
@@ -108,8 +110,7 @@ public class ChatMessageService {
                     .build();
 
             // 메세지 보내기
-            redisPublisher.publish(requestDto, responseDto);
-            // sendingOperations.convertAndSend("/sub/chat/room/" + requestDto.getRoomNo(), responseDto);
+            redisPublisher.publish(responseDto);
         }
     }
 }
