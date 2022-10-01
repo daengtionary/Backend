@@ -162,6 +162,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         friend.content,
                         friend.title,
                         friend.maxCount,
+                        friend.status,
                         friend.count,
                         friend.createdAt,
                         friend.modifiedAt
