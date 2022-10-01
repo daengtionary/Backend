@@ -87,6 +87,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         community.communityNo,
                         community.category,
                         community.member.nick,
+                        community.member.email,
                         community.title,
                         community.view,
                         dog.breed.as("breed"),
