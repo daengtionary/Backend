@@ -1,6 +1,7 @@
 package com.sparta.daengtionary.category.chat.service;
 
 import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
+import com.sparta.daengtionary.aop.redis.RedisPublisher;
 import com.sparta.daengtionary.category.chat.domain.ChatMessage;
 import com.sparta.daengtionary.category.chat.domain.ChatRoom;
 import com.sparta.daengtionary.category.chat.domain.ChatRoomMember;
@@ -26,7 +27,7 @@ public class ChatMessageService {
     private final ResponseBodyDto responseBodyDto;
     private final MemberService memberService;
     private final ChatRoomService chatRoomService;
-    private final SimpMessageSendingOperations sendingOperations;
+    private final RedisPublisher redisPublisher;
 
     // 메세지 가져오기
     public ResponseEntity<?> getMessages(HttpServletRequest request, Long roomNo) {
@@ -38,7 +39,14 @@ public class ChatMessageService {
 
         // response List에 추가
         for (ChatMessage chatMessage : messageList) {
-            messageResponseDtoList.add(MessageResponseDto.createMessage(chatMessage));
+            messageResponseDtoList.add(MessageResponseDto.builder()
+                    .messageNo(chatMessage.getMessageNo())
+                    .type(chatMessage.getType())
+                    .sender(chatMessage.getSender())
+                    .message(chatMessage.getMessage())
+                    .date(chatMessage.getCreatedAt())
+                    .build()
+            );
         }
 
         return responseBodyDto.success(messageResponseDtoList, "메세지 조회 완료");
@@ -56,26 +64,52 @@ public class ChatMessageService {
             // enterStatus가 false일 경우만 저장
             if (!chatRoomMember.getEnterStatus()) {
                 // message 생성 & 저장
-                ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.createMessageEnter(requestDto));
+                ChatMessage chatMessage = ChatMessage.builder()
+                        .type(requestDto.getType())
+                        .sender(requestDto.getSender())
+                        .message(requestDto.getSender() + "님이 입장하였습니다 :)")
+                        .build();
+
+                chatMessageRepository.save(chatMessage);
 
                 // enterStatus true로 변경
                 chatRoomMember.updateEnterStatus();
 
                 // responseDto에 담기
-                MessageResponseDto responseDto = MessageResponseDto.createMessage(chatMessage);
+                MessageResponseDto responseDto = MessageResponseDto.builder()
+                        .messageNo(chatMessage.getMessageNo())
+                        .type(chatMessage.getType())
+                        .sender(chatMessage.getSender())
+                        .message(chatMessage.getMessage())
+                        .date(chatMessage.getCreatedAt())
+                        .build();
 
                 // 메세지 보내기
-                sendingOperations.convertAndSend("/queue/chat/room/" + requestDto.getRoomNo(), responseDto);
+                redisPublisher.publish(requestDto, responseDto);
+                // sendingOperations.convertAndSend("/sub/chat/room/" + requestDto.getRoomNo(), responseDto);
             }
-        } else if (requestDto.getType().equals("TALK")){
+        } else if (requestDto.getType().equals("TALK")) {
             // message 생성 & 저장
-            ChatMessage chatMessage = chatMessageRepository.save(ChatMessage.createMessageTalk(requestDto));
+            ChatMessage chatMessage = ChatMessage.builder()
+                    .type(requestDto.getType())
+                    .sender(requestDto.getSender())
+                    .message(requestDto.getMessage())
+                    .build();
+
+            chatMessageRepository.save(chatMessage);
 
             // responseDto에 담기
-            MessageResponseDto responseDto = MessageResponseDto.createMessage(chatMessage);
+            MessageResponseDto responseDto = MessageResponseDto.builder()
+                    .messageNo(chatMessage.getMessageNo())
+                    .type(chatMessage.getType())
+                    .sender(chatMessage.getSender())
+                    .message(chatMessage.getMessage())
+                    .date(chatMessage.getCreatedAt())
+                    .build();
 
             // 메세지 보내기
-            sendingOperations.convertAndSend("/queue/chat/room/" + requestDto.getRoomNo(), responseDto);
+            redisPublisher.publish(requestDto, responseDto);
+            // sendingOperations.convertAndSend("/sub/chat/room/" + requestDto.getRoomNo(), responseDto);
         }
     }
 }
