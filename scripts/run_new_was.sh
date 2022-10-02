@@ -24,8 +24,9 @@ REPOSITORY=/home/ubuntu/daengtionary
 # shellcheck disable=SC2164
 cd $REPOSITORY
 
-
-JAR_PATH=$REPOSITORY/build/libs/app.jar
+# shellcheck disable=SC2010
+JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'app.jar' | tail -n 1)
+JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
 nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} >/home/ubuntu/daengtionary/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
