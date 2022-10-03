@@ -68,7 +68,31 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 
 <h2>트러블 슈팅</h2>
 
+<h3>쿼리 조회시 속도 향상</h3>
+
+```
+문제 상황 :  조회 쿼리를 요청했을 때 속도 저하
+
+전체 쿼리 조회와 상세 페이지 조회 쿼리 속도 개선을 했습니다.
+
+우선 전체 쿼리 조회는 pageable을 이용해서 페이징처리를 했습니다.
+
+그러나 offset을 사용해서 데이터가 많이 없는데도 불구하고 0.4초나 걸리는 현상이 발생하게 되었습니다.
+
+offset을 이용하면 예를들어 10020번째 데이터를 조회하려고 한다면 10000개의 데이터를 다 조회 한 이후에 20개의 데이터를 조회하는 결과가 이루어 진다 하여 
+
+no offset 방식으로 개선 해서 속도 개선을 했습니다.
+
+```
+
+![전체_쿼리_개선_전](https://user-images.githubusercontent.com/108968316/193590414-d546d84a-4575-4fea-bbcc-40390d071dea.jpg)
+![nooffest](https://user-images.githubusercontent.com/108968316/193590433-ebd2befd-68af-4668-9924-fb2c0da47baf.jpg)
+
+
+
 <h3> build시 속도 저하</h3>
+
+```
 문제 상황 :
 - 점점 프로젝트를 진행할수록 build 시에 시간이 늘어나는것으로 보여 
     
@@ -76,15 +100,20 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 해결 방안 : 
  
  gitaction에서 cache를 이용해서 처리하는 방법이 있다는 것을 알고 바로 적용을 해서
+ 
+ 아래와 같은 식으로 약 20초의 속도를 감소시키는데에 성공했습니다
+ ```
+ 
  ![cahsh_00000](https://user-images.githubusercontent.com/108968316/193587710-98c87516-7896-46b8-90a0-3ff7b821e685.jpg)
 ![cahsh_00001](https://user-images.githubusercontent.com/108968316/193587724-8d11feec-853e-4a85-951a-9876218a6a02.jpg)
 
-위와 같은 식으로 약 20초의 속도를 감소시키는데에 성공했습니다.
+.
  
 
 
 <h3> 엔진엑스를 이용한 무중단 배포중 임베디드 레디스 이용</h3>
 
+```
 문제 상황 : 
 
 - nginx를 이용해서 무중단 배포중에 임베디드 레디스를 사용해서 챗팅기능을 구현하는데
@@ -96,6 +125,7 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 - 임베디드 레디스가 작동중에는 새로운 서버를 띄울수 없는점을 발견했습니다.
 
 그래서 새로운 서버가 배포 할 때 레디스도 같이 종료후 실행을 하는 것으로 처리했습니다.
+```
 
 ![error2](https://user-images.githubusercontent.com/108968316/193588930-2af3c4ce-b680-4ed3-a1cf-36ee82c2e438.jpg)
 ![error](https://user-images.githubusercontent.com/108968316/193588936-c08cdcff-49a7-4954-959f-201c92356ccf.jpg)
