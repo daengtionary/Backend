@@ -17,17 +17,21 @@ TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-
 
 if [ ! -z ${TARGET_PID} ]; then
   echo "> Kill WAS running at ${TARGET_PORT}."
-  sudo kill -9 ${TARGET_PID}
+  sudo kill ${TARGET_PID}
 fi
 
-REPOSITORY=/home/ubuntu/daengtionary
-# shellcheck disable=SC2164
-cd $REPOSITORY
+JAR_NAME=$(ls -tr /home/ubuntu/daengtionary/build/libs/*.jar | tail -n 1)
+echo "> JAR Name: $JAR_NAME"
+chmod +x $JAR_NAME
 
-# shellcheck disable=SC2010
-JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'app.jar' | tail -n 1)
-JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+#REPOSITORY=/home/ubuntu/daengtionary
+## shellcheck disable=SC2164
+#cd $REPOSITORY
+#
+## shellcheck disable=SC2010
+#JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'app.jar' | tail -n 1)
+#JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
 
-nohup java -jar -Dserver.port=${TARGET_PORT} ${JAR_PATH} >/home/ubuntu/daengtionary/nohup.out 2>&1 &
+nohup java -jar -Dserver.port=${TARGET_PORT} $JAR_NAME > /home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
