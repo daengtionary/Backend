@@ -6,6 +6,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.sparta.daengtionary.category.community.dto.response.CommunityResponseDto;
+import com.sparta.daengtionary.category.friend.dto.response.FriendResponseDto;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.dto.response.MapResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
@@ -24,8 +25,8 @@ import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
 import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
 import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
-import static com.sparta.daengtionary.category.trade.domain.QTradeReview.tradeReview;
 import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
+import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
 
 @Repository
 public class PostRepositorySupport extends QuerydslRepositorySupport {
@@ -50,10 +51,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         map.title,
                         map.address,
                         map.view,
+                        map.content,
                         mapReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         mapImg.mapImgUrl,
-                        mapInfo1.mapInfo,
                         map.createdAt,
                         map.modifiedAt
                 ))
@@ -84,10 +85,13 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .select(Projections.fields(
                         CommunityResponseDto.class,
                         community.communityNo,
+                        community.category,
                         community.member.nick,
+                        community.member.email,
                         community.title,
                         community.view,
                         dog.breed.as("breed"),
+                        dog.image,
                         communityReview.countDistinct().as("reviewCount"),
                         wish.countDistinct().as("wishCount"),
                         communityImg1.communityImg,
@@ -103,10 +107,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .on(community.communityNo.eq(wish.community.communityNo))
                 .leftJoin(dog)
                 .on(community.member.memberNo.eq(dog.member.memberNo))
-                .where(eqTitle(title, "community"),
-                        eqContent(content, "community"),
+                .where(eqCategory(category, "community"),
+                        eqTitle(title, "community"),
                         eqNick(nick, "community"),
-                        eqCategory(category, "community"))
+                        eqContent(content, "community"))
                 .groupBy(community.communityNo)
                 .orderBy(boardSort(sort, "community"), community.communityNo.desc())
                 .limit(pagesize)
@@ -125,7 +129,8 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         trade.title,
                         trade.content,
                         trade.view,
-                        tradeReview.countDistinct().as("reviewCount"),
+                        trade.price,
+                        trade.postStatus,
                         wish.countDistinct().as("wishCount"),
                         tradeImg1.tradeImg,
                         trade.createdAt,
@@ -134,8 +139,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .from(trade)
                 .leftJoin(tradeImg1)
                 .on(trade.tradeNo.eq(tradeImg1.trade.tradeNo))
-                .leftJoin(tradeReview)
-                .on(trade.tradeNo.eq(tradeReview.trade.tradeNo))
                 .leftJoin(wish)
                 .on(trade.tradeNo.eq(wish.trade.tradeNo))
                 .where(eqPostStatus(postStatus),
@@ -151,8 +154,37 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     }
 
+    public List<FriendResponseDto> findAllFriend(String category, String address, String content, String title, int pagenum, int pagesize) {
+        return queryFactory
+                .select(Projections.fields(
+                        FriendResponseDto.class,
+                        friend.friendNo,
+                        friend.category,
+                        friend.address,
+                        friend.content,
+                        friend.title,
+                        friend.maxCount,
+                        friend.status,
+                        friend.count,
+                        friend.createdAt,
+                        friend.modifiedAt
+                ))
+                .from(friend)
+                .where(eqCategory(category, "friend"),
+                        eqAddress(address, "friend"),
+                        eqTitle(title, "friend"),
+                        eqContent(content, "friend")
+                )
+                .groupBy(friend.friendNo)
+                .orderBy(friend.createdAt.desc().nullsLast())
+                .limit(pagesize)
+                .offset((long) pagenum * pagesize)
+                .fetch();
+    }
+
     private BooleanExpression eqCategory(String category, String tableName) {
         if (category.isEmpty()) return null;
+        if (tableName.equals("friend")) return friend.category.eq(category);
         if (tableName.equals("map")) return map.category.eq(category);
         if (tableName.equals("community")) return community.category.eq(category);
         return null;
@@ -162,8 +194,10 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         return postStatus.isEmpty() ? null : trade.postStatus.eq(postStatus);
     }
 
+
     private BooleanExpression eqAddress(String address, String tableName) {
         if (address.isEmpty()) return null;
+        if (tableName.equals("friend")) return friend.address.contains(address);
         if (tableName.equals("map")) return map.address.contains(address);
         if (tableName.equals("trade")) return trade.address.contains(address);
         return null;
@@ -171,6 +205,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     private BooleanExpression eqTitle(String title, String tableName) {
         if (title.isEmpty()) return null;
+        if (tableName.equals("friend")) return friend.title.contains(title);
         if (tableName.equals("map")) return map.title.contains(title);
         if (tableName.equals("community")) return community.title.contains(title);
         if (tableName.equals("trade")) return trade.title.contains(title);
@@ -179,6 +214,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
 
     private BooleanExpression eqContent(String content, String tableName) {
         if (content.isEmpty()) return null;
+        if (tableName.equals("friend")) return friend.content.contains(content);
         if (tableName.equals("map")) return map.content.contains(content);
         if (tableName.equals("community")) return community.content.contains(content);
         if (tableName.equals("trade")) return trade.content.contains(content);
@@ -198,13 +234,13 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
         if (!sort.isEmpty()) {
             if (sort.equals("new")) {
                 if (tableName.equals("map")) {
-                    return map.mapNo.desc().nullsLast();
+                    return map.createdAt.desc().nullsLast();
                 }
                 if (tableName.equals("community")) {
-                    return community.communityNo.desc().nullsLast();
+                    return community.createdAt.desc().nullsLast();
                 }
                 if (tableName.equals("trade")) {
-                    return trade.tradeNo.desc().nullsLast();
+                    return trade.createdAt.desc().nullsLast();
                 }
             } else if (sort.equals("popular")) {
                 if (tableName.equals("map")) {

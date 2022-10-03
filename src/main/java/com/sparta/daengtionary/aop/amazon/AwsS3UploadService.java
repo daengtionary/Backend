@@ -1,11 +1,7 @@
 package com.sparta.daengtionary.aop.amazon;
 
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -17,7 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -29,32 +24,14 @@ import java.util.UUID;
 public class AwsS3UploadService {
     private final AmazonS3 amazonS3;
 
-    @Value("${cloud.aws.credentials.access-key}")
-    private String accessKey;
-
-    @Value("${cloud.aws.credentials.secret-key}")
-    private String secretKey;
-
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.region.static}")
-    private String region;
-
-
-    @PostConstruct
-    public AmazonS3Client amazonS3Client() {
-        BasicAWSCredentials awsCredentials = new BasicAWSCredentials(accessKey, secretKey);
-        return (AmazonS3Client) AmazonS3ClientBuilder.standard()
-                .withRegion(region)
-                .withCredentials(new AWSStaticCredentialsProvider(awsCredentials))
-                .build();
-    }
-
     ///map/image
-    public List<String> uploadListImg(List<MultipartFile> multipartFiles, String path) {
+    public List<String> uploadListImg(List<MultipartFile> multipartFiles) {
+        if (multipartFiles.isEmpty()) return null;
+
         List<String> imgUrlList = new ArrayList<>();
-        vaildatePath(path);
 
         for (MultipartFile file : multipartFiles) {
             String fileName = createFileName(file.getOriginalFilename());
@@ -63,9 +40,9 @@ public class AwsS3UploadService {
             objectMetadata.setContentType(file.getContentType());
 
             try (InputStream inputStream = file.getInputStream()) {
-                amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
+                amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                         .withCannedAcl(CannedAccessControlList.PublicRead));
-                imgUrlList.add(amazonS3.getUrl(bucket + path, fileName).toString());
+                imgUrlList.add(amazonS3.getUrl(bucket, fileName).toString());
             } catch (IOException e) {
                 throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
             }
@@ -74,9 +51,8 @@ public class AwsS3UploadService {
     }
 
     //
-    public String uploadImage(MultipartFile multipartFile, String path) {
+    public String uploadImage(MultipartFile multipartFile) {
         String image = "";
-        vaildatePath(path);
 
         String fileName = createFileName(multipartFile.getOriginalFilename());
         ObjectMetadata objectMetadata = new ObjectMetadata();
@@ -84,19 +60,13 @@ public class AwsS3UploadService {
         objectMetadata.setContentType(multipartFile.getContentType());
 
         try (InputStream inputStream = multipartFile.getInputStream()) {
-            amazonS3.putObject(new PutObjectRequest(bucket + path, fileName, inputStream, objectMetadata)
+            amazonS3.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
-            image = amazonS3.getUrl(bucket + path, fileName).toString();
+            image = amazonS3.getUrl(bucket, fileName).toString();
         } catch (IOException e) {
             throw new CustomException(ErrorCode.IMAGE_UPLOAD_ERROR);
         }
         return image;
-    }
-
-    public void vaildatePath(String path) {
-        if (path == null) {
-            throw new CustomException(ErrorCode.WRONG_IMAGE_PATH);
-        }
     }
 
     public void deleteFile(String fileName) {
@@ -124,7 +94,39 @@ public class AwsS3UploadService {
         }
         return fileName.substring(fileName.lastIndexOf("."));
 
-
     }
 
+//    MultipartFile resizeImage(String fileName, String fileFormatName, MultipartFile originalImage, int targetWidth) {
+//        try {
+//            BufferedImage image = ImageIO.read(originalImage.getInputStream());
+//
+//            int originWidth = image.getWidth();
+//            int originHeight = image.getHeight();
+//
+//            if (originWidth < targetWidth) {
+//                return originalImage;
+//            }
+//
+//            MarvinImage marvinImage = new MarvinImage(image);
+//
+//            Scale scale = new Scale();
+//            scale.load();
+//            scale.setAttribute("newWidth", targetWidth);
+//            scale.setAttribute("newHeight", targetWidth * originHeight / originWidth);
+//            scale.process(marvinImage.clone(), marvinImage, null, null, false);
+//
+//            BufferedImage imageNoAlpha = marvinImage.getBufferedImageNoAlpha();
+//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//            ImageIO.write(imageNoAlpha, fileFormatName, baos);
+//            baos.flush();
+//            ;
+//
+//            return new MockMultipartFile(fileName, baos.toByteArray());
+//
+//
+//        } catch (IOException e) {
+//            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+//        }
 }
+
+
