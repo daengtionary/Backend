@@ -8,10 +8,9 @@ name: deploy
 #      - 'main'
 #      - 'release'
 on:
-  pull_request:
+  push:
     branches:
-      - 'main'
-      - 'release'
+      - 'temp'
 
 permissions:
   contents: read
