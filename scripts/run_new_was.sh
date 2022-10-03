@@ -17,7 +17,9 @@ TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-
 
 if [ ! -z ${TARGET_PID} ]; then
   echo "> Kill WAS running at ${TARGET_PORT}."
-  sudo kill -9 ps -ef | grep 'redis'
+  # shellcheck disable=SC2046
+  # shellcheck disable=SC2006
+  kill -9 `ps -ef|grep redis|awk '{print $2}'`
   sudo kill -9 ${TARGET_PID}
 fi
 
