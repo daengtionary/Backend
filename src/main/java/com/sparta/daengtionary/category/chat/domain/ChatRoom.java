@@ -5,11 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Getter
-public class ChatRoom extends Timestamped {
+public class ChatRoom extends Timestamped implements Serializable {
     private static final long serialVersionUID = 6494678977089006639L;
 
     @Id
@@ -31,7 +32,7 @@ public class ChatRoom extends Timestamped {
     }
 
     @Builder
-    public ChatRoom(Long roomNo, String type, String title) {
+    public ChatRoom(Long roomNo, String roomKey, String type, String title) {
         this.roomNo = roomNo;
         this.type = type;
         this.title = title;

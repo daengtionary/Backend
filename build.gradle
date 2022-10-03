@@ -53,7 +53,7 @@ dependencies {
     implementation 'org.webjars:bootstrap:3.3.7'
     implementation 'org.webjars:jquery:3.1.1-1'
 
-    //escape4
+    // escape4
     implementation 'org.apache.commons:commons-text:1.8'
 
     // Redis
@@ -66,6 +66,10 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.1'
+
+    //자바 역직렬화 문제 해결 패키지
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
 
     annotationProcessor(

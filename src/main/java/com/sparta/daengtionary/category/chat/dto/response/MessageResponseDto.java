@@ -10,17 +10,11 @@ import java.time.LocalDateTime;
 @Getter
 public class MessageResponseDto {
     private Long messageNo;
-
     private Long roomNo;
-
     private String type;
-
     private String sender;
-
     private String message;
-
-    @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
-    private LocalDateTime date;
+    private String date;
     
     
     public MessageResponseDto() {
@@ -28,7 +22,8 @@ public class MessageResponseDto {
     }
     
     @Builder
-    public MessageResponseDto(Long messageNo, Long roomNo, String type, String sender, String message, LocalDateTime date) {
+    public MessageResponseDto(Long messageNo, Long roomNo, String type,
+                              String sender, String message, String date) {
         this.messageNo = messageNo;
         this.roomNo = roomNo;
         this.type = type;
