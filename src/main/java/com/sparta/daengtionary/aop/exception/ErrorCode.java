@@ -41,6 +41,9 @@ public enum ErrorCode {
     MAP_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "NOT_FOUND", "해당 게시물을 찾을 수 없습니다."),
     MAP_WRONG_ACCESS(HttpStatus.BAD_REQUEST.value(), "BAD_REQUEST", "본인의 게시글이 아닙니다."),
 
+    //friend
+    FRIEND_IS_NOT_MEMBER(HttpStatus.BAD_REQUEST.value(),"BAD_REQUEST","본인은 참가할수 없습니다."),
+
 
     //댓글
     REVIEW_NOT_FOUND(HttpStatus.NOT_FOUND.value(), "NOT_FOUND", "해당 게시물을 찾을 수 없습니다."),

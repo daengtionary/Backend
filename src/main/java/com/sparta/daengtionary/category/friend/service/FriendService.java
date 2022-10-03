@@ -94,11 +94,12 @@ public class FriendService {
 
     @Transactional
     public ResponseEntity<?> friendNotOverCount(Long friendNo) {
+        Member member = tokenProvider.getMemberFromAuthentication();
         Friend friend = findByFriend(friendNo);
 
 
         if (friend.getStatus().equals("진행중")) {
-            friend.NotOverCount();
+            friend.NotOverCount(member);
             friend.finishCount();
             return responseBodyDto.success("참가 성공");
         }
