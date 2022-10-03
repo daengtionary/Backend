@@ -1,7 +1,6 @@
 package com.sparta.daengtionary.category.chat.domain;
 
 import com.sparta.daengtionary.category.member.domain.Member;
-import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -9,8 +8,6 @@ import javax.persistence.*;
 @Entity
 @Getter
 public class ChatRoomMember {
-    private static final long serialVersionUID = 6494678977089006639L;
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roomMemberNo;
@@ -31,12 +28,15 @@ public class ChatRoomMember {
 
     }
 
-    @Builder
-    public ChatRoomMember(Long roomMemberNo, ChatRoom chatRoom, Member member, Boolean enterStatus) {
-        this.roomMemberNo = roomMemberNo;
-        this.chatRoom = chatRoom;
-        this.member = member;
-        this.enterStatus = enterStatus;
+
+    public static ChatRoomMember createChatRoomMember(ChatRoom chatRoom, Member member) {
+        ChatRoomMember chatRoomMember = new ChatRoomMember();
+
+        chatRoomMember.chatRoom = chatRoom;
+        chatRoomMember.member = member;
+        chatRoomMember.enterStatus = false;
+
+        return chatRoomMember;
     }
 
     public void updateEnterStatus() {

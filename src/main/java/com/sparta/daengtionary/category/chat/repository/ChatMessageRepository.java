@@ -8,6 +8,5 @@ import java.util.Optional;
 
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
     List<ChatMessage> findAllByRoomNo(Long roomNo);
-    Boolean existsByRoomNo(long roomNo);
     Optional<ChatMessage> findTop1ByRoomNoOrderByMessageNoDesc(Long roomNo);
 }

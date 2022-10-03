@@ -16,9 +16,8 @@ public class TradeResponseDto {
     private String title;
     private String postStatus;
     private int view;
-
-    private int price;
     private String tradeImg;
+    private Long reviewCount;
     private Long wishCount;
     @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
@@ -26,15 +25,15 @@ public class TradeResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public TradeResponseDto(Long tradeNo, String nick, String title, String postStatus, int view, String tradeImg,int price,
-                            Long wishCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+    public TradeResponseDto(Long tradeNo, String nick, String title, String postStatus, int view, String tradeImg,
+                            Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.tradeNo = tradeNo;
         this.nick = nick;
         this.title = title;
         this.postStatus = postStatus;
+        this.reviewCount = reviewCount;
         this.wishCount = wishCount;
         this.view = view;
-        this.price = price;
         this.tradeImg = tradeImg;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;

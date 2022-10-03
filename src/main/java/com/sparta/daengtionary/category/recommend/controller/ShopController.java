@@ -41,9 +41,9 @@ public class ShopController {
     }
 
     @GetMapping("/{shopNo}")
-    public ResponseEntity<?> getShop(@PathVariable Long shopNo, @RequestParam int pagenum, @RequestParam int pagesize) {
+    public ResponseEntity<?> getShop(@PathVariable Long shopNo) {
         mapService.mapViewUpdate(shopNo);
-        return mapService.getAllMap(shopNo, pagenum, pagesize);
+        return mapService.getAllMap(shopNo);
     }
 
 
