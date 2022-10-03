@@ -45,6 +45,7 @@ public class ChatMessageService {
         for (ChatMessage chatMessage : messageList) {
             messageResponseDtoList.add(MessageResponseDto.builder()
                     .messageNo(chatMessage.getMessageNo())
+                    .roomNo(chatMessage.getRoomNo())
                     .type(chatMessage.getType())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
