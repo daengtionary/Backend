@@ -18,6 +18,7 @@ import java.util.List;
 import static com.sparta.daengtionary.category.community.domain.QCommunity.community;
 import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
 import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
+import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
@@ -26,7 +27,6 @@ import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapRe
 import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
 import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
 import static com.sparta.daengtionary.category.wish.domain.QWish.wish;
-import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
 
 @Repository
 public class PostRepositorySupport extends QuerydslRepositorySupport {

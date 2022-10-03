@@ -35,10 +35,10 @@ public class TradeService {
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
     private final WishRepository wishRepository;
+
     @Transactional
     public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-
 
 
         Trade trade = Trade.builder()
@@ -53,8 +53,8 @@ public class TradeService {
                 .build();
 
         tradeRepository.save(trade);
-        if(multipartFiles != null){
-            if(multipartFiles.get(0).getSize() > 0){
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
                 List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles);
                 List<TradeImg> tradeImgs = new ArrayList<>();
                 for (String img : tradeImgList) {
@@ -69,7 +69,6 @@ public class TradeService {
                 tradeImgRepository.saveAll(tradeImgs);
             }
         }
-
 
 
         return responseBodyDto.success("생성 완료");
@@ -162,8 +161,8 @@ public class TradeService {
             s3UploadService.deleteFile(i.getTradeImg());
         }
         tradeImgRepository.deleteAll(deleteImg);
-        if(multipartFiles != null){
-            if(multipartFiles.get(0).getSize() > 0){
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
                 List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles);
 
                 List<TradeImg> saveImg = new ArrayList<>();
@@ -215,5 +214,4 @@ public class TradeService {
                 () -> new CustomException(ErrorCode.MAP_NOT_FOUND)
         );
     }
-
 }
