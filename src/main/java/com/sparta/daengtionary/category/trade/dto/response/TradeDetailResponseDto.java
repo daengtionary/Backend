@@ -13,6 +13,7 @@ import java.util.List;
 public class TradeDetailResponseDto {
     private Long tradeNo;
     private String nick;
+    private Long memberNo;
     private String title;
     private String address;
     private String stuffStatus;
@@ -29,7 +30,7 @@ public class TradeDetailResponseDto {
     private LocalDateTime modifiedAt;
 
     @Builder
-    public TradeDetailResponseDto(Long tradeNo, String nick, String title, Long wishCount,
+    public TradeDetailResponseDto(Long tradeNo, String nick, String title, Long wishCount,Long memberNo,
                                   String address, String stuffStatus, String exchange, String postStatus,
                                   String content, int price, int view, List<String> tradeImgUrl,
                                   LocalDateTime createdAt, LocalDateTime modifiedAt) {
@@ -39,6 +40,7 @@ public class TradeDetailResponseDto {
         this.content = content;
         this.price = price;
         this.wishCount = wishCount;
+        this.memberNo = memberNo;
         this.address = address;
         this.exchange = exchange;
         this.stuffStatus = stuffStatus;
