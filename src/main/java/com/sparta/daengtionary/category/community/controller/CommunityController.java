@@ -35,10 +35,11 @@ public class CommunityController {
         return service.getSearchCommunity(category, title, content, nick, sort, pagenum, pagesize);
     }
 
+
     @GetMapping("/{comNo}")
-    public ResponseEntity<?> getCommunity(@PathVariable Long comNo, @RequestParam int pagenum, @RequestParam int pagesize) {
+    public ResponseEntity<?> getCommunity(@PathVariable Long comNo) {
         service.communityViewUpdate(comNo);
-        return service.getCommunity(comNo, pagenum, pagesize);
+        return service.getCommunity(comNo);
     }
 
     @PatchMapping("/{comNo}")
