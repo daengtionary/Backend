@@ -19,7 +19,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,17 +30,19 @@ jobs:
           java-version: "11"
           distribution: "temurin"
 
-#      - name: action-slack
-#        uses: 8398a7/action-slack@v3
-#        with:
-#            status: ${{ job.status }}
-#            author_name: "daengtionary"
-#            fields: repo,commit,message,author,pullRequest,action
-#            mention: here
-#            if_mention: failure,cancelled
-#        env:
-#            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#        if: always()
+
+      #      - name: action-slack
+      #        uses: 8398a7/action-slack@v3
+      #        with:
+      #            status: ${{ job.status }}
+      #            author_name: "daengtionary"
+      #            fields: repo,commit,message,author,pullRequest,action
+      #            mention: here
+      #            if_mention: failure,cancelled
+      #        env:
+      #            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      #        if: always()
+
 
 
 
@@ -53,14 +55,14 @@ jobs:
           echo "${{ secrets.PROPERTIES }}" >> ./application.properties
         shell: bash
 
-#      - uses: actions/cache@v3
-#        with:
-#          path: |
-#            ~/.gradle/caches
-#            ~/.gradle/wrapper
-#          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-#          restore-keys: |
-#            ${{ runner.os }}-gradle-
+      #      - uses: actions/cache@v3
+      #        with:
+      #          path: |
+      #            ~/.gradle/caches
+      #            ~/.gradle/wrapper
+      #          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+      #          restore-keys: |
+      #            ${{ runner.os }}-gradle-
 
       #gradlew 파일 실행권한 설정
       - name: Grant execute permission for gradlew
