@@ -1,15 +1,14 @@
 package com.sparta.daengtionary.category.chat.domain;
 
-import com.sparta.daengtionary.aop.util.Timestamped;
-import com.sparta.daengtionary.category.chat.dto.request.MessageRequestDto;
 import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Getter
-public class ChatMessage extends Timestamped {
+public class ChatMessage implements Serializable {
     private static final long serialVersionUID = 6494678977089006639L;
 
     @Id
@@ -28,17 +27,22 @@ public class ChatMessage extends Timestamped {
     @Column(nullable = false)
     private String message;
 
+    @Column(nullable = false)
+    private String date;
+
 
     public ChatMessage() {
 
     }
 
     @Builder
-    public ChatMessage(Long messageNo, Long roomNo, String type, String message, String sender) {
+    public ChatMessage(Long messageNo, Long roomNo, String roomKey, String type,
+                       String message, String sender, String date) {
         this.messageNo = messageNo;
         this.roomNo = roomNo;
         this.type = type;
         this.sender = sender;
         this.message = message;
+        this.date = date;
     }
 }

@@ -10,6 +10,7 @@ import com.sparta.daengtionary.category.chat.dto.request.ChatRoomRequestDto;
 import com.sparta.daengtionary.category.chat.dto.response.ChatRoomResponseDto;
 import com.sparta.daengtionary.category.chat.repository.ChatMessageRepository;
 import com.sparta.daengtionary.category.chat.repository.ChatRoomMemberRepository;
+import com.sparta.daengtionary.category.chat.repository.ChatRoomRedisRepository;
 import com.sparta.daengtionary.category.chat.repository.ChatRoomRepository;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.dto.response.MemberResponseDto;
@@ -20,8 +21,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.UUID;
 
 import static com.sparta.daengtionary.aop.exception.ErrorCode.*;
 
@@ -31,6 +36,7 @@ public class ChatRoomService {
     private final TokenProvider tokenProvider;
     private final MemberService memberService;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomRedisRepository chatRoomRedisRepository;
     private final ChatRoomMemberRepository chatRoomMemberRepository;
     private final ChatMessageRepository chatMessageRepository;
     private final ResponseBodyDto responseBodyDto;
@@ -53,12 +59,20 @@ public class ChatRoomService {
         // chatRoom 있으면 가져오고 없으면 생성 후 member 저장
         ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
 
+        // redis 저장
+        chatRoomRedisRepository.createChatRoom(chatRoom);
+
+        // 날짜 역직렬화 오류로 날짜 생성
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
+
         // welcome message 저장
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomNo(chatRoom.getRoomNo())
                 .type("SYSTEM")
                 .sender("SYSTEM")
                 .message("대화가 시작되었습니다 :)")
+                .date(date)
                 .build();
 
         chatMessageRepository.save(chatMessage);
@@ -82,6 +96,9 @@ public class ChatRoomService {
                 .build();
 
         chatRoomRepository.save(chatRoom);
+
+        // redis 저장
+        chatRoomRedisRepository.createChatRoom(chatRoom);
 
         // chatRoom member 정보 저장
         ChatRoomMember chatRoomMember = ChatRoomMember.builder()
@@ -147,7 +164,7 @@ public class ChatRoomService {
                             .roomNo(chatRoom.getRoomNo())
                             .type(chatRoom.getType())
                             .chatRoomMembers(memberResponseDtoList)
-                            .lastDate(chatMessage.getCreatedAt())
+                            .lastDate(chatMessage.getDate())
                             .lastMessage(chatMessage.getMessage())
                             .build()
             );
@@ -163,6 +180,7 @@ public class ChatRoomService {
                 () -> {
                     // chatRoom 생성
                     ChatRoom chatRoom = ChatRoom.builder()
+                            .roomKey(UUID.randomUUID().toString())
                             .type("personal")
                             .title("1:1")
                             .build();

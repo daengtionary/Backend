@@ -1,32 +1,41 @@
 package com.sparta.daengtionary.category.friend.service;
 
+import com.sparta.daengtionary.aop.amazon.AwsS3UploadService;
 import com.sparta.daengtionary.aop.dto.ResponseBodyDto;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.friend.domain.Friend;
+import com.sparta.daengtionary.category.friend.domain.FriendImg;
 import com.sparta.daengtionary.category.friend.dto.request.FriendRequestDto;
 import com.sparta.daengtionary.category.friend.dto.response.FriendResponseDto;
+import com.sparta.daengtionary.category.friend.repository.FriendImgRepository;
 import com.sparta.daengtionary.category.friend.repository.FriendRepository;
 import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.trade.domain.TradeImg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class FriendService {
     private final FriendRepository friendRepository;
+    private final AwsS3UploadService s3UploadService;
+    private final FriendImgRepository friendImgRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
 
     @Transactional
-    public ResponseEntity<?> createFriend(FriendRequestDto requestDto) {
+    public ResponseEntity<?> createFriend(FriendRequestDto requestDto,
+                                          List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
 
         Friend friend = Friend.builder()
@@ -38,6 +47,23 @@ public class FriendService {
                 .category(requestDto.getCategory())
                 .build();
         friendRepository.save(friend);
+
+        if(multipartFiles != null){
+            if(multipartFiles.get(0).getSize() > 0){
+                List<String> friendImgList = s3UploadService.uploadListImg(multipartFiles);
+                List<FriendImg> friendImgs = new ArrayList<>();
+                for (String img : friendImgList) {
+                    friendImgs.add(
+                            FriendImg.builder()
+                                    .friend(friend)
+                                    .friendImg(img)
+                                    .build()
+                    );
+                }
+
+                friendImgRepository.saveAll(friendImgs);
+            }
+        }
 
         return responseBodyDto.success("생성 완료");
     }
@@ -52,7 +78,6 @@ public class FriendService {
     @Transactional(readOnly = true)
     public ResponseEntity<?> getFriend(Long friendNo) {
         Friend friend = findByFriend(friendNo);
-
 
         return responseBodyDto.success(FriendResponseDto.builder()
                         .category(friend.getCategory())
