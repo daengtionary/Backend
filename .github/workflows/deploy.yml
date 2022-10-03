@@ -1,16 +1,10 @@
-#deploy.yml
 
 name: deploy
 
-#on:
-#  pull_request:
-#    branches:
-#      - 'main'
-#      - 'release'
 on:
   push:
-    branches:
-      - 'temp'
+    branches: [ main ]
+
 
 permissions:
   contents: read
@@ -35,19 +29,19 @@ jobs:
         with:
           java-version: "11"
           distribution: "temurin"
+      - name: action-slack
+        uses: 8398a7/action-slack@v3
+        with:
+            status: ${{ job.status }}
+            author_name: "daengtionary"
+            fields: repo,commit,message,author,pullRequest,action
+            mention: here
+            if_mention: failure,cancelled
+        env:
+            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
 
-#      - name: action-slack
-#        uses: 8398a7/action-slack@v3
-#        with:
-#            status: ${{ job.status }}
-#            author_name: "daengtionary"
-#            fields: repo,commit,message,author,pullRequest,action
-#            mention: here
-#            if_mention: failure,cancelled
-#        env:
-#            SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-#        if: always()
-
+      ## 1-1 application.properties 파일 생성
       - name: make application.properties
         run: |
           mkdir -p ./src/main/resources
@@ -55,6 +49,15 @@ jobs:
           touch ./application.properties
           echo "${{ secrets.PROPERTIES }}" >> ./application.properties
         shell: bash
+
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-  
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
