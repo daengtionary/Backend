@@ -1,8 +1,6 @@
 package com.sparta.daengtionary.aop.redis;
 
 
-import com.sparta.daengtionary.category.chat.domain.ChatMessage;
-import com.sparta.daengtionary.category.chat.dto.request.MessageRequestDto;
 import com.sparta.daengtionary.category.chat.dto.response.MessageResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +20,10 @@ public class RedisPublisher {
 
     private final RedisTemplate<String, Object> redisTemplate;
 
-    public void publish(MessageResponseDto responseDto) {
-        redisTemplate.convertAndSend(String.valueOf(responseDto.getRoomNo()), responseDto);
+    public void publish(ChannelTopic topic, MessageResponseDto responseDto) {
+        System.out.println("메시지 발행!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        redisTemplate.convertAndSend(topic.getTopic(), responseDto);
+        // redisTemplate.convertAndSend(String.valueOf(responseDto.getRoomNo()), responseDto);
+        System.out.println("메시지 발행 완료 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     }
 }

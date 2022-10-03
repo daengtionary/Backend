@@ -8,6 +8,7 @@ import com.sparta.daengtionary.category.chat.domain.ChatRoomMember;
 import com.sparta.daengtionary.category.chat.dto.request.MessageRequestDto;
 import com.sparta.daengtionary.category.chat.dto.response.MessageResponseDto;
 import com.sparta.daengtionary.category.chat.repository.ChatMessageRepository;
+import com.sparta.daengtionary.category.chat.repository.ChatRoomRedisRepository;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +30,7 @@ public class ChatMessageService {
     private final ResponseBodyDto responseBodyDto;
     private final MemberService memberService;
     private final ChatRoomService chatRoomService;
+    private final ChatRoomRedisRepository chatRoomRedisRepository;
     private final RedisPublisher redisPublisher;
 
     // 메세지 가져오기
@@ -43,7 +48,7 @@ public class ChatMessageService {
                     .type(chatMessage.getType())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
-                    .date(chatMessage.getCreatedAt())
+                    .date(chatMessage.getDate())
                     .build()
             );
         }
@@ -62,12 +67,21 @@ public class ChatMessageService {
 
             // enterStatus가 false일 경우만 저장
             if (!chatRoomMember.getEnterStatus()) {
+                // redis 채팅방 입장 설정
+                String roomNo = String.valueOf(chatRoom.getRoomNo());
+                chatRoomRedisRepository.enterChatRoom(roomNo);
+
+                // 날짜 역직렬화 오류로 날짜 생성
+                LocalDateTime now = LocalDateTime.now();
+                String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
+
                 // message 생성 & 저장
                 ChatMessage chatMessage = ChatMessage.builder()
                         .roomNo(requestDto.getRoomNo())
                         .type(requestDto.getType())
                         .sender(requestDto.getSender())
                         .message(requestDto.getSender() + "님이 입장하였습니다 :)")
+                        .date(date)
                         .build();
 
                 chatMessageRepository.save(chatMessage);
@@ -82,19 +96,24 @@ public class ChatMessageService {
                         .type(chatMessage.getType())
                         .sender(chatMessage.getSender())
                         .message(chatMessage.getMessage())
-                        .date(chatMessage.getCreatedAt())
+                        .date(chatMessage.getDate())
                         .build();
 
                 // 메세지 보내기
-                redisPublisher.publish(responseDto);
+                redisPublisher.publish(chatRoomRedisRepository.getTopic(roomNo), responseDto);
             }
         } else if (requestDto.getType().equals("TALK")) {
+            // 날짜 역직렬화 오류로 날짜 생성
+            LocalDateTime now = LocalDateTime.now();
+            String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
+
             // message 생성 & 저장
             ChatMessage chatMessage = ChatMessage.builder()
                     .roomNo(requestDto.getRoomNo())
                     .type(requestDto.getType())
                     .sender(requestDto.getSender())
                     .message(requestDto.getMessage())
+                    .date(date)
                     .build();
 
             chatMessageRepository.save(chatMessage);
@@ -102,15 +121,16 @@ public class ChatMessageService {
             // responseDto에 담기
             MessageResponseDto responseDto = MessageResponseDto.builder()
                     .messageNo(chatMessage.getMessageNo())
-                    .messageNo(chatMessage.getMessageNo())
+                    .roomNo(chatMessage.getRoomNo())
                     .type(chatMessage.getType())
                     .sender(chatMessage.getSender())
                     .message(chatMessage.getMessage())
-                    .date(chatMessage.getCreatedAt())
+                    .date(chatMessage.getDate())
                     .build();
 
             // 메세지 보내기
-            redisPublisher.publish(responseDto);
+            String roomNo = String.valueOf(responseDto.getRoomNo());
+            redisPublisher.publish(chatRoomRedisRepository.getTopic(roomNo), responseDto);
         }
     }
 }
