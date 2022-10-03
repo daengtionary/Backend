@@ -14,8 +14,12 @@
 
 판매하고 싶은 상품도 판매 할 수 있는 서비스입니다.
 
+<h2>프로젝트 노션</h2>
+
+https://www.notion.so/b16810b040254299a360deec190d1f4f
 
 <h2>📋프로젝트 기간</h2>
+
 2022-08-26 ~ 2022-10-07
 
 서비스 시작 일
@@ -33,7 +37,7 @@
 <h2>📄기술 스택</h2>
 
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"><img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"><img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white">
 
 
 <h2>툴</h2>
@@ -45,10 +49,50 @@
 
 <img src="https://img.shields.io/badge/Amazon EC2-FF9900?style=for-the-badge&logo=Amazon EC2&logoColor=white"><img src="https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white">
 
+<h2>API</h2>
 
-<h2>방문자수</h2>
+<h3>서비스 아키텍쳐</h3>
 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fdaengtionary%2Fbackend&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=false)](https://hits.seeyoufarm.com)
+![main](https://user-images.githubusercontent.com/108968316/193571757-7770d7e8-bab7-4b7e-bdc7-961a273c0214.jpg)
+
+<h3>ERD</h3>
+
+![erd](https://user-images.githubusercontent.com/108968316/193579678-75d3d11a-4500-4e67-a17c-12e385bdc955.jpg)
 
 
-![Footer](https://capsule-render.vercel.app/api?type=waving&color=auto&height=200&section=footer)
+<h3>주요 기능</h3>
+
+* 실시간 챗팅
+* 가장 인기있는 랭킹 시스템
+
+
+<h2>트러블 슈팅</h2>
+
+
+
+# 배포시 서버 구동 멈춤 문제
+
+문제 상황 : 
+
+- ci/cd 를 진행 할때 백엔드에 ec2가 약 5분 내로 멈추는 경우가 발생해서
+
+       무중단 배포를 도입해야 될거 같다고 의견을 통합했습니다.
+
+해결 방안 :
+
+- 무중단 배포의 핵심은 로드밸런서(Load Balancer)를 통해 연결된 두 개 이상의 (서로 다른 IP, 포트를 가진) 인스턴스에 트래픽을 제어해 배포하는 것 이라는 결론에 도달
+- 엔진엑스/도커 가 후보에 올랐습니다.
+
+의견조율
+
+- 기존에 ci/cd를 도커로 이용했기에 도커를 이용해서 처리 하기로 판단
+
+해결 
+
+- 도커를 이용해서 짧은 시간내에 무중단 배포를 처리하기에는 어렵다고 판단.
+- ec2 내부에 nginx를 설치/설정 하여 gitaction / codedeploy / s3 를 이용해서 처리 완료
+
+
+<h2>API</h2>
+
+https://www.notion.so/API-1a8bdd074c034c799550baed8f6caa7b
