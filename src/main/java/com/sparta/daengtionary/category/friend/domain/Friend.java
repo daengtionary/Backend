@@ -71,9 +71,12 @@ public class Friend extends Timestamped {
         }
     }
 
-    public void NotOverCount() {
-        if(this.count < this.maxCount){
+    public void NotOverCount(Member member) {
+        if(this.count < this.maxCount && !this.member.equals(member)){
             setCount();
+        }
+        else if(this.member.equals(member)){
+            throw new CustomException(ErrorCode.FRIEND_IS_NOT_MEMBER);
         }
     }
 
