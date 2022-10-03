@@ -28,7 +28,7 @@ public class ResponseBodyDto {
         return ResponseEntity.ok(body);
     }
 
-    // 메시지만 있는 성공 응답
+    // only message 성공 응답
     public ResponseEntity<?> success(String message) {
         Body body = Body.builder()
                 .state(HttpStatus.OK.value())
