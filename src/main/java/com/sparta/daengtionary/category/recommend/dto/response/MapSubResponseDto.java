@@ -10,14 +10,14 @@ import java.util.List;
 @NoArgsConstructor
 public class MapSubResponseDto {
     private MapDetailSubResponseDto mapDetailSubResponseDto;
-    private List<MapImgResponseDto> mapImgResponseDtoList;
+    private List<ImgResponseDto> imgResponseDtoList;
     private List<ReviewResponseDto> reviewResponseDtoList;
 
     @Builder
-    public MapSubResponseDto(MapDetailSubResponseDto mapDetailSubResponseDto, List<MapImgResponseDto> mapImgResponseDtoList,
+    public MapSubResponseDto(MapDetailSubResponseDto mapDetailSubResponseDto, List<ImgResponseDto> imgResponseDtoList,
                              List<ReviewResponseDto> reviewResponseDtoList) {
         this.mapDetailSubResponseDto = mapDetailSubResponseDto;
-        this.mapImgResponseDtoList = mapImgResponseDtoList;
+        this.imgResponseDtoList = imgResponseDtoList;
         this.reviewResponseDtoList = reviewResponseDtoList;
     }
 

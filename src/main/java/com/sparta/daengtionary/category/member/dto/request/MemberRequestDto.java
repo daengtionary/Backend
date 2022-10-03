@@ -31,10 +31,4 @@ public class MemberRequestDto {
     public static class Update {
         private String nick;
     }
-
-    @Getter
-    @Setter
-    public static class MakeChat {
-        private Long memberNo;
-    }
 }

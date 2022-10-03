@@ -35,22 +35,33 @@ public class ChatRoomService {
     private final ChatMessageRepository chatMessageRepository;
     private final ResponseBodyDto responseBodyDto;
 
+
     @Transactional
-    public ResponseEntity<?> createChatRoomPersonal(HttpServletRequest request,
+    public ResponseEntity<?> createPersonalChatRoom(HttpServletRequest request,
                                                     ChatRoomRequestDto requestDto) {
-        // 채탱방 생성 member 정보
+        // creator 정보
         Member creator = tokenProvider.getMemberFromAuthentication();
 
-        // 채팅방 대상 member 정보
+        // target 정보
         Member target = memberService.checkMemberByMemberNo(requestDto.getMemberNo());
 
-        // 생성과 대싱이 같으면 Error
+        // creator, target 같으면 Exception
         if (creator.equals(target)) {
             throw new CustomException(CANNOT_CHAT_WITH_ME);
         }
 
-        // 채팅방이 있으면 가져오고 없으면 생성 후 멤버 저장
-        ChatRoom chatRoom = checkChatRoomPersonalByMembers(creator, target);
+        // chatRoom 있으면 가져오고 없으면 생성 후 member 저장
+        ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
+
+        // welcome message 저장
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomNo(chatRoom.getRoomNo())
+                .type("SYSTEM")
+                .sender("SYSTEM")
+                .message("대화가 시작되었습니다 :)")
+                .build();
+
+        chatMessageRepository.save(chatMessage);
 
         return responseBodyDto.success(ChatRoomResponseDto.builder()
                         .roomNo(chatRoom.getRoomNo())
@@ -58,11 +69,56 @@ public class ChatRoomService {
                 "채팅방 준비 완료");
     }
 
+    @Transactional
+    public ResponseEntity<?> createGroupChatRoom(HttpServletRequest request,
+                                                 ChatRoomRequestDto requestDto) {
+        // 생성 member 정보
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        // chatRoom 생성
+        ChatRoom chatRoom = ChatRoom.builder()
+                .type("group")
+                .title(requestDto.getTitle())
+                .build();
+
+        chatRoomRepository.save(chatRoom);
+
+        // chatRoom member 정보 저장
+        ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                .chatRoom(chatRoom)
+                .member(member)
+                .enterStatus(false)
+                .build();
+
+        chatRoomMemberRepository.save(chatRoomMember);
+
+        return responseBodyDto.success(ChatRoomResponseDto.builder()
+                        .roomNo(chatRoom.getRoomNo())
+                        .build(),
+                "채팅방 준비 완료");
+    }
+
+    @Transactional
+    public ResponseEntity<?> createGroupChatRoomMember(HttpServletRequest request,
+                                                       ChatRoomRequestDto requestDto) {
+        // 참여 요청 member 정보
+        Member member = tokenProvider.getMemberFromAuthentication();
+
+        // 참여 요청 chatRoom 정보
+        ChatRoom chatRoom = getChatRoomByRoomNo(requestDto.getRoomNo());
+
+        // 참여 여부 확인 후 미참여 시 참여
+        ChatRoomMember chatRoomMember = checkChatRoomMemberByMemberAndChatRoom(member, chatRoom);
+
+        return responseBodyDto.success("참여가 완료되었습니다 :)");
+    }
+
+    @Transactional(readOnly = true)
     public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
         // member 정보
         Member member = tokenProvider.getMemberFromAuthentication();
 
-        // 채팅방 찾기
+        // chatRoom 찾기
         List<ChatRoom> chatRoomList = chatRoomRepository.findByAllChatRoom(member);
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
 
@@ -70,7 +126,7 @@ public class ChatRoomService {
             List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoom(chatRoom);
             List<MemberResponseDto> memberResponseDtoList = new ArrayList<>();
 
-            // 채팅방 참여자 정보 가져오기
+            // chatRoom 참여자 정보 가져오기
             for (ChatRoomMember chatRoomMember : chatRoomMemberList) {
                 memberResponseDtoList.add(
                         MemberResponseDto.builder()
@@ -80,10 +136,10 @@ public class ChatRoomService {
                 );
             }
 
-            // 마지막 대화내용 가져오기
+            // 마지막 채팅 메세지 가져오기
             ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
-                        () -> new CustomException(NOT_FOUND_CHAT_ROOM)
-                );
+                    () -> new CustomException(NOT_FOUND_CHAT_ROOM)
+            );
 
             // responseDto 추가
             chatRoomResponseDtoList.add(
@@ -102,15 +158,53 @@ public class ChatRoomService {
 
 
     @Transactional
-    public ChatRoom checkChatRoomPersonalByMembers(Member creator, Member target) {
+    public ChatRoom checkPersonalChatRoomByMembers(Member creator, Member target) {
         return chatRoomRepository.findByChatRoom(creator, target).orElseGet(
                 () -> {
-                    ChatRoom chatRoom = chatRoomRepository.save(ChatRoom.createChatRoomPersonal());
+                    // chatRoom 생성
+                    ChatRoom chatRoom = ChatRoom.builder()
+                            .type("personal")
+                            .title("1:1")
+                            .build();
 
-                    chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, creator));
-                    chatRoomMemberRepository.save(ChatRoomMember.createChatRoomMember(chatRoom, target));
+                    chatRoomRepository.save(chatRoom);
+
+                    // creator member 저장
+                    ChatRoomMember creatorRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(creator)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(creatorRoomMember);
+
+                    // target member 저장
+                    ChatRoomMember targetRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(target)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(targetRoomMember);
 
                     return chatRoom;
+                }
+        );
+    }
+
+    @Transactional
+    public ChatRoomMember checkChatRoomMemberByMemberAndChatRoom(Member member, ChatRoom chatRoom) {
+        return chatRoomMemberRepository.findByMemberAndChatRoom(member, chatRoom).orElseGet(
+                () -> {
+                    ChatRoomMember chatRoomMember = ChatRoomMember.builder()
+                            .chatRoom(chatRoom)
+                            .member(member)
+                            .enterStatus(false)
+                            .build();
+
+                    chatRoomMemberRepository.save(chatRoomMember);
+
+                    return chatRoomMember;
                 }
         );
     }

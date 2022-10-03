@@ -11,17 +11,15 @@ import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapImg;
 import com.sparta.daengtionary.category.recommend.domain.MapInfo;
-import com.sparta.daengtionary.category.recommend.domain.MapReview;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.request.MapRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.response.*;
 import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
-import com.sparta.daengtionary.category.recommend.repository.MapReviewRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,18 +37,14 @@ public class MapService {
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
     private final AwsS3UploadService s3UploadService;
-    private final MapReviewRepository mapReviewRepository;
 
     private final PostDetailRepositorySupport postDetailRepositorySupport;
 
-    private final String imgPath = "/map/image";
 
     @Transactional
     public ResponseEntity<?> createMap(MapRequestDto mapRequestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        validateMemberRole(member);
-        validateFile(multipartFiles);
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
+
 
         Map map = Map.builder()
                 .member(member)
@@ -61,33 +55,23 @@ public class MapService {
                 .build();
 
         mapRepository.save(map);
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles);
+                List<MapImg> mapImgList = new ArrayList<>();
+                for (String img : mapImgs) {
+                    mapImgList.add(
+                            MapImg.builder()
+                                    .map(map)
+                                    .mapImgUrl(img)
+                                    .build()
+                    );
+                }
+                mapImgRepository.saveAll(mapImgList);
+            }
 
-
-        List<MapImg> mapImgList = new ArrayList<>();
-        for (String img : mapImgs) {
-            mapImgList.add(
-                    MapImg.builder()
-                            .map(map)
-                            .mapImgUrl(img)
-                            .build()
-            );
         }
-        mapImgRepository.saveAll(mapImgList);
-
-        return responseBodyDto.success(
-                MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(member.getNick())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .imgUrls(mapImgs)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-                "생성 완료"
-        );
+        return responseBodyDto.success("생성 완료");
     }
 
     @Transactional(readOnly = true)
@@ -108,69 +92,31 @@ public class MapService {
         return responseBodyDto.success(mapResponseDtoPage, "조회 성공");
     }
 
+    @Scheduled(cron = "0 0 12 * * ?")
     @Transactional(readOnly = true)
-    public ResponseEntity<?> getTestMap(Long mapNo, int pagenum, int pagesize) {
+    public void schedulTest(){
+        System.out.println("매일 12시에 실행");
+    }
+
+    @Transactional(readOnly = true)
+    public ResponseEntity<?> getAllMap(Long mapNo, int pagenum, int pagesize) {
         MapDetailSubResponseDto map = postDetailRepositorySupport.findByMapDetail(mapNo);
-        List<MapImgResponseDto> mapImgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
+        List<ImgResponseDto> imgResponseDtoList = postDetailRepositorySupport.findByMapImg(mapNo);
         List<ReviewResponseDto> reviewResponseDtoList = postDetailRepositorySupport.findByMapReview(mapNo, pagenum, pagesize);
         return responseBodyDto.success(MapSubResponseDto.builder()
                         .mapDetailSubResponseDto(map)
-                        .mapImgResponseDtoList(mapImgResponseDtoList)
+                        .imgResponseDtoList(imgResponseDtoList)
                         .reviewResponseDtoList(reviewResponseDtoList)
                         .build()
                 , "조회 성공");
     }
 
-    @Transactional(readOnly = true)
-    public ResponseEntity<?> getAllMap(Long mapNo) {
-        Map map = validateMap(mapNo);
-
-        List<MapImg> mapImgTemp = mapImgRepository.findAllByMap(map);
-        List<String> mapImgs = new ArrayList<>();
-
-        for (MapImg i : mapImgTemp) {
-            mapImgs.add(i.getMapImgUrl());
-        }
-
-        List<MapReview> reviews = mapReviewRepository.findAllByMap(map);
-        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
-        for (MapReview i : reviews) {
-            reviewResponseDtoList.add(
-                    ReviewResponseDto.builder()
-                            .reviewNo(i.getMapReviewNo())
-                            .nick(i.getMember().getNick())
-                            .content(i.getContent())
-                            .image(i.getMember().getDogs().get(0).getImage())
-                            .star(i.getStar())
-                            .build()
-            );
-        }
-
-        return responseBodyDto.success(
-                MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(map.getMember().getNick())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .mapStar(map.getStar())
-                        .view(map.getView())
-                        .imgUrls(mapImgs)
-                        .mapReviewList(reviewResponseDtoList)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-                "조회 성공"
-        );
-    }
 
     @Transactional
     public ResponseEntity<?> mapUpdate(MapPutRequestDto requestDto, Long mapNo, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = validateMap(mapNo);
         map.validateMember(member);
-        validateFile(multipartFiles);
 
 
         List<MapImg> temp = mapImgRepository.findAllByMap(map);
@@ -178,38 +124,27 @@ public class MapService {
             s3UploadService.deleteFile(i.getMapImgUrl());
         }
         mapImgRepository.deleteAll(temp);
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
+                List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles);
 
-        List<String> mapImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
-
-        List<MapImg> mapImgList = new ArrayList<>();
-        for (String img : mapImgs) {
-            mapImgList.add(
-                    MapImg.builder()
-                            .map(map)
-                            .mapImgUrl(img)
-                            .build()
-            );
+                List<MapImg> mapImgList = new ArrayList<>();
+                for (String img : mapImgs) {
+                    mapImgList.add(
+                            MapImg.builder()
+                                    .map(map)
+                                    .mapImgUrl(img)
+                                    .build()
+                    );
+                }
+                mapImgRepository.saveAll(mapImgList);
+            }
         }
-        mapImgRepository.saveAll(mapImgList);
+
 
         map.updateMap(requestDto);
 
-        return responseBodyDto.success(MapDetailResponseDto.builder()
-                        .mapNo(map.getMapNo())
-                        .nick(map.getMember().getNick())
-                        .title(map.getTitle())
-                        .address(map.getAddress())
-                        .category(map.getCategory())
-                        .content(map.getContent())
-                        .mapStar(map.getStar())
-                        .view(map.getView())
-                        .imgUrls(mapImgs)
-                        .createdAt(map.getCreatedAt())
-                        .modifiedAt(map.getModifiedAt())
-                        .build(),
-
-                "수정 성공"
-        );
+        return responseBodyDto.success("수정 성공");
     }
 
     @Transactional
@@ -235,21 +170,6 @@ public class MapService {
         map.viewUpdate();
     }
 
-    private void validateFile(List<MultipartFile> multipartFiles) {
-        if (multipartFiles == null) {
-            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
-        }
-    }
-
-
-    @Transactional(readOnly = true)
-    public void isDuplicateCheck(MapRequestDto requestDto) {
-        if (mapRepository.existsByTitle(requestDto.getTitle()) &&
-                mapRepository.existsByAddress(requestDto.getAddress()) &&
-                mapRepository.existsByCategory(requestDto.getCategory())) {
-            throw new CustomException(ErrorCode.MAP_DUPLICATE_TITLE);
-        }
-    }
 
     @Transactional(readOnly = true)
     public Map validateMap(Long mapNo) {
@@ -258,11 +178,5 @@ public class MapService {
         );
     }
 
-    private void validateMemberRole(Member member) {
-        String temp = String.valueOf(member.getRole());
-        if (!temp.equals("BUSINESS")) {
-            throw new CustomException(ErrorCode.MAP_WRONG_ROLE);
-        }
-    }
 
 }
