@@ -6,11 +6,11 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class ImgResponseDto {
+public class MapImgResponseDto {
     private String mapImgUrl;
 
     @Builder
-    public ImgResponseDto(String mapImgUrl) {
+    public MapImgResponseDto(String mapImgUrl) {
         this.mapImgUrl = mapImgUrl;
     }
 }

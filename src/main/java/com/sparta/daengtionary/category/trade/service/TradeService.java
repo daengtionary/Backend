@@ -7,13 +7,17 @@ import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
+import com.sparta.daengtionary.category.member.repository.MemberRepository;
+import com.sparta.daengtionary.category.recommend.dto.response.ReviewResponseDto;
 import com.sparta.daengtionary.category.trade.domain.Trade;
 import com.sparta.daengtionary.category.trade.domain.TradeImg;
+import com.sparta.daengtionary.category.trade.domain.TradeReview;
 import com.sparta.daengtionary.category.trade.dto.request.TradeRequestDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeDetailResponseDto;
 import com.sparta.daengtionary.category.trade.dto.response.TradeResponseDto;
 import com.sparta.daengtionary.category.trade.repository.TradeImgRepository;
 import com.sparta.daengtionary.category.trade.repository.TradeRepository;
+import com.sparta.daengtionary.category.trade.repository.TradeReviewRepository;
 import com.sparta.daengtionary.category.wish.domain.Wish;
 import com.sparta.daengtionary.category.wish.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,15 +35,20 @@ public class TradeService {
     private final TradeRepository tradeRepository;
     private final TradeImgRepository tradeImgRepository;
     private final AwsS3UploadService s3UploadService;
+    private final MemberRepository memberRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
+    private final TradeReviewRepository tradeReviewRepository;
     private final PostRepositorySupport postRepositorySupport;
+
     private final WishRepository wishRepository;
+    private final String imgPath = "/map/image";
+
     @Transactional
     public ResponseEntity<?> createTrade(TradeRequestDto requestDto, List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
-
-
+        validateFile(multipartFiles);
+        List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
         Trade trade = Trade.builder()
                 .member(member)
@@ -53,26 +62,36 @@ public class TradeService {
                 .build();
 
         tradeRepository.save(trade);
-        if(multipartFiles != null){
-            if(multipartFiles.get(0).getSize() > 0){
-                List<String> tradeImgList = s3UploadService.uploadListImg(multipartFiles);
-                List<TradeImg> tradeImgs = new ArrayList<>();
-                for (String img : tradeImgList) {
-                    tradeImgs.add(
-                            TradeImg.builder()
-                                    .trade(trade)
-                                    .tradeImg(img)
-                                    .build()
-                    );
-                }
 
-                tradeImgRepository.saveAll(tradeImgs);
-            }
+        List<TradeImg> tradeImgs = new ArrayList<>();
+        for (String img : tradeImgList) {
+            tradeImgs.add(
+                    TradeImg.builder()
+                            .trade(trade)
+                            .tradeImg(img)
+                            .build()
+            );
         }
 
+        tradeImgRepository.saveAll(tradeImgs);
 
-
-        return responseBodyDto.success("생성 완료");
+        return responseBodyDto.success(
+                TradeDetailResponseDto.builder()
+                        .tradeNo(trade.getTradeNo())
+                        .nick(member.getNick())
+                        .title(trade.getTitle())
+                        .content(trade.getContent())
+                        .price(trade.getPrice())
+                        .address(trade.getAddress())
+                        .exchange(trade.getExchange())
+                        .stuffStatus(trade.getStuffStatus())
+                        .postStatus(trade.getPostStatus())
+                        .view(trade.getView())
+                        .tradeImgUrl(tradeImgList)
+                        .createdAt(trade.getCreatedAt())
+                        .modifiedAt(trade.getModifiedAt())
+                        .build(), "생성완료"
+        );
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +124,19 @@ public class TradeService {
             traImgs.add(i.getTradeImg());
         }
 
+        List<TradeReview> reviews = tradeReviewRepository.findAllByTrade(trade);
+        List<ReviewResponseDto> reviewResponseDtoList = new ArrayList<>();
+
+        for (TradeReview i : reviews) {
+            reviewResponseDtoList.add(
+                    ReviewResponseDto.builder()
+                            .reviewNo(i.getTradeReviewNo())
+                            .nick(i.getMember().getNick())
+                            .content(i.getContent())
+                            .image(i.getMember().getDogs().get(0).getImage())
+                            .build()
+            );
+        }
         List<Wish> temp = wishRepository.findAllByTrade(trade);
 
         return responseBodyDto.success(
@@ -120,7 +152,9 @@ public class TradeService {
                         .stuffStatus(trade.getStuffStatus())
                         .postStatus(trade.getPostStatus())
                         .tradeImgUrl(traImgs)
+                        .reviewCount((long) reviews.size())
                         .wishCount((long) temp.size())
+                        .reviewList(reviewResponseDtoList)
                         .createdAt(trade.getCreatedAt())
                         .modifiedAt(trade.getModifiedAt())
                         .build(), "조회 성공"
@@ -156,34 +190,39 @@ public class TradeService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Trade trade = validateTrade(tradeNo);
         trade.validateMember(member);
+        validateFile(multipartFiles);
 
         List<TradeImg> deleteImg = tradeImgRepository.findAllByTrade(trade);
         for (TradeImg i : deleteImg) {
             s3UploadService.deleteFile(i.getTradeImg());
         }
         tradeImgRepository.deleteAll(deleteImg);
-        if(multipartFiles != null){
-            if(multipartFiles.get(0).getSize() > 0){
-                List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles);
 
-                List<TradeImg> saveImg = new ArrayList<>();
-                for (String i : tradeImgs) {
-                    saveImg.add(
-                            TradeImg.builder()
-                                    .trade(trade)
-                                    .tradeImg(i)
-                                    .build()
-                    );
-                }
+        List<String> tradeImgs = s3UploadService.uploadListImg(multipartFiles, imgPath);
 
-                tradeImgRepository.saveAll(saveImg);
-            }
+        List<TradeImg> saveImg = new ArrayList<>();
+        for (String i : tradeImgs) {
+            saveImg.add(
+                    TradeImg.builder()
+                            .trade(trade)
+                            .tradeImg(i)
+                            .build()
+            );
         }
 
-
+        tradeImgRepository.saveAll(saveImg);
         trade.updateTrade(requestDto);
 
-        return responseBodyDto.success("수정 성공"
+        return responseBodyDto.success(
+                TradeDetailResponseDto.builder()
+                        .tradeNo(trade.getTradeNo())
+                        .nick(member.getNick())
+                        .title(trade.getTitle())
+                        .content(trade.getContent())
+                        .tradeImgUrl(tradeImgs)
+                        .createdAt(trade.getCreatedAt())
+                        .modifiedAt(trade.getModifiedAt())
+                        .build(), "수정 성공"
         );
     }
 
@@ -216,4 +255,15 @@ public class TradeService {
         );
     }
 
+    private void validateFile(List<MultipartFile> multipartFiles) {
+        if (multipartFiles == null) {
+            throw new CustomException(ErrorCode.WRONG_INPUT_CONTENT);
+        }
+    }
+
+    private Member validateMember(Long memberNo) {
+        return memberRepository.findById(memberNo).orElseThrow(
+                () -> new CustomException(ErrorCode.NOT_FOUND_USER_INFO)
+        );
+    }
 }

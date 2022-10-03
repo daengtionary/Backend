@@ -13,8 +13,6 @@ public class CommunityResponseDto {
     private Long communityNo;
     private String nick;
     private String breed;
-    private String email;
-    private String image;
     private String title;
     private String category;
     private int view;
@@ -28,7 +26,7 @@ public class CommunityResponseDto {
 
 
     @Builder
-    public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg, String category,String email,String image,
+    public CommunityResponseDto(Long communityNo, String nick, String title, int view, String communityImg, String category,
                                 String breed, Long wishCount, Long reviewCount, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.communityNo = communityNo;
         this.nick = nick;
@@ -36,9 +34,7 @@ public class CommunityResponseDto {
         this.breed = breed;
         this.view = view;
         this.category = category;
-        this.image = image;
         this.reviewCount = reviewCount;
-        this.email = email;
         this.wishCount = wishCount;
         this.communityImg = communityImg;
         this.createdAt = createdAt;

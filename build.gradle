@@ -63,10 +63,10 @@ dependencies {
     implementation group: 'redis.clients', name: 'jedis', version: '3.3.0'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
+
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.1'
-
 
     annotationProcessor(
             "jakarta.persistence:jakarta.persistence-api",
@@ -81,3 +81,7 @@ bootJar {
     archiveFileName = 'app.jar'
     archiveVersion = "0.0.0"
 }
+
+/*tasks.named('test') {
+    useJUnitPlatform()
+}*/
