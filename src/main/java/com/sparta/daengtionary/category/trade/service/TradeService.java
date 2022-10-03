@@ -110,6 +110,7 @@ public class TradeService {
                 TradeDetailResponseDto.builder()
                         .tradeNo(trade.getTradeNo())
                         .nick(trade.getMember().getNick())
+                        .memberNo(trade.getMember().getMemberNo())
                         .title(trade.getTitle())
                         .content(trade.getContent())
                         .price(trade.getPrice())
