@@ -84,21 +84,32 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ResponseEntity<?> createGroupChatRoom(HttpServletRequest request,
-                                                 ChatRoomRequestDto requestDto) {
-        // 생성 member 정보
-        Member member = tokenProvider.getMemberFromAuthentication();
-
+    public ChatRoom createGroupChatRoom(Member member, String title) {
         // chatRoom 생성
         ChatRoom chatRoom = ChatRoom.builder()
                 .type("group")
-                .title(requestDto.getTitle())
+                .title(title)
                 .build();
 
         chatRoomRepository.save(chatRoom);
 
         // redis 저장
         chatRoomRedisRepository.createChatRoom(chatRoom);
+
+        // 날짜 역직렬화 오류로 날짜 생성
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
+
+        // welcome message 저장
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomNo(chatRoom.getRoomNo())
+                .type("SYSTEM")
+                .sender("SYSTEM")
+                .message("대화가 시작되었습니다 :)")
+                .date(date)
+                .build();
+
+        chatMessageRepository.save(chatMessage);
 
         // chatRoom member 정보 저장
         ChatRoomMember chatRoomMember = ChatRoomMember.builder()
@@ -109,10 +120,7 @@ public class ChatRoomService {
 
         chatRoomMemberRepository.save(chatRoomMember);
 
-        return responseBodyDto.success(ChatRoomResponseDto.builder()
-                        .roomNo(chatRoom.getRoomNo())
-                        .build(),
-                "채팅방 준비 완료");
+        return chatRoom;
     }
 
     @Transactional
