@@ -42,7 +42,7 @@ public class FriendController {
     }
 
     @PostMapping("/count/{friendNo}")
-    public ResponseEntity<?> friendCountUpdate(@PathVariable Long friendNo){
+    public ResponseEntity<?> friendCountUpdate(@PathVariable Long friendNo) {
         return friendService.friendNotOverCount(friendNo);
     }
 

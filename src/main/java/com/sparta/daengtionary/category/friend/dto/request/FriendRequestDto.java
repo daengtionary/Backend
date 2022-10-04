@@ -4,6 +4,7 @@ import lombok.Getter;
 
 @Getter
 public class FriendRequestDto {
+    private Long friendNo;
     private String address;
     private String category;
     private String title;
