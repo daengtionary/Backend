@@ -52,6 +52,8 @@ public class AwsS3UploadService {
 
     //
     public String uploadImage(MultipartFile multipartFile) {
+        if (multipartFile.isEmpty()) return null;
+
         String image = "";
 
         String fileName = createFileName(multipartFile.getOriginalFilename());

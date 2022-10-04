@@ -21,13 +21,6 @@ public class ChatRoomController {
         return chatRoomService.createPersonalChatRoom(request, requestDto);
     }
 
-    // group chatRoom 생성
-    @PostMapping("/room/group")
-    public ResponseEntity<?> createGroupChatRoom(HttpServletRequest request,
-                                                 @RequestBody ChatRoomRequestDto requestDto) {
-        return chatRoomService.createGroupChatRoom(request, requestDto);
-    }
-
     // group chatRoomMember 신청
     @PostMapping("/room/into")
     public ResponseEntity<?> createGroupChatRoomMember(HttpServletRequest request,
