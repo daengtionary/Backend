@@ -22,7 +22,6 @@ import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
-import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo1;
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
 import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
 import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
@@ -61,8 +60,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1)
-                .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .leftJoin(mapReview)
                 .on(map.mapNo.eq(mapReview.map.mapNo))
                 .leftJoin(wish)
