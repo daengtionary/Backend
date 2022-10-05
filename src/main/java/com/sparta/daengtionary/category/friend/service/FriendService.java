@@ -11,6 +11,7 @@ import com.sparta.daengtionary.category.chat.service.ChatRoomService;
 import com.sparta.daengtionary.category.friend.domain.Friend;
 import com.sparta.daengtionary.category.friend.domain.FriendImg;
 import com.sparta.daengtionary.category.friend.dto.request.FriendRequestDto;
+import com.sparta.daengtionary.category.friend.dto.response.FriendDetailResponseDto;
 import com.sparta.daengtionary.category.friend.dto.response.FriendResponseDto;
 import com.sparta.daengtionary.category.friend.repository.FriendImgRepository;
 import com.sparta.daengtionary.category.friend.repository.FriendRepository;
@@ -86,7 +87,7 @@ public class FriendService {
 
         List<FriendImg> friendImgList = friendImgRepository.findAllByFriend(friend);
 
-        return responseBodyDto.success(FriendResponseDto.builder()
+        return responseBodyDto.success(FriendDetailResponseDto.builder()
                         .friendNo(friend.getFriendNo())
                         .member(friend.getMember())
                         .address(friend.getAddress())

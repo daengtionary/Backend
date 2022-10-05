@@ -164,7 +164,7 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         friend.maxCount,
                         friend.status,
                         friend.count,
-                        friendImg1.friendImg,
+                        friendImg1.friendImg.as("image"),
                         friend.createdAt,
                         friend.modifiedAt
                 ))
