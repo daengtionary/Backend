@@ -19,6 +19,7 @@ import static com.sparta.daengtionary.category.community.domain.QCommunity.commu
 import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
 import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
 import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
+import static com.sparta.daengtionary.category.friend.domain.QFriendImg.friendImg1;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
@@ -163,10 +164,13 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         friend.maxCount,
                         friend.status,
                         friend.count,
+                        friendImg1.friendImg,
                         friend.createdAt,
                         friend.modifiedAt
                 ))
                 .from(friend)
+                .leftJoin(friendImg1)
+                .on(friend.friendNo.eq(friendImg1.friend.friendNo))
                 .where(eqCategory(category, "friend"),
                         eqAddress(address, "friend"),
                         eqTitle(title, "friend"),
