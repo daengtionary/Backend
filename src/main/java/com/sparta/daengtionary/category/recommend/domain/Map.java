@@ -1,19 +1,16 @@
 package com.sparta.daengtionary.category.recommend.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.util.Timestamped;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
-import com.sparta.daengtionary.category.wish.domain.Wish;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Getter
 @Entity
@@ -46,22 +43,6 @@ public class Map extends Timestamped {
 
     @Column(nullable = false)
     private String address;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-    private List<MapImg> mapImgs;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-    private List<MapInfo> mapInfos;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-    private List<MapReview> mapReviews;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "map", fetch = FetchType.LAZY)
-    private List<Wish> wishes;
 
     @Builder
     public Map(Long mapNo, Member member, String title, String category, String content,

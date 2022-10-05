@@ -27,7 +27,6 @@ public class AwsS3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    ///map/image
     public List<String> uploadListImg(List<MultipartFile> multipartFiles) {
         if (multipartFiles.isEmpty()) return null;
 
@@ -50,7 +49,6 @@ public class AwsS3UploadService {
         return imgUrlList;
     }
 
-    //
     public String uploadImage(MultipartFile multipartFile) {
         if (multipartFile.isEmpty()) return null;
 
@@ -97,38 +95,4 @@ public class AwsS3UploadService {
         return fileName.substring(fileName.lastIndexOf("."));
 
     }
-
-//    MultipartFile resizeImage(String fileName, String fileFormatName, MultipartFile originalImage, int targetWidth) {
-//        try {
-//            BufferedImage image = ImageIO.read(originalImage.getInputStream());
-//
-//            int originWidth = image.getWidth();
-//            int originHeight = image.getHeight();
-//
-//            if (originWidth < targetWidth) {
-//                return originalImage;
-//            }
-//
-//            MarvinImage marvinImage = new MarvinImage(image);
-//
-//            Scale scale = new Scale();
-//            scale.load();
-//            scale.setAttribute("newWidth", targetWidth);
-//            scale.setAttribute("newHeight", targetWidth * originHeight / originWidth);
-//            scale.process(marvinImage.clone(), marvinImage, null, null, false);
-//
-//            BufferedImage imageNoAlpha = marvinImage.getBufferedImageNoAlpha();
-//            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-//            ImageIO.write(imageNoAlpha, fileFormatName, baos);
-//            baos.flush();
-//            ;
-//
-//            return new MockMultipartFile(fileName, baos.toByteArray());
-//
-//
-//        } catch (IOException e) {
-//            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
-//        }
 }
-
-

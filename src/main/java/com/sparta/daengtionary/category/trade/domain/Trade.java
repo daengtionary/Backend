@@ -69,9 +69,6 @@ public class Trade extends Timestamped {
         this.stuffStatus = requestDto.getStuffStatus();
     }
 
-    public void updateStatus() {
-        this.postStatus = "판매 완료";
-    }
 
     public void viewUpdate() {
         this.view += 1;

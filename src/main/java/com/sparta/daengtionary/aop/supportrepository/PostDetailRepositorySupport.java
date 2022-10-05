@@ -142,13 +142,4 @@ public class PostDetailRepositorySupport extends QuerydslRepositorySupport {
                 .fetch();
     }
 
-//    public List<Map> findMap(){
-//        return queryFactory
-//                .select(map)
-//                .from(map)
-//                .where(map.mapNo.in(
-//                        JPAExpressions.select(map.mapNo).from(map).groupBy(map.title,map.address).having()
-//                ))
-//                .fetch();
-//    }
 }
