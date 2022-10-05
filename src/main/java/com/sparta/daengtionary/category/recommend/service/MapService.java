@@ -10,12 +10,10 @@ import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
 import com.sparta.daengtionary.category.member.domain.Member;
 import com.sparta.daengtionary.category.recommend.domain.Map;
 import com.sparta.daengtionary.category.recommend.domain.MapImg;
-import com.sparta.daengtionary.category.recommend.domain.MapInfo;
 import com.sparta.daengtionary.category.recommend.dto.request.MapPutRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.request.MapRequestDto;
 import com.sparta.daengtionary.category.recommend.dto.response.*;
 import com.sparta.daengtionary.category.recommend.repository.MapImgRepository;
-import com.sparta.daengtionary.category.recommend.repository.MapInfoRepository;
 import com.sparta.daengtionary.category.recommend.repository.MapRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +29,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MapService {
     private final MapRepository mapRepository;
-    private final MapInfoRepository mapInfoRepository;
     private final MapImgRepository mapImgRepository;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
@@ -152,8 +149,6 @@ public class MapService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Map map = validateMap(mapNo);
         map.validateMember(member);
-        List<MapInfo> infoDelete = mapInfoRepository.findAllByMap(map);
-        mapInfoRepository.deleteAll(infoDelete);
         List<MapImg> imgDelete = mapImgRepository.findAllByMap(map);
         for (MapImg i : imgDelete) {
             s3UploadService.deleteFile(i.getMapImgUrl());
