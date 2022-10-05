@@ -12,8 +12,9 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class FriendResponseDto {
+public class FriendDetailResponseDto {
     private Long friendNo;
+    private Member member;
     private String address;
     private String category;
     private String title;
@@ -21,7 +22,8 @@ public class FriendResponseDto {
     private String status;
     private int maxCount;
     private int count;
-    private String image;
+    private Long roomNo;
+    private List<FriendImg> images;
     @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     @JsonFormat(pattern = "yyyy년 MM월 dd일 E요일 a hh:mm:ss", timezone = "Asia/Seoul")
@@ -29,10 +31,11 @@ public class FriendResponseDto {
 
 
     @Builder
-    public FriendResponseDto(Long friendNo, String address, String category, String title, String content,
-                             String status, int count, int maxCount, String image, LocalDateTime createdAt,
-                             LocalDateTime modifiedAt) {
+    public FriendDetailResponseDto(Long friendNo, Member member, String address, String category, String title,
+                                   String content, String status, int count, int maxCount, Long roomNo,
+                                   List<FriendImg> images, LocalDateTime createdAt, LocalDateTime modifiedAt) {
         this.friendNo = friendNo;
+        this.member = member;
         this.address = address;
         this.category = category;
         this.title = title;
@@ -40,7 +43,8 @@ public class FriendResponseDto {
         this.status = status;
         this.count = count;
         this.maxCount = maxCount;
-        this.image = image;
+        this.roomNo = roomNo;
+        this.images = images;
         this.createdAt = createdAt;
         this.modifiedAt = modifiedAt;
     }
