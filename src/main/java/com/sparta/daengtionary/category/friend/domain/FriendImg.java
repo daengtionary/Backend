@@ -1,5 +1,6 @@
 package com.sparta.daengtionary.category.friend.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,13 +14,13 @@ public class FriendImg {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long friendImgNo;
-
+    @JsonIgnore
     @JoinColumn(name = "tradeNo", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Friend friend;
-
     @Column
     private String friendImg;
+
 
     @Builder
     public FriendImg(Long friendImgNo, Friend friend, String friendImg) {
