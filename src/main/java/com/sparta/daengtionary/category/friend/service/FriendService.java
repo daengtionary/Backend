@@ -84,6 +84,8 @@ public class FriendService {
     public ResponseEntity<?> getFriend(Long friendNo) {
         Friend friend = findByFriend(friendNo);
 
+        List<FriendImg> friendImgList = friendImgRepository.findAllByFriend(friend);
+
         return responseBodyDto.success(FriendResponseDto.builder()
                         .friendNo(friend.getFriendNo())
                         .member(friend.getMember())
@@ -95,6 +97,7 @@ public class FriendService {
                         .count(friend.getCount())
                         .maxCount(friend.getMaxCount())
                         .roomNo(friend.getRoomNo())
+                        .images(friendImgList)
                         .createdAt(friend.getCreatedAt())
                         .modifiedAt(friend.getModifiedAt())
                         .build()
