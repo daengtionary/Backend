@@ -152,6 +152,7 @@ public class ChatRoomService {
                     ChatRoomResponseDto.builder()
                             .roomNo(chatRoom.getRoomNo())
                             .type(chatRoom.getType())
+                            .title(chatRoom.getTitle())
                             .chatRoomMembers(memberResponseDtoList)
                             .lastDate(chatMessage.getDate())
                             .lastMessage(chatMessage.getMessage())
