@@ -45,28 +45,21 @@ public class ChatRoomService {
     @Transactional
     public ResponseEntity<?> createPersonalChatRoom(HttpServletRequest request,
                                                     ChatRoomRequestDto requestDto) {
-        // creator 정보
         Member creator = tokenProvider.getMemberFromAuthentication();
 
-        // target 정보
         Member target = memberService.checkMemberByMemberNo(requestDto.getMemberNo());
 
-        // creator, target 같으면 Exception
         if (creator.equals(target)) {
             throw new CustomException(CANNOT_CHAT_WITH_ME);
         }
 
-        // chatRoom 있으면 가져오고 없으면 생성 후 member 저장
         ChatRoom chatRoom = checkPersonalChatRoomByMembers(creator, target);
 
-        // redis 저장
         chatRoomRedisRepository.createChatRoom(chatRoom);
 
-        // 날짜 역직렬화 오류로 날짜 생성
         LocalDateTime now = LocalDateTime.now();
         String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
 
-        // welcome message 저장
         ChatMessage chatMessage = ChatMessage.builder()
                 .roomNo(chatRoom.getRoomNo())
                 .type("SYSTEM")
@@ -84,23 +77,30 @@ public class ChatRoomService {
     }
 
     @Transactional
-    public ResponseEntity<?> createGroupChatRoom(HttpServletRequest request,
-                                                 ChatRoomRequestDto requestDto) {
-        // 생성 member 정보
-        Member member = tokenProvider.getMemberFromAuthentication();
-
+    public ChatRoom createGroupChatRoom(Member member, String title) {
         // chatRoom 생성
         ChatRoom chatRoom = ChatRoom.builder()
                 .type("group")
-                .title(requestDto.getTitle())
+                .title(title)
                 .build();
 
         chatRoomRepository.save(chatRoom);
 
-        // redis 저장
         chatRoomRedisRepository.createChatRoom(chatRoom);
 
-        // chatRoom member 정보 저장
+        LocalDateTime now = LocalDateTime.now();
+        String date = now.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일 E요일 a hh:mm:ss", Locale.KOREA));
+
+        ChatMessage chatMessage = ChatMessage.builder()
+                .roomNo(chatRoom.getRoomNo())
+                .type("SYSTEM")
+                .sender("SYSTEM")
+                .message("대화가 시작되었습니다 :)")
+                .date(date)
+                .build();
+
+        chatMessageRepository.save(chatMessage);
+
         ChatRoomMember chatRoomMember = ChatRoomMember.builder()
                 .chatRoom(chatRoom)
                 .member(member)
@@ -109,22 +109,16 @@ public class ChatRoomService {
 
         chatRoomMemberRepository.save(chatRoomMember);
 
-        return responseBodyDto.success(ChatRoomResponseDto.builder()
-                        .roomNo(chatRoom.getRoomNo())
-                        .build(),
-                "채팅방 준비 완료");
+        return chatRoom;
     }
 
     @Transactional
     public ResponseEntity<?> createGroupChatRoomMember(HttpServletRequest request,
                                                        ChatRoomRequestDto requestDto) {
-        // 참여 요청 member 정보
         Member member = tokenProvider.getMemberFromAuthentication();
 
-        // 참여 요청 chatRoom 정보
         ChatRoom chatRoom = getChatRoomByRoomNo(requestDto.getRoomNo());
 
-        // 참여 여부 확인 후 미참여 시 참여
         ChatRoomMember chatRoomMember = checkChatRoomMemberByMemberAndChatRoom(member, chatRoom);
 
         return responseBodyDto.success("참여가 완료되었습니다 :)");
@@ -132,10 +126,8 @@ public class ChatRoomService {
 
     @Transactional(readOnly = true)
     public ResponseEntity<?> getChatRooms(HttpServletRequest request) {
-        // member 정보
         Member member = tokenProvider.getMemberFromAuthentication();
 
-        // chatRoom 찾기
         List<ChatRoom> chatRoomList = chatRoomRepository.findByAllChatRoom(member);
         List<ChatRoomResponseDto> chatRoomResponseDtoList = new ArrayList<>();
 
@@ -143,7 +135,6 @@ public class ChatRoomService {
             List<ChatRoomMember> chatRoomMemberList = chatRoomMemberRepository.findByChatRoom(chatRoom);
             List<MemberResponseDto> memberResponseDtoList = new ArrayList<>();
 
-            // chatRoom 참여자 정보 가져오기
             for (ChatRoomMember chatRoomMember : chatRoomMemberList) {
                 memberResponseDtoList.add(
                         MemberResponseDto.builder()
@@ -153,16 +144,15 @@ public class ChatRoomService {
                 );
             }
 
-            // 마지막 채팅 메세지 가져오기
             ChatMessage chatMessage = chatMessageRepository.findTop1ByRoomNoOrderByMessageNoDesc(chatRoom.getRoomNo()).orElseThrow(
                     () -> new CustomException(NOT_FOUND_CHAT_ROOM)
             );
 
-            // responseDto 추가
             chatRoomResponseDtoList.add(
                     ChatRoomResponseDto.builder()
                             .roomNo(chatRoom.getRoomNo())
                             .type(chatRoom.getType())
+                            .title(chatRoom.getTitle())
                             .chatRoomMembers(memberResponseDtoList)
                             .lastDate(chatMessage.getDate())
                             .lastMessage(chatMessage.getMessage())
@@ -178,7 +168,6 @@ public class ChatRoomService {
     public ChatRoom checkPersonalChatRoomByMembers(Member creator, Member target) {
         return chatRoomRepository.findByChatRoom(creator, target).orElseGet(
                 () -> {
-                    // chatRoom 생성
                     ChatRoom chatRoom = ChatRoom.builder()
                             .roomKey(UUID.randomUUID().toString())
                             .type("personal")
@@ -187,7 +176,6 @@ public class ChatRoomService {
 
                     chatRoomRepository.save(chatRoom);
 
-                    // creator member 저장
                     ChatRoomMember creatorRoomMember = ChatRoomMember.builder()
                             .chatRoom(chatRoom)
                             .member(creator)
@@ -196,7 +184,6 @@ public class ChatRoomService {
 
                     chatRoomMemberRepository.save(creatorRoomMember);
 
-                    // target member 저장
                     ChatRoomMember targetRoomMember = ChatRoomMember.builder()
                             .chatRoom(chatRoom)
                             .member(target)

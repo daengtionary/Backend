@@ -41,7 +41,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-  
 
-      ## 1-1 application.properties 파일 생성
       - name: make application.properties
         run: |
           mkdir -p ./src/main/resources
@@ -62,12 +61,10 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         if: always()
 
-      #gradlew 파일 실행권한 설정
       - name: Grant execute permission for gradlew
         run: chmod +x ./gradlew
         shell: bash
 
-        #빌드 시작
       - name: Build with Gradle
         run: ./gradlew build
         shell: bash

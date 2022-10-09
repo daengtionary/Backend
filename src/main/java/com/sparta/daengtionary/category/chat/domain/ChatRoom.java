@@ -1,6 +1,8 @@
 package com.sparta.daengtionary.category.chat.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sparta.daengtionary.aop.util.Timestamped;
+import com.sparta.daengtionary.category.friend.domain.Friend;
 import lombok.Builder;
 import lombok.Getter;
 

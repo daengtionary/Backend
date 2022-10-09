@@ -19,10 +19,10 @@ import static com.sparta.daengtionary.category.community.domain.QCommunity.commu
 import static com.sparta.daengtionary.category.community.domain.QCommunityImg.communityImg1;
 import static com.sparta.daengtionary.category.community.domain.QCommunityReview.communityReview;
 import static com.sparta.daengtionary.category.friend.domain.QFriend.friend;
+import static com.sparta.daengtionary.category.friend.domain.QFriendImg.friendImg1;
 import static com.sparta.daengtionary.category.mypage.domain.QDog.dog;
 import static com.sparta.daengtionary.category.recommend.domain.QMap.map;
 import static com.sparta.daengtionary.category.recommend.domain.QMapImg.mapImg;
-import static com.sparta.daengtionary.category.recommend.domain.QMapInfo.mapInfo1;
 import static com.sparta.daengtionary.category.recommend.domain.QMapReview.mapReview;
 import static com.sparta.daengtionary.category.trade.domain.QTrade.trade;
 import static com.sparta.daengtionary.category.trade.domain.QTradeImg.tradeImg1;
@@ -61,8 +61,6 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                 .from(map)
                 .leftJoin(mapImg)
                 .on(map.mapNo.eq(mapImg.map.mapNo))
-                .leftJoin(mapInfo1)
-                .on(map.mapNo.eq(mapInfo1.map.mapNo))
                 .leftJoin(mapReview)
                 .on(map.mapNo.eq(mapReview.map.mapNo))
                 .leftJoin(wish)
@@ -166,10 +164,13 @@ public class PostRepositorySupport extends QuerydslRepositorySupport {
                         friend.maxCount,
                         friend.status,
                         friend.count,
+                        friendImg1.friendImg.as("image"),
                         friend.createdAt,
                         friend.modifiedAt
                 ))
                 .from(friend)
+                .leftJoin(friendImg1)
+                .on(friend.friendNo.eq(friendImg1.friend.friendNo))
                 .where(eqCategory(category, "friend"),
                         eqAddress(address, "friend"),
                         eqTitle(title, "friend"),

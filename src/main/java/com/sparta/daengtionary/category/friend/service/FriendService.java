@@ -6,14 +6,16 @@ import com.sparta.daengtionary.aop.exception.CustomException;
 import com.sparta.daengtionary.aop.exception.ErrorCode;
 import com.sparta.daengtionary.aop.jwt.TokenProvider;
 import com.sparta.daengtionary.aop.supportrepository.PostRepositorySupport;
+import com.sparta.daengtionary.category.chat.domain.ChatRoom;
+import com.sparta.daengtionary.category.chat.service.ChatRoomService;
 import com.sparta.daengtionary.category.friend.domain.Friend;
 import com.sparta.daengtionary.category.friend.domain.FriendImg;
 import com.sparta.daengtionary.category.friend.dto.request.FriendRequestDto;
+import com.sparta.daengtionary.category.friend.dto.response.FriendDetailResponseDto;
 import com.sparta.daengtionary.category.friend.dto.response.FriendResponseDto;
 import com.sparta.daengtionary.category.friend.repository.FriendImgRepository;
 import com.sparta.daengtionary.category.friend.repository.FriendRepository;
 import com.sparta.daengtionary.category.member.domain.Member;
-import com.sparta.daengtionary.category.trade.domain.TradeImg;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final AwsS3UploadService s3UploadService;
     private final FriendImgRepository friendImgRepository;
+    private final ChatRoomService chatRoomService;
     private final ResponseBodyDto responseBodyDto;
     private final TokenProvider tokenProvider;
     private final PostRepositorySupport postRepositorySupport;
@@ -38,18 +41,21 @@ public class FriendService {
                                           List<MultipartFile> multipartFiles) {
         Member member = tokenProvider.getMemberFromAuthentication();
 
+        ChatRoom chatRoom = chatRoomService.createGroupChatRoom(member, requestDto.getTitle());
+
         Friend friend = Friend.builder()
                 .member(member)
                 .address(requestDto.getAddress())
-                .title(requestDto.getTitle())
-                .maxCount(requestDto.getMaxCount())
-                .content(requestDto.getContent())
                 .category(requestDto.getCategory())
+                .title(requestDto.getTitle())
+                .content(requestDto.getContent())
+                .maxCount(requestDto.getMaxCount())
+                .roomNo(chatRoom.getRoomNo())
                 .build();
         friendRepository.save(friend);
 
-        if(multipartFiles != null){
-            if(multipartFiles.get(0).getSize() > 0){
+        if (multipartFiles != null) {
+            if (multipartFiles.get(0).getSize() > 0) {
                 List<String> friendImgList = s3UploadService.uploadListImg(multipartFiles);
                 List<FriendImg> friendImgs = new ArrayList<>();
                 for (String img : friendImgList) {
@@ -79,17 +85,22 @@ public class FriendService {
     public ResponseEntity<?> getFriend(Long friendNo) {
         Friend friend = findByFriend(friendNo);
 
-        return responseBodyDto.success(FriendResponseDto.builder()
-                        .category(friend.getCategory())
-                        .address(friend.getAddress())
+        List<FriendImg> friendImgList = friendImgRepository.findAllByFriend(friend);
+
+        return responseBodyDto.success(FriendDetailResponseDto.builder()
                         .friendNo(friend.getFriendNo())
+                        .member(friend.getMember())
+                        .address(friend.getAddress())
+                        .category(friend.getCategory())
+                        .title(friend.getTitle())
                         .content(friend.getContent())
+                        .status(friend.getStatus())
                         .count(friend.getCount())
                         .maxCount(friend.getMaxCount())
+                        .roomNo(friend.getRoomNo())
+                        .images(friendImgList)
                         .createdAt(friend.getCreatedAt())
                         .modifiedAt(friend.getModifiedAt())
-                        .status(friend.getStatus())
-                        .title(friend.getTitle())
                         .build()
                 , "조회 완료"
         );
