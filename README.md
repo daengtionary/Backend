@@ -4,19 +4,71 @@
 
 
 <h2>✏프로젝트 소개</h2>
-댕과사전
 
-안녕하세요 행해99기 8기 댕과사전 서비스를 만든 3조 입니다.
+반려견을 위한 견주들의 커뮤니티!
 
-저희 서비스는 반려견을 키우면서 병원/호텔 등등의 정보를 공유하며 얻을 수 있으며
+- 진료 잘하는 동물 병원은 어딘지?
 
-커뮤니티 서비스와 챗팅 서비스를 이용해서 친목을 쌓으며 마켓 기능을 통하여 
+- 시설이 깔끔한 애견 호텔은 어딘지?
 
-판매하고 싶은 상품도 판매 할 수 있는 서비스입니다.
+- 필요 없는 애견 용품이 있다면 장터에 올려 필요한 사람에게 판매해요
 
-<h2>🎡프로젝트 노션</h2>
+- 커뮤니티를 통해 후기 글도 쓰고 내 강아지 자랑까지!
 
-https://www.notion.so/b16810b040254299a360deec190d1f4f
+서비스 URL : https://daengtionary.site/
+
+서비스 영상 URL : https://www.youtube.com/watch?v=VtDBOU1VodU&feature=emb_logo
+
+댕과사전 팀 노션 : https://www.notion.so/b16810b040254299a360deec190d1f4f
+
+<h2>⭐주요 기능</h2>
+<details>
+<summary>카카오톡 소셜 회원가입</summary>
+<div markdown="1">       
+
+![194747242-d90b686d-754b-4c43-b210-d7bddc0eabc4](https://user-images.githubusercontent.com/108968316/194888641-265754d3-1a65-4e96-821c-77e16fd08041.gif)
+
+</div>
+</details>
+
+<details>
+<summary>댕매칭(산책, 애견카페) 으로 우리 아이 친구 찾아주기!</summary>
+<div markdown="1">       
+
+![194747597-1f97eff7-5aa1-4c5e-80be-7e82a6d2d49f](https://user-images.githubusercontent.com/108968316/194888709-bb9ceead-41ee-4c6f-aee1-6197541b9f23.gif)
+
+</div>
+</details>
+
+<details>
+<summary>댕플레이스(병원, 호텔 정보) 에서 꿀팁 얻어가기!</summary>
+<div markdown="1">       
+
+![194747282-9bf25fb1-e7a0-48e3-9eaa-a3c160fc1615](https://user-images.githubusercontent.com/108968316/194888988-c8cc81a0-1a0d-476f-be41-2882af1f2978.gif)
+
+
+</div>
+</details>
+
+<details>
+<summary>장터에서 글 쓰고 댕톡(장터 유저 간 1대1 채팅)으로 중고물품 거래하기!</summary>
+<div markdown="1">       
+
+![194747523-51f4acff-2b25-46c2-bc03-942d26d24bab](https://user-images.githubusercontent.com/108968316/194889021-99f2da25-369b-48d8-8dce-844cf68f0956.gif)
+
+
+</div>
+</details>
+
+<details>
+<summary>커뮤니티에 자유롭게 글쓰기!</summary>
+<div markdown="1">       
+
+![194747639-c67597d5-d3e7-42c1-83e1-3bfeb62956de](https://user-images.githubusercontent.com/108968316/194889050-2c89a149-333a-49f7-ad5a-91f715d4cce6.gif)
+
+
+</div>
+</details>
 
 <h2>📋프로젝트 기간</h2>
 
@@ -30,19 +82,23 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 
 |이름|github|position|
 |------|---|---|
-|박진우|https://github.com/Jinu0729|back-end|
-|안승현|https://github.com/zemiles|back-end|
-|한동훈|https://github.com/hdonghun|back-end|
+|박진우|https://github.com/Jinu0729|팀장*BE|
+|안승현|https://github.com/zemiles|BE|
+|한동훈|https://github.com/hdonghun|BE|
+|김민석|https://github.com/cordplace|부팀장*FE|
+|하병노|https://github.com/hahbr88|FE|
+|박재정|https://github.com/PARK-JAE-JEONG|FE|
+|오소영||UX/UI|
 
 <h2>📄기술 스택</h2>
 
 <img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=white"><img src="https://img.shields.io/badge/Spring Security-6DB33F?style=for-the-badge&logo=Spring Security&logoColor=white"><img src="https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white">
-<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=Redis&logoColor=white"><img src="https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=Gradle&logoColor=white"><img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"><img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=GitHub Actions&logoColor=white"><img src="https://img.shields.io/badge/Amazon S3-569A31?style=for-the-badge&logo=Amazon S3&logoColor=white"><img src="https://img.shields.io/badge/Code Deploy-007396?style=for-the-badge&logo=Code Deploy&logoColor=white">
 
 
 <h2>📄툴</h2>
 
-<img src="https://img.shields.io/badge/mysql-4479A1?style=for-the-badge&logo=mysql&logoColor=white"><img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"><img src="https://img.shields.io/badge/GitHub Actions-2088FF?style=for-the-badge&logo=GitHub Actions&logoColor=white"><img src="https://img.shields.io/badge/Amazon S3-569A31?style=for-the-badge&logo=Amazon S3&logoColor=white"><img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white"><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"><img src="https://img.shields.io/badge/GitKraken-179287?style=for-the-badge&logo=GitKraken&logoColor=white"><img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"><img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white"><img src="https://img.shields.io/badge/Code Deploy-007396?style=for-the-badge&logo=Code Deploy&logoColor=white">
+<img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white"><img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=Postman&logoColor=white"><img src="https://img.shields.io/badge/IntelliJ IDEA-000000?style=for-the-badge&logo=IntelliJ IDEA&logoColor=white"><img src="https://img.shields.io/badge/GitKraken-179287?style=for-the-badge&logo=GitKraken&logoColor=white"><img src="https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white"><img src="https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white">
 
 
 <h2>📄서버</h2>
@@ -51,24 +107,39 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 
 <h2>🏍API</h2>
 
-<h3>서비스 아키텍쳐</h3>
+<h3>서비스 아키텍처</h3>
 
-![main](https://user-images.githubusercontent.com/108968316/193571757-7770d7e8-bab7-4b7e-bdc7-961a273c0214.jpg)
+<details>
+<summary>아키텍처 보기</summary>
+<div markdown="1">       
+
+![그림1](https://user-images.githubusercontent.com/108968316/194886934-5630a2d2-54ad-441a-8249-0b83e00e7dd9.png)
+
+</div>
+</details>
+
+
 
 <h3>ERD</h3>
 
+<details>
+<summary>ERD 보기</summary>
+<div markdown="1">       
+
 ![erd](https://user-images.githubusercontent.com/108968316/193586316-cd539be4-810c-42af-aee3-d2dbe731ef37.jpg)
 
+</div>
+</details>
 
-<h3>주요 기능</h3>
+<h3>댕과사전 API</h3>
 
-* 실시간 챗팅
-* 가장 인기있는 랭킹 시스템
+URL : https://www.notion.so/API-1a8bdd074c034c799550baed8f6caa7b
 
+<h2>🚀트러블 슈팅</h2>
 
-<h2>🎱트러블 슈팅</h2>
-
-<h3>쿼리 조회시 속도 향상</h3>
+<details>
+<summary>쿼리 조회시 속도 향상</summary>
+<div markdown="1">       
 
 ```
 문제 상황 :  조회 쿼리를 요청했을 때 속도 저하
@@ -79,7 +150,9 @@ https://www.notion.so/b16810b040254299a360deec190d1f4f
 
 그러나 offset을 사용해서 데이터가 많이 없는데도 불구하고 0.4초나 걸리는 현상이 발생하게 되었습니다.
 
-offset을 이용하면 예를들어 10020번째 데이터를 조회하려고 한다면 10000개의 데이터를 다 조회 한 이후에 20개의 데이터를 조회하는 결과가 이루어 진다 하여 
+offset을 이용하면 예를들어 10020번째 데이터를 조회하려고 한다면 10000개의 데이터를 다 
+
+조회 한 이후에 20개의 데이터를 조회하는 결과가 이루어 진다 하여 
 
 no offset 방식으로 개선 해서 속도 개선을 했습니다.
 
@@ -88,9 +161,12 @@ no offset 방식으로 개선 해서 속도 개선을 했습니다.
 ![전체_쿼리_개선_전](https://user-images.githubusercontent.com/108968316/193590414-d546d84a-4575-4fea-bbcc-40390d071dea.jpg)
 ![nooffest](https://user-images.githubusercontent.com/108968316/193590433-ebd2befd-68af-4668-9924-fb2c0da47baf.jpg)
 
+</div>
+</details>
 
-
-<h3> build시 속도 저하</h3>
+<details>
+<summary>build시 속도 저하</summary>
+<div markdown="1">       
 
 ```
 문제 상황 :
@@ -108,10 +184,14 @@ no offset 방식으로 개선 해서 속도 개선을 했습니다.
 ![cahsh_00001](https://user-images.githubusercontent.com/108968316/193587724-8d11feec-853e-4a85-951a-9876218a6a02.jpg)
 
 .
- 
 
+</div>
+</details>
 
-<h3> 엔진엑스를 이용한 무중단 배포중 임베디드 레디스 이용</h3>
+<details>
+<summary>엔진엑스를 이용한 무중단 배포중 임베디드 레디스 이용</summary>
+<div markdown="1">       
+
 
 ```
 문제 상황 : 
@@ -131,7 +211,6 @@ no offset 방식으로 개선 해서 속도 개선을 했습니다.
 ![error](https://user-images.githubusercontent.com/108968316/193588936-c08cdcff-49a7-4954-959f-201c92356ccf.jpg)
 
 
+</div>
+</details>
 
-<h2>API</h2>
-
-https://www.notion.so/API-1a8bdd074c034c799550baed8f6caa7b
